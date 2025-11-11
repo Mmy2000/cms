@@ -8,7 +8,7 @@
   <div class="mb-6">
     <button 
       onclick="window.history.back()" 
-      class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-all shadow-sm">
+      class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200  text-gray-700  rounded-xl  transition-all shadow-sm">
       
       رجوع
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -18,7 +18,7 @@
   </div>
 
   <!-- Main Content Card -->
-<div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-10 border border-gray-200 dark:border-gray-700"
+<div class="bg-white  rounded-2xl shadow-lg overflow-hidden mb-10 border border-gray-200 "
      x-data="{ open: false }">
 
   {% if content.image %}
@@ -47,8 +47,8 @@
   {% endif %}
 
   <div class="p-8">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">{{ content.title }}</h1>
-    <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">{{ content.description|linebreaks }}</p>
+    <h1 class="text-3xl font-bold text-gray-800  mb-4">{{ content.title }}</h1>
+    <p class="text-gray-700  leading-relaxed text-lg">{{ content.description|linebreaks }}</p>
 
     {% if content.file %}
       <div class="mt-6">
@@ -69,14 +69,14 @@
 
   <!-- Subcontents Section -->
   {% if subcontents %}
-    <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow p-6">
+    <div class="bg-gray-50  rounded-2xl shadow p-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">📂 العناوين الفرعية</h2>
+        <h2 class="text-2xl font-semibold text-gray-900 ">📂 العناوين الفرعية</h2>
 
         <!-- Sorting Form -->
         <form method="get" class="flex items-center gap-2">
-          <label for="sort" class="text-gray-700 dark:text-gray-300 text-sm font-medium">ترتيب حسب:</label>
-          <select name="sort" id="sort" class="border border-gray-300 dark:border-gray-700 rounded-xl py-2 px-3 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-blue-500">
+          <label for="sort" class="text-gray-700  text-sm font-medium">ترتيب حسب:</label>
+          <select name="sort" id="sort" class="border border-gray-300  rounded-xl py-2 px-3 bg-white  text-gray-800  text-sm focus:ring-2 focus:ring-blue-500">
             <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
             <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
             <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>
@@ -91,21 +91,21 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for sub in subcontents %}
           <a href="{% url 'content_detail' id=sub.id %}"
-             class="group block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+             class="group block bg-white  border border-gray-200  rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             {% if sub.image %}
               <img src="{{ sub.image.url }}" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
               {% else %}
               <img src="/static/default.jpg" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
             {% endif %}
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2 group-hover:text-blue-600 transition">
+            <h3 class="text-lg font-bold text-gray-800  mb-2 group-hover:text-blue-600 transition">
               {{ sub.title }}
             </h3>
             {% if sub.description %}
-              <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
+              <p class="text-gray-600  text-sm line-clamp-3">
                 {{ sub.description|truncatewords:20 }}
               </p>
             {% endif %}
-            <p class="text-gray-400 dark:text-gray-500 text-xs mt-3">
+            <p class="text-gray-400 text-xs mt-3">
               تاريخ الإضافة: {{ sub.created_at|date:"Y-m-d" }}
             </p>
           </a>

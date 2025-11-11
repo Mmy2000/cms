@@ -6,12 +6,12 @@
 
   <!-- Page Header -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">📚 العناوين الرئيسية</h1>
+    <h1 class="text-3xl font-bold text-gray-900 ">📚 العناوين الرئيسية</h1>
 
     <!-- Sorting Form -->
     <form method="get" class="flex items-center gap-2">
-      <label for="sort" class="text-gray-700 dark:text-gray-300 text-sm font-medium">ترتيب حسب:</label>
-      <select name="sort" id="sort" class="border border-gray-300 dark:border-gray-700 rounded-xl py-2 px-3 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-blue-500">
+      <label for="sort" class="text-gray-700  text-sm font-medium">ترتيب حسب:</label>
+      <select name="sort" id="sort" class="border border-gray-300  rounded-xl py-2 px-3 bg-white  text-gray-800  text-sm focus:ring-2 focus:ring-blue-500">
         <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
         <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
         <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>
@@ -27,13 +27,13 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
       {% for topic in topics %}
         <a href="{% url 'content_detail' id=topic.id %}"
-           class="group block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+           class="group block bg-white  border border-gray-200  rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           {% if topic.image %}
             <img src="{{ topic.image.url }}" alt="{{ topic.title }}" class="rounded-lg mb-4 h-48 w-full object-cover">
             {% else %}
               <img src="/static/default.jpg" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
           {% endif %}
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition">
+          <h2 class="text-xl font-bold text-gray-900  mb-2 group-hover:text-blue-600 transition">
             {{ topic.title }}
           </h2>
           {% if topic.description %}
@@ -41,7 +41,7 @@
               {{ topic.description|truncatewords:30 }}
             </p>
           {% endif %}
-          <p class="text-gray-400 dark:text-gray-500 text-xs mt-3">تاريخ الإضافة: {{ topic.created_at|date:"Y-m-d" }}</p>
+          <p class="text-gray-400 text-xs mt-3">تاريخ الإضافة: {{ topic.created_at|date:"Y-m-d" }}</p>
         </a>
       {% endfor %}
     </div>
