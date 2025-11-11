@@ -25,6 +25,8 @@ class Content(models.Model):
 
     class Meta:
         ordering = ["title"]
+        verbose_name = _("Content")
+        verbose_name_plural = _("Contents")
 
     def __str__(self):
         return self.title

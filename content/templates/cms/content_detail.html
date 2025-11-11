@@ -18,29 +18,54 @@
   </div>
 
   <!-- Main Content Card -->
-  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-10 border border-gray-200 dark:border-gray-700">
-    {% if content.image %}
-      <img src="{{ content.image.url }}" alt="{{ content.title }}" class="w-full h-64 object-cover">
-    {% endif %}
-    <div class="p-8">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">{{ content.title }}</h1>
-      <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">{{ content.description|linebreaks }}</p>
+<div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-10 border border-gray-200 dark:border-gray-700"
+     x-data="{ open: false }">
 
-      {% if content.file %}
-        <div class="mt-6">
-          <a href="{{ content.file.url }}" download
-             class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
-            </svg>
-            تحميل الملف
-          </a>
-        </div>
-      {% endif %}
+  {% if content.image %}
+  <!-- Image Thumbnail -->
+  <img 
+    src="{{ content.image.url }}" 
+    alt="{{ content.title }}" 
+    class="w-full h-64 object-cover cursor-pointer"
+    @click="open = true"
+  >
+
+  <!-- Modal -->
+  <div 
+    x-show="open" 
+    x-transition
+    style="display: none;"
+    class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+  >
+    <div class="relative max-w-3xl w-full mx-4">
+      <!-- Close Button -->
+      <button @click="open = false" class="absolute left-3 text-red-600 text-4xl font-bold">&times;</button>
+      <!-- Image -->
+      <img src="{{ content.image.url }}" alt="{{ content.title }}" class="rounded-xl w-full h-auto">
     </div>
   </div>
+  {% endif %}
+
+  <div class="p-8">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">{{ content.title }}</h1>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">{{ content.description|linebreaks }}</p>
+
+    {% if content.file %}
+      <div class="mt-6">
+        <a href="{{ content.file.url }}" download
+           class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
+          </svg>
+          تحميل الملف
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
 
   <!-- Subcontents Section -->
   {% if subcontents %}
