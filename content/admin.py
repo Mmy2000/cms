@@ -32,13 +32,12 @@ class GroupAdmin(BaseGroupAdmin, UnfoldModelAdmin):
 
 @admin.register(Content)
 class ContentAdmin(UnfoldModelAdmin):
-    list_display = ("title", "slug", "parent", "created_at", "updated_at")
-    search_fields = ("title", "slug", "description")
+    list_display = ("title", "parent", "created_at", "updated_at")
+    search_fields = ("title", "description")
     list_filter = ("created_at", "updated_at", "parent")
-    prepopulated_fields = {"slug": ("title",)}
     ordering = ("title",)
     fieldsets = (
-        (None, {"fields": ("title", "slug", "description", "parent")}),
+        (None, {"fields": ("title", "description", "parent", "image", "file")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
     readonly_fields = ("created_at", "updated_at")

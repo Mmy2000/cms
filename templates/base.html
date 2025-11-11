@@ -1,15 +1,109 @@
-<!-- cms/templates/base.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}My CMS{% endblock %}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+  <title>{% block title %}موقعي{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Optional: Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+    }
+  </style>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <div class="container mx-auto px-6 py-10">
+
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+
+  <!-- 🌐 Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>نظام إدارة المحتوى</span>
+      </a>
+
+      <!-- Menu -->
+      <div class="hidden md:flex items-center gap-6">
+        <a href="/" class="hover:text-blue-600 transition">الرئيسية</a>
+        <a href="/about" class="hover:text-blue-600 transition">من نحن</a>
+        <a href="/contact" class="hover:text-blue-600 transition">اتصل بنا</a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="menu-btn" class="md:hidden text-gray-700 dark:text-gray-200 focus:outline-none">
+        <i class="fa-solid fa-bars text-2xl"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <a href="/" class="block px-6 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition">الرئيسية</a>
+      <a href="/about" class="block px-6 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition">من نحن</a>
+      <a href="/contact" class="block px-6 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition">اتصل بنا</a>
+    </div>
+  </nav>
+
+  <!-- 🧩 Main Content -->
+  <main class="max-w-7xl mx-auto px-6 py-10">
     {% block content %}
     {% endblock %}
-  </div>
+  </main>
+
+  <!-- ⚙️ Footer -->
+  <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-10 mt-10">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center md:text-right">
+      
+      <div>
+        <h3 class="text-lg font-semibold text-blue-600 mb-4">عن الموقع</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+          هذا الموقع هو نظام إدارة محتوى بسيط يتيح لك إنشاء وتنظيم المحتوى بسهولة واحترافية.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-blue-600 mb-4">روابط سريعة</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/" class="hover:text-blue-600 transition">الرئيسية</a></li>
+          <li><a href="/about" class="hover:text-blue-600 transition">من نحن</a></li>
+          <li><a href="/contact" class="hover:text-blue-600 transition">اتصل بنا</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-blue-600 mb-4">تابعنا</h3>
+        <div class="flex justify-center md:justify-end gap-4 text-gray-600 dark:text-gray-400">
+          <a href="#" class="hover:text-blue-600"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="hover:text-blue-600"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="hover:text-blue-600"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      © {{ now|date:"Y" }} جميع الحقوق محفوظة - هاي نت سوفت
+    </div>
+  </footer>
+
+  <!-- 🔘 Mobile Menu Toggle -->
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+
 </body>
 </html>

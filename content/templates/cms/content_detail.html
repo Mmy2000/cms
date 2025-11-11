@@ -1,18 +1,94 @@
 {% extends 'base.html' %}
-{% block content %}
-  <h1 class="text-2xl font-bold mb-2">{{ content.title }}</h1>
-  <p class="mb-6">{{ content.description }}</p>
+{% load static %}
 
-  {% if subcontents %}
-    <h2 class="text-xl font-semibold mb-2">Subtopics:</h2>
-    <ul class="list-disc ml-5">
-      {% for sub in subcontents %}
-        <li>
-          <a href="{% url 'content_detail' slug=sub.slug %}" class="text-blue-500 hover:underline">
-            {{ sub.title }}
+{% block content %}
+<section dir="rtl" class="max-w-5xl mx-auto px-6 py-12">
+
+  <!-- 🔙 Back Button -->
+  <div class="mb-6">
+    <button 
+      onclick="window.history.back()" 
+      class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-all shadow-sm">
+      
+      رجوع
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main Content Card -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-10 border border-gray-200 dark:border-gray-700">
+    {% if content.image %}
+      <img src="{{ content.image.url }}" alt="{{ content.title }}" class="w-full h-64 object-cover">
+    {% endif %}
+    <div class="p-8">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">{{ content.title }}</h1>
+      <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">{{ content.description|linebreaks }}</p>
+
+      {% if content.file %}
+        <div class="mt-6">
+          <a href="{{ content.file.url }}" download
+             class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
+            </svg>
+            تحميل الملف
           </a>
-        </li>
-      {% endfor %}
-    </ul>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Subcontents Section -->
+  {% if subcontents %}
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow p-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">📂 العناوين الفرعية</h2>
+
+        <!-- Sorting Form -->
+        <form method="get" class="flex items-center gap-2">
+          <label for="sort" class="text-gray-700 dark:text-gray-300 text-sm font-medium">ترتيب حسب:</label>
+          <select name="sort" id="sort" class="border border-gray-300 dark:border-gray-700 rounded-xl py-2 px-3 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-blue-500">
+            <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
+            <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
+            <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>
+          </select>
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl px-4 py-2 transition">
+            تطبيق
+          </button>
+        </form>
+      </div>
+
+      <!-- Subcontents Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for sub in subcontents %}
+          <a href="{% url 'content_detail' id=sub.id %}"
+             class="group block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            {% if sub.image %}
+              <img src="{{ sub.image.url }}" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
+              {% else %}
+              <img src="/static/default.jpg" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
+            {% endif %}
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2 group-hover:text-blue-600 transition">
+              {{ sub.title }}
+            </h3>
+            {% if sub.description %}
+              <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
+                {{ sub.description|truncatewords:20 }}
+              </p>
+            {% endif %}
+            <p class="text-gray-400 dark:text-gray-500 text-xs mt-3">
+              تاريخ الإضافة: {{ sub.created_at|date:"Y-m-d" }}
+            </p>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
   {% endif %}
+
+</section>
 {% endblock %}
+
