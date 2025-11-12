@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
+<title>{% block title %}{{content.title}}{% endblock %}</title>
+
 {% block content %}
 <section dir="rtl" class="max-w-5xl mx-auto px-6 py-12">
 

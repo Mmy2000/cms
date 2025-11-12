@@ -37,7 +37,8 @@ INSTALLED_APPS = [
 
     # apps
 
-    "content"
+    "content",
+    "settings"
 ]
 
 UNFOLD = {
@@ -68,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "settings.settings_context.site_config_context",
             ],
         },
     },
