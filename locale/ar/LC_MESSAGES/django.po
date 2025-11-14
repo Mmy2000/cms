@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-12 00:03+0200\n"
+"POT-Creation-Date: 2025-11-14 03:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,43 +19,79 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\content\models.py:7
+#: .\content\models.py:6
 msgid "Title"
 msgstr "العنوان"
 
-#: .\content\models.py:8
+#: .\content\models.py:7
 msgid "Description"
 msgstr "الوصف"
 
-#: .\content\models.py:17
+#: .\content\models.py:16
 msgid "Parent Content"
 msgstr "المحتوى الرئيسي"
 
-#: .\content\models.py:20
+#: .\content\models.py:19
 #: .\venv\Lib\site-packages\django\db\models\fields\files.py:420
 msgid "Image"
 msgstr "الصورة"
 
-#: .\content\models.py:21
+#: .\content\models.py:20
 #: .\venv\Lib\site-packages\django\db\models\fields\files.py:244
 msgid "File"
 msgstr "الملف"
 
-#: .\content\models.py:23
+#: .\content\models.py:22
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
-#: .\content\models.py:24
+#: .\content\models.py:23
 msgid "updated_at"
 msgstr "تاريخ التحديث"
 
-#: .\content\models.py:28
+#: .\content\models.py:27
 msgid "Content"
 msgstr "المحتوى"
 
-#: .\content\models.py:29
+#: .\content\models.py:28
 msgid "Contents"
 msgstr "المحتويات"
+
+#: .\settings\models.py:7
+msgid "Site Logo"
+msgstr "لوجو الموقع"
+
+#: .\settings\models.py:8
+msgid "Site Name"
+msgstr "اسم الموقع"
+
+#: .\settings\models.py:9
+msgid "About Site"
+msgstr "عن الموقع"
+
+#: .\settings\models.py:10
+msgid "Copyright Info"
+msgstr "حقوق الطبع والنشر"
+
+#: .\settings\models.py:11
+msgid "Instagram Link"
+msgstr "لينك الانستجرام"
+
+#: .\settings\models.py:12
+msgid "Facebook Link"
+msgstr "لينك الفيس بوك"
+
+#: .\settings\models.py:13
+msgid "LinkedIn Link"
+msgstr "لينك اللينكدان"
+
+#: .\settings\models.py:16
+msgid "Site Configuration"
+msgstr "تكوين الموقع"
+
+#: .\settings\models.py:17
+msgid "Site Configurations"
+msgstr "تكوينات الموقع"
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
