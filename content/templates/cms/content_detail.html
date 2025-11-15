@@ -97,7 +97,7 @@
             {% if sub.image %}
               <img src="{{ sub.image.url }}" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
               {% else %}
-              <img src="/static/default.jpg" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
+              <img src="{% static 'default.jpg' %}" alt="{{ sub.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
             {% endif %}
             <h3 class="text-lg font-bold text-gray-800  mb-2 group-hover:text-blue-600 transition">
               {{ sub.title }}

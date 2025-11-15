@@ -37,8 +37,8 @@ INSTALLED_APPS = [
 
     # apps
 
-    "content",
-    "settings"
+    "content.apps.ContentConfig",
+    "settings.apps.SettingsConfig",
 ]
 
 UNFOLD = {
