@@ -1,7 +1,8 @@
 from pathlib import Path
 import os
 import environ
-from datetime import timedelta
+from django.templatetags.static import static
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,14 +27,13 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
 INSTALLED_APPS = [
     "unfold",
-    # "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_summernote",
+    # "django_summernote",
 
     # apps
 
@@ -45,7 +45,19 @@ UNFOLD = {
     "SITE_TITLE": "My Admin",
     "SITE_HEADER": "My Admin Panel",
     "BRAND": "Hinet",
+    "SITE_SYMBOL": "speed",  # symbol from icon set
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/svg+xml",
+            "href": lambda request: static("favicon.svg"),
+        },
+    ],
+    "THEME": "light",
 }
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
