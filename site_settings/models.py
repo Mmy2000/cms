@@ -18,3 +18,28 @@ class SiteConfiguration(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Page(models.Model):
+    page_name = models.CharField(_("Page Name"),max_length=255)
+    page_url = models.CharField(_("Page URL"),max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = _("Page")
+        verbose_name_plural = _("Pages")
+
+    def __str__(self):
+        return self.page_name
+
+class SEOSettings(models.Model):
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='seo_settings', verbose_name=_("Page"))
+    meta_title = models.CharField(_("Meta Title"),max_length=255, blank=True, null=True)
+    meta_keywords = models.TextField(_("Meta Keywords"),blank=True, null=True)
+    meta_description = models.TextField(_("Meta Description"),blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("SEO Setting")
+        verbose_name_plural = _("SEO Settings")
+
+    def __str__(self):
+        return str(self.id)

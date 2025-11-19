@@ -1,8 +1,36 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}{{site_configuration.site_name}}{% endblock %}</title>
+  <!-- Dynamic SEO Title -->
+  <title>
+    {% if seo and seo.meta_title %}
+      {{ seo.meta_title }}
+    {% else %}
+      {% block title %}{{ site_configuration.site_name }}{% endblock %}
+    {% endif %}
+  </title>
+
+  <!-- Dynamic SEO Meta Description -->
+  {% if seo and seo.meta_description %}
+    <meta name="description" content="{{ seo.meta_description }}">
+  {% else %}
+    {% block meta_description %}
+      <meta name="description" content="{{ site_configuration.about_site|truncatewords:25 }}">
+    {% endblock %}
+  {% endif %}
+
+  <!-- Dynamic Meta Keywords -->
+  {% if seo and seo.meta_keywords %}
+    <meta name="keywords" content="{{ seo.meta_keywords }}">
+  {% else %}
+    {% block meta_keywords %}
+      <meta name="keywords" content="{{ site_configuration.site_name }}">
+    {% endblock %}
+
+  {% endif %}
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="{{site_configuration.site_logo.url}}" />
 
@@ -41,7 +69,9 @@
 
       <!-- Menu -->
       <div class="hidden md:flex items-center gap-6 text-2xl font-medium">
-        <a href="/" class="hover:text-blue-600 transition">الرئيسية</a>
+        {% for page in pages %}
+          <a href="{{ page.page_url }}" class="hover:text-blue-600 transition">{{ page.page_name }}</a>
+        {% endfor %}
       </div>
 
       <!-- Mobile Menu Button -->
@@ -52,9 +82,9 @@
 
     <!-- Mobile Dropdown -->
     <div id="mobile-menu" class="hidden md:hidden bg-white  border-gray-200 ">
-      <a href="/" class="block px-6 py-3 hover:bg-gray-100  transition">الرئيسية</a>
-      <a href="/about" class="block px-6 py-3 hover:bg-gray-100  transition">من نحن</a>
-      <a href="/contact" class="block px-6 py-3 hover:bg-gray-100  transition">اتصل بنا</a>
+      {% for page in pages%}
+        <a href="{{ page.page_name }}" class="block px-6 py-3 hover:bg-gray-100  transition">{{ page.page_name }}</a>
+      {% endfor %}
     </div>
   </nav>
 
@@ -112,65 +142,11 @@
     </div>
   </footer>
 
-  <!-- 🔘 Mobile Menu Toggle -->
-  <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-  </script>
   <!-- Alpine.js -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    // MAIN SLIDER
-    var mainSwiper = new Swiper(".mySwiper", {
-        loop: false,
-        navigation: {
-            nextEl: ".mySwiper .swiper-button-next",
-            prevEl: ".mySwiper .swiper-button-prev",
-        },
-        pagination: {
-            el: ".mySwiper .swiper-pagination",
-            clickable: true,
-        }
-    });
-
-    // MODAL SLIDER
-    var modalSwiper = new Swiper(".modalSwiper", {
-        loop: false,
-        navigation: {
-            nextEl: ".modalSwiper .swiper-button-next",
-            prevEl: ".modalSwiper .swiper-button-prev",
-        },
-        pagination: {
-            el: ".modalSwiper .swiper-pagination",
-            clickable: true,
-        }
-    });
-
-    // SYNC MODAL WITH CLICKED IMAGE
-    document.addEventListener('alpine:init', () => {
-        Alpine.effect(() => {
-            let root = Alpine.$root;
-            let open = Alpine.evaluate(root, 'open');
-            let index = Alpine.evaluate(root, 'modalIndex');
-
-            if (open) {
-                modalSwiper.slideTo(index);
-            }
-        });
-    });
-
-});
-</script>
-
+<script src="{% static 'js/main.js' %}"></script>
 
 </body>
 </html>

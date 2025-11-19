@@ -2,6 +2,14 @@
 {% load static %}
 
 <title>{% block title %}{{ content.title }}{% endblock %}</title>
+{% block meta_description %}
+  <meta name="description" content="{{ content.description|truncatewords:25 }}">
+{% endblock %}
+
+{% block meta_keywords %}
+  <meta name="keywords" content="{{ content.title }}">
+{% endblock %}
+
 
 {% block content %}
 <section dir="rtl" class="max-w-5xl mx-auto px-6 py-12">

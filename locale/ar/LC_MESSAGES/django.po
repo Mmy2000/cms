@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-16 08:49+0200\n"
+"POT-Creation-Date: 2025-11-19 06:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\content\admin.py:49
+#: .\content\admin.py:50
 msgid "Basic Information"
 msgstr "المعلومات الأساسية"
 
-#: .\content\admin.py:51
+#: .\content\admin.py:52
 msgid "Main Image"
 msgstr "الصورة الرئيسيه"
 
-#: .\content\admin.py:55
+#: .\content\admin.py:56
 msgid "Timestamps"
 msgstr "الطوابع الزمنية"
 
@@ -89,45 +89,81 @@ msgstr "ملف المحتوى"
 msgid "Content Files"
 msgstr "ملفات المحتوي"
 
-#: .\settings\apps.py:8
+#: .\site_settings\apps.py:8
 msgid "Settings Management"
 msgstr "إدارة الاعدادات"
 
-#: .\settings\models.py:7
+#: .\site_settings\models.py:7
 msgid "Site Logo"
 msgstr "لوجو الموقع"
 
-#: .\settings\models.py:8
+#: .\site_settings\models.py:8
 msgid "Site Name"
 msgstr "اسم الموقع"
 
-#: .\settings\models.py:9
+#: .\site_settings\models.py:9
 msgid "About Site"
 msgstr "عن الموقع"
 
-#: .\settings\models.py:10
+#: .\site_settings\models.py:10
 msgid "Copyright Info"
 msgstr "حقوق الطبع والنشر"
 
-#: .\settings\models.py:11
+#: .\site_settings\models.py:11
 msgid "Instagram Link"
 msgstr "لينك الانستجرام"
 
-#: .\settings\models.py:12
+#: .\site_settings\models.py:12
 msgid "Facebook Link"
 msgstr "لينك الفيس بوك"
 
-#: .\settings\models.py:13
+#: .\site_settings\models.py:13
 msgid "LinkedIn Link"
 msgstr "لينك اللينكدان"
 
-#: .\settings\models.py:16
+#: .\site_settings\models.py:16
 msgid "Site Configuration"
 msgstr "تكوين الموقع"
 
-#: .\settings\models.py:17
+#: .\site_settings\models.py:17
 msgid "Site Configurations"
 msgstr "تكوينات الموقع"
+
+#: .\site_settings\models.py:24
+msgid "Page Name"
+msgstr "اسم الصفحه"
+
+#: .\site_settings\models.py:25
+msgid "Page URL"
+msgstr "لينك الصفحه"
+
+#: .\site_settings\models.py:28 .\site_settings\models.py:35
+msgid "Page"
+msgstr "الصفحه"
+
+#: .\site_settings\models.py:29
+msgid "Pages"
+msgstr "الصفحات"
+
+#: .\site_settings\models.py:36
+msgid "Meta Title"
+msgstr "عنوان ميتا"
+
+#: .\site_settings\models.py:37
+msgid "Meta Keywords"
+msgstr "الكلمات الرئيسية التعريفية"
+
+#: .\site_settings\models.py:38
+msgid "Meta Description"
+msgstr "وصف الميتا"
+
+#: .\site_settings\models.py:41
+msgid "SEO Setting"
+msgstr "إعدادات تحسين محركات البحث"
+
+#: .\site_settings\models.py:42
+msgid "SEO Settings"
+msgstr "إعدادات تحسين محركات البحث"
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"

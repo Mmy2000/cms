@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteConfiguration
+from .models import SiteConfiguration, Page, SEOSettings
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from django.utils.html import format_html
 
@@ -24,3 +24,22 @@ class SiteConfigurationAdmin(UnfoldModelAdmin):
         return "—"
 
     preview_logo.short_description = "Logo"
+
+@admin.register(Page)
+class PageAdmin(UnfoldModelAdmin):
+    list_display = ("page_name", "page_url")
+    search_fields = ("page_name", "page_url")
+    ordering = ("page_name",)
+    fieldsets = (
+        (None, {"fields": ("page_name", "page_url")}),
+    )
+
+@admin.register(SEOSettings)
+class SEOSettingsAdmin(UnfoldModelAdmin):
+    list_display = ("page", "meta_title")
+    search_fields = ("meta_title", "meta_keywords", "meta_description")
+    ordering = ("-id",)
+    fieldsets = (
+        (None, {"fields": ("page", "meta_title", "meta_keywords", "meta_description")}),
+    )
+    
