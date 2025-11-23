@@ -33,12 +33,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django_summernote",
-
+    "django.contrib.humanize",
     # apps
-
     "content.apps.ContentConfig",
     "site_settings.apps.SettingsConfig",
+    "stamps.apps.StampsConfig",
 ]
 
 UNFOLD = {

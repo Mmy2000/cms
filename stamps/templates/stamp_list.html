@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block title %} قائمة حسابات الدمغة {% endblock %}
+
+{% block content %}
+
+
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-20 border border-gray-200">
+    
+    <!-- العنوان -->
+    <div class="flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200 px-6 py-4 ">
+        <h2 class="text-xl font-bold text-green-800 flex items-center gap-2">
+            💰 إجمالي الدمغة لكل الشركات:
+            <span class="text-green-900 text-2xl">{{ total_all_companies|floatformat:2|intcomma }}</span>
+        </h2>
+
+    <form method="GET" class="flex gap-4 items-center">
+
+    <select name="company" class="border p-2 border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:ring-2 focus:ring-blue-500">
+        <option value="">كل الشركات</option>
+        {% for c in companies %}
+            <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.name }} ({{ c.year }})
+            </option>
+        {% endfor %}
+    </select>
+
+    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        فلتر
+    </button>
+
+    <!-- زر Reset -->
+    <a href="{% url 'stamp_list' %}"
+       class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">
+        إعادة التعيين 🔄
+    </a>
+
+</form>
+
+    </div>
+
+    <div class="overflow-auto max-h-[600px]">
+        <table class="min-w-full border-collapse text-right">
+            
+            <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
+                <tr class="text-sm lg:text-lg font-bold">
+                    <th class="p-3 border-b">الشركة</th>
+                    <th class="p-3 border-b">السنة</th>
+                    <th class="p-3 border-b">قيمة الأعمال</th>
+                    <th class="p-3 border-b">عدد النسخ</th>
+                    <th class="p-3 border-b">النسبة</th>
+                    <th class="p-3 border-b">إجمالي الدمغه للمطالبة</th>
+                    <th class="p-3 border-b">رصيد سنوات سابقة</th>
+                    <th class="p-3 border-b">إجمالي الدمغة</th>
+                    <th class="p-3 border-b">التاريخ 
+                        <a href="?sort=created_at{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
+                        <a href="?sort=-created_at{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="">
+                {% for s in stamps %}
+                <tr class="border-b hover:bg-gray-50 transition-all">
+                    <td class="p-3 font-medium">{{ s.company.name }}</td>
+                    <td class="p-3">{{ s.company.year }}</td>
+                    <td class="p-3">{{ s.value_of_work|floatformat:2|intcomma }}</td>
+                    <td class="p-3">{{ s.invoice_copies }}</td>
+                    <td class="p-3">{{ s.stamp_rate }}</td>
+
+                    <td class="p-3 font-semibold text-blue-700">
+                        {{ s.d1|floatformat:2|intcomma }}
+                    </td>
+
+                    <td class="p-3">
+                        {{ s.total_past_years|floatformat:2|intcomma }}
+                    </td>
+
+                    <td class="p-3 font-bold text-green-700">
+                        {{ s.total_stamp_for_company|floatformat:2|intcomma }}
+                    </td>
+
+                    <td class="p-3 text-gray-500 text-xs">
+                        {{ s.created_at|date:"Y-m-d H:i" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center p-6 text-gray-500">
+                        لا توجد بيانات حتى الآن.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+
+
+{% endblock %}

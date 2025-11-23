@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-19 06:12+0200\n"
+"POT-Creation-Date: 2025-11-23 22:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr "المحتوى الرئيسي"
 msgid "Image"
 msgstr "الصورة"
 
-#: .\content\models.py:22
+#: .\content\models.py:22 .\stamps\models.py:30
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
@@ -164,6 +164,58 @@ msgstr "إعدادات تحسين محركات البحث"
 #: .\site_settings\models.py:42
 msgid "SEO Settings"
 msgstr "إعدادات تحسين محركات البحث"
+
+#: .\stamps\apps.py:8
+msgid "Calculating stamps"
+msgstr "حساب الدمغات"
+
+#: .\stamps\models.py:8
+msgid "Company name"
+msgstr "اسم الشركه"
+
+#: .\stamps\models.py:9
+msgid "Year"
+msgstr "السنه"
+
+#: .\stamps\models.py:13 .\stamps\models.py:21
+msgid "Company"
+msgstr "الشركه"
+
+#: .\stamps\models.py:14
+msgid "Companies"
+msgstr "الشركات"
+
+#: .\stamps\models.py:22
+msgid "Value Of Work (A)"
+msgstr "قيمه الاعمال"
+
+#: .\stamps\models.py:23
+msgid "Invoice Copies (B)"
+msgstr "عدد نسخ الفاتوره"
+
+#: .\stamps\models.py:24
+msgid "Stamp rate (C)"
+msgstr "نسبه الدمغه"
+
+#: .\stamps\models.py:26
+msgid "Total stamp duty for the claim"
+msgstr "اجمالي الدمغه للمطالبه"
+
+#: .\stamps\models.py:27
+msgid "Past years total"
+msgstr "اجمالي الدمغه عن سنوات"
+
+#: .\stamps\models.py:28
+msgid "Total stamp"
+msgstr "اجمالي الدمغه"
+
+#: .\stamps\models.py:34
+msgid "Stamp Calculation"
+msgstr "حساب الدمغه"
+
+#: .\stamps\models.py:35
+msgid "Stamp Calculations"
+msgstr "حساب الدمغات"
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"

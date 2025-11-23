@@ -5,6 +5,7 @@ from site_settings.views import custom_404_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('content.urls')),
+    path('stamps', include('stamps.urls')),
     # path('summernote/', include('django_summernote.urls')),
 ]
 
