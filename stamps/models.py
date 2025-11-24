@@ -14,7 +14,7 @@ class Company(models.Model):
         verbose_name_plural = _("Companies")
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.year}"
 
 
 class StampCalculation(models.Model):
