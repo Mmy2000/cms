@@ -83,7 +83,7 @@
     <!-- Mobile Dropdown -->
     <div id="mobile-menu" class="hidden md:hidden bg-white  border-gray-200 ">
       {% for page in pages%}
-        <a href="{{ page.page_name }}" class="block px-6 py-3 hover:bg-gray-100  transition">{{ page.page_name }}</a>
+        <a href="{{ page.page_url }}" class="block px-6 py-3 hover:bg-gray-100  transition">{{ page.page_name }}</a>
       {% endfor %}
     </div>
   </nav>
