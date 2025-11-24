@@ -19,13 +19,13 @@ class Company(models.Model):
 
 class StampCalculation(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="stamp_calculations",verbose_name=_("Company"))
-    value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=20, decimal_places=2)
+    value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=2)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
     stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
 
-    d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=20, decimal_places=2, blank=True, null=True)
-    total_past_years = models.DecimalField(_("Past years total"), max_digits=20, decimal_places=2, default=0,help_text="إجمالي السنوات السابقة لنفس الشركة")
-    total_stamp_for_company = models.DecimalField(_("Total stamp"), max_digits=20, decimal_places=2, blank=True, null=True,help_text="الإجمالي بعد جمع كل السنوات السابقة مع الحالي")
+    d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=19, decimal_places=2, blank=True, null=True)
+    total_past_years = models.DecimalField(_("Past years total"), max_digits=19, decimal_places=2, default=0,help_text="إجمالي السنوات السابقة لنفس الشركة يتم حسابه تلقائيًا")
+    total_stamp_for_company = models.DecimalField(_("Total stamp"), max_digits=19, decimal_places=2, blank=True, null=True,help_text="الإجمالي بعد جمع كل السنوات السابقة مع الحالي يتم حسابه تلقائيًا")
 
     created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
 
