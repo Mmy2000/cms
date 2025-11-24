@@ -12,6 +12,6 @@ class CompanyAdmin(UnfoldModelAdmin):
 
 @admin.register(StampCalculation)
 class StampCalculationAdmin(UnfoldModelAdmin):
-    list_display = ["company", "value_of_work", "invoice_copies", "stamp_rate", "d1", "total_past_years", "total_stamp_for_company", "created_at"]
+    list_display = ["company", "value_of_work", "invoice_copies","invoice_year" ,"stamp_rate", "d1", "total_past_years", "total_stamp_for_company", "created_at"]
     search_fields = ["company", "year"]
     ordering = ["-created_at"]

@@ -55,9 +55,9 @@
                     <th class="p-3 border-b">إجمالي الدمغه للمطالبة</th>
                     <th class="p-3 border-b">رصيد سنوات سابقة</th>
                     <th class="p-3 border-b">إجمالي الدمغة</th>
-                    <th class="p-3 border-b">التاريخ 
-                        <a href="?sort=created_at{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
-                        <a href="?sort=-created_at{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
+                    <th class="p-3 border-b">تاريخ الفاتوره 
+                        <a href="?sort=invoice_year{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
+                        <a href="?sort=-invoice_year{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
                     </th>
                 </tr>
             </thead>
@@ -84,7 +84,7 @@
                     </td>
 
                     <td class="p-3 text-gray-500 text-xs">
-                        {{ s.created_at|date:"Y-m-d H:i" }}
+                        {{ s.invoice_year }}
                     </td>
                 </tr>
                 {% empty %}

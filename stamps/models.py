@@ -21,6 +21,7 @@ class StampCalculation(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="stamp_calculations",verbose_name=_("Company"))
     value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=2)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
+    invoice_year = models.PositiveIntegerField(_("Invoice Year"),null=True, blank=True)
     stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
 
     d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=19, decimal_places=2, blank=True, null=True)

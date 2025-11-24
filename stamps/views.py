@@ -35,6 +35,8 @@ def stamp_list(request):
         "-total_stamp_for_company",
         "created_at",
         "-created_at",
+        "invoice_year",
+        "-invoice_year",
     ]
 
     if sort_by in allowed_sorts:
