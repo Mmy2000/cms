@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}إضافة حساب دمغة{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white p-10 mt-20 shadow-xl rounded-2xl border border-gray-200">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-2">
+        <span class="text-green-600 text-4xl">➕</span>
+        إضافة حساب دمغة جديد
+    </h2>
+
+    <!-- 🔥 Display global validation errors (non-field errors) -->
+    {% if form.non_field_errors %}
+        <div class="bg-red-100 border border-red-300 text-red-700 p-4 mb-6 rounded-lg">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- الشركة -->
+            <div>
+                <label class="font-semibold text-gray-700">الشركة</label>
+                {{ form.company }}
+
+                {% if form.company.errors %}
+                    <p class="text-red-600 mt-2 text-sm">
+                        {{ form.company.errors.0 }}
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- شركة جديدة -->
+            <div class="">
+                <div class="">
+                    <label class="font-semibold text-gray-700">شركة جديدة (اختياري)</label>
+                    {{ form.new_company_name }}
+                    {% if form.new_company_name.errors %}
+                        <p class="text-red-600 mt-2 text-sm">{{ form.new_company_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- قيمة العمل -->
+            <div>
+                <label class="font-semibold text-gray-700">قيمة العمل</label>
+                {{ form.value_of_work }}
+                {% if form.value_of_work.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.value_of_work.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- عدد النسخ -->
+            <div>
+                <label class="font-semibold text-gray-700">عدد النسخ</label>
+                {{ form.invoice_copies }}
+                {% if form.invoice_copies.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.invoice_copies.errors.0 }}</p>
+                {% endif %}
+            </div>
+                    <!-- سنة الفاتورة -->
+            <div>
+                <label class="font-semibold text-gray-700">سنة الفاتورة</label>
+                {{ form.invoice_year }}
+                {% if form.invoice_year.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.invoice_year.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- نسبة الدمغة -->
+            <div>
+                <label class="font-semibold text-gray-700">نسبة الدمغة</label>
+                {{ form.stamp_rate }}
+                {% if form.stamp_rate.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.stamp_rate.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- سعر الصرف -->
+            <div>
+                <label class="font-semibold text-gray-700">سعر الصرف</label>
+                {{ form.exchange_rate }}
+                {% if form.exchange_rate.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.exchange_rate.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Live Calculation Results -->
+        <div class="mt-10 p-5 bg-green-50 rounded-xl border border-green-200 space-y-3">
+
+            <h3 class="text-xl font-bold text-green-700 mb-3">النتائج المباشرة</h3>
+
+            <p class="text-gray-700 font-semibold">
+                إجمالي الدمغه للمطالبة: <span id="d1-value" class="text-green-700 font-bold">0</span>
+            </p>
+
+        </div>
+
+
+        <!-- buttons -->
+        <div class="flex justify-between pt-6">
+            <a href="{% url 'stamp_list' %}"
+               class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-semibold">
+                رجوع
+            </a>
+
+            <button
+                class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg">
+                حفظ
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

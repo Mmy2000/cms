@@ -5,8 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Company(models.Model):
-    name = models.CharField(_("Company name"), max_length=200)
-    year = models.PositiveIntegerField(_("Year"))
+    name = models.CharField(_("Company name"), max_length=200, unique=True)
 
     class Meta:
         ordering = ["name"]
@@ -14,7 +13,7 @@ class Company(models.Model):
         verbose_name_plural = _("Companies")
 
     def __str__(self):
-        return f"{self.name} - {self.year}"
+        return f"{self.name}"
 
 
 class StampCalculation(models.Model):
@@ -23,6 +22,7 @@ class StampCalculation(models.Model):
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
     invoice_year = models.PositiveIntegerField(_("Invoice Year"),null=True, blank=True)
     stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
+    exchange_rate = models.DecimalField(_("Exchange Rate"), max_digits=10, decimal_places=4, default=1, validators=[MinValueValidator(0.0001)],help_text="سعر الصرف لتحويل القيمة إذا كانت بالعملة الأجنبية")
 
     d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=19, decimal_places=2, blank=True, null=True)
     total_past_years = models.DecimalField(_("Past years total"), max_digits=19, decimal_places=2, default=0,help_text="إجمالي السنوات السابقة لنفس الشركة يتم حسابه تلقائيًا")
@@ -37,7 +37,7 @@ class StampCalculation(models.Model):
 
     def save(self, *args, **kwargs):
         # احسب D1
-        self.d1 = self.value_of_work * self.invoice_copies * self.stamp_rate
+        self.d1 = self.value_of_work * self.invoice_copies * self.stamp_rate * self.exchange_rate
 
         # احسب كل السابق لنفس الشركة قبل إنشاء هذا السجل
         if self.pk:  
@@ -64,4 +64,4 @@ class StampCalculation(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.company} - {self.company.year}"
+        return f"{self.company} "

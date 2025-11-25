@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 11:23+0200\n"
+"POT-Creation-Date: 2025-11-24 21:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr "المحتوى الرئيسي"
 msgid "Image"
 msgstr "الصورة"
 
-#: .\content\models.py:22 .\stamps\models.py:31
+#: .\content\models.py:22 .\stamps\models.py:32
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
@@ -201,23 +201,27 @@ msgstr "تاريخ الفاتوره"
 msgid "Stamp rate (C)"
 msgstr "نسبه الدمغه"
 
-#: .\stamps\models.py:27
+#: .\stamps\models.py:26
+msgid "Exchange Rate"
+msgstr "سعر الصرف"
+
+#: .\stamps\models.py:28
 msgid "Total stamp duty for the claim"
 msgstr "اجمالي الدمغه للمطالبه"
 
-#: .\stamps\models.py:28
+#: .\stamps\models.py:29
 msgid "Past years total"
 msgstr "اجمالي الدمغه عن سنوات"
 
-#: .\stamps\models.py:29
+#: .\stamps\models.py:30
 msgid "Total stamp"
 msgstr "اجمالي الدمغه"
 
-#: .\stamps\models.py:35
+#: .\stamps\models.py:36
 msgid "Stamp Calculation"
 msgstr "حساب الدمغه"
 
-#: .\stamps\models.py:36
+#: .\stamps\models.py:37
 msgid "Stamp Calculations"
 msgstr "حساب الدمغات"
 

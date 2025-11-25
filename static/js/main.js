@@ -48,3 +48,37 @@ const menuBtn = document.getElementById('menu-btn');
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
     });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    function calc() {
+        // Get field values
+        const value_of_work = parseFloat(document.getElementById("id_value_of_work")?.value || 0);
+        const invoice_copies = parseFloat(document.getElementById("id_invoice_copies")?.value || 0);
+        const stamp_rate = parseFloat(document.getElementById("id_stamp_rate")?.value || 0);
+        const exchange_rate = parseFloat(document.getElementById("id_exchange_rate")?.value || 0);
+
+        // =====================
+        // ✨ Your Calculations
+        // =====================
+
+        const d1 = value_of_work * invoice_copies * stamp_rate * exchange_rate;
+
+        // =====================
+        // ✨ Update UI
+        // =====================
+
+        document.getElementById("d1-value").textContent = d1.toFixed(2);
+    }
+
+    // Attach listeners to ALL inputs
+    const inputs = document.querySelectorAll("input, select");
+    inputs.forEach(input => {
+        input.addEventListener("input", calc);
+        input.addEventListener("change", calc);
+    });
+
+    // Initial run
+    calc();
+});

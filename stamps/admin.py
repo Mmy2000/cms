@@ -5,7 +5,7 @@ from unfold.admin import ModelAdmin as UnfoldModelAdmin
 
 @admin.register(Company)
 class CompanyAdmin(UnfoldModelAdmin):
-    list_display = ["name", "year"]
+    list_display = ["name"]
     search_fields = ["name"]
     ordering = ["name"]
 
