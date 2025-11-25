@@ -24,6 +24,7 @@ class StampCalculationForm(forms.ModelForm):
             "invoice_year",
             "stamp_rate",
             "exchange_rate",
+            "note",
         ]
 
         widgets = {
@@ -67,6 +68,13 @@ class StampCalculationForm(forms.ModelForm):
                     "placeholder": "سعر الصرف",
                 }
             ),
+            "note": forms.Textarea(
+                attrs={
+                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "placeholder": "يجب ادخال المصادر هنا",
+                    "rows": 4,
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +99,11 @@ class StampCalculationForm(forms.ModelForm):
         if not company and not new_name:
             raise forms.ValidationError(
                 "يجب اختيار شركة أو إدخال شركة جديدة."
+            )
+        
+        if not cleaned_data.get("note"):
+            raise forms.ValidationError(
+                "يجب ادخال المصادر في حقل الملاحظات."
             )
 
         return cleaned_data

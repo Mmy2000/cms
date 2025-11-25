@@ -27,6 +27,12 @@ class StampCalculation(models.Model):
     d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=19, decimal_places=2, blank=True, null=True)
     total_past_years = models.DecimalField(_("Past years total"), max_digits=19, decimal_places=2, default=0,help_text="إجمالي السنوات السابقة لنفس الشركة يتم حسابه تلقائيًا")
     total_stamp_for_company = models.DecimalField(_("Total stamp"), max_digits=19, decimal_places=2, blank=True, null=True,help_text="الإجمالي بعد جمع كل السنوات السابقة مع الحالي يتم حسابه تلقائيًا")
+    note = models.TextField(
+        _("Note"),
+        blank=True,
+        null=True,
+        help_text="يتم ادخال المصادر هنا اذا وجدت",
+    )
 
     created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
 

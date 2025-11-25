@@ -96,6 +96,14 @@
                 {% endif %}
             </div>
         </div>
+        <!-- ملاحظات -->
+        <div>
+            <label class="font-semibold text-gray-700">ملاحظات</label>
+            {{ form.note }}
+            {% if form.note.errors %}
+                <p class="text-red-600 mt-2 text-sm">{{ form.note.errors.0 }}</p>
+            {% endif %}
+        </div>
 
         <!-- Live Calculation Results -->
         <div class="mt-10 p-5 bg-green-50 rounded-xl border border-green-200 space-y-3">
