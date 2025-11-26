@@ -17,7 +17,7 @@ def stamp_list(request):
 
     # Sorting
     sort_by = request.GET.get("sort", "-created_at")
-    allowed_sorts = ["invoice_year", "-invoice_year"]
+    allowed_sorts = ["invoice_date", "-invoice_date"]
 
     if sort_by in allowed_sorts:
         stamps = stamps.order_by(sort_by)
@@ -26,9 +26,7 @@ def stamp_list(request):
         stamps = stamps.order_by(sort_by)
 
     # Total
-    total_all_companies = (
-        stamps.aggregate(total=Sum("total_stamp_for_company"))["total"] or 0
-    )
+    total_all_companies = stamps.aggregate(total=Sum("d1"))["total"] or 0
 
     # ⭐ Pagination
     page_number = request.GET.get("page")

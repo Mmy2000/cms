@@ -70,9 +70,9 @@
                     <!-- سنة الفاتورة -->
             <div>
                 <label class="font-semibold text-gray-700">سنة الفاتورة</label>
-                {{ form.invoice_year }}
-                {% if form.invoice_year.errors %}
-                    <p class="text-red-600 mt-2 text-sm">{{ form.invoice_year.errors.0 }}</p>
+                {{ form.invoice_date }}
+                {% if form.invoice_date.errors %}
+                    <p class="text-red-600 mt-2 text-sm">{{ form.invoice_date.errors.0 }}</p>
                 {% endif %}
             </div>
         </div>

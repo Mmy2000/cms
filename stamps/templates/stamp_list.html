@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load number_filters %}
+
 
 
 {% block title %} قائمة حسابات الدمغة {% endblock %}
@@ -33,13 +35,13 @@
     <!-- العنوان -->
     <div class="flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200 px-6 py-4 ">
         <h2 class="text-xl font-bold text-green-800 flex items-center gap-2">
-            💰 إجمالي الدمغة لكل الشركات:
-            <span class="text-green-900 text-2xl">{{ total_all_companies|floatformat:2|intcomma }}</span>
+            💰 إجمالي الدمغة بالمليون:
+            <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span>
         </h2>
 
-        <form method="GET" class="flex gap-4 items-center">
+        <form method="GET" class="flex gap-4 items-center mt-2 lg:mt-0">
 
-            <select name="company" class="border p-2 border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:ring-2 focus:ring-blue-500">
+            <select name="company" class="border p-2 border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">كل الشركات</option>
                 {% for c in companies %}
                     <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
@@ -48,8 +50,8 @@
                 {% endfor %}
             </select>
 
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                فلتر
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                بحث 🔍
             </button>
 
             <!-- زر Reset -->
@@ -63,85 +65,62 @@
     </div>
 
     <div class="overflow-auto max-h-[600px]">
-        <table class="min-w-full border-collapse text-right">
-            
-            <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
-                <tr class="text-sm lg:text-lg font-bold">
-                    <th class="p-3 border-b">الشركة</th>
-                    <th class="p-3 border-b">قيمة الأعمال</th>
-                    <th class="p-3 border-b">عدد النسخ</th>
-                    <th class="p-3 border-b">النسبة</th>
-                    <th class="p-3 border-b">إجمالي الدمغه للمطالبة</th>
-                    <th class="p-3 border-b">رصيد سنوات سابقة</th>
-                    <th class="p-3 border-b">إجمالي الدمغة</th>
-                    <th class="p-3 border-b">تاريخ الفاتوره 
-                        <a href="?sort=invoice_year{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
-                        <a href="?sort=-invoice_year{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
-                    </th>
-                </tr>
-            </thead>
+    <table class="min-w-full text-right border border-gray-200">
+        <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
+            <tr class="text-sm lg:text-lg font-bold">
+                <th class="p-3 border border-gray-200">الشركة</th>
+                <th class="p-3 border border-gray-200">
+                    تاريخ الفاتوره  
+                    <a href="?sort=invoice_date{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
+                    <a href="?sort=-invoice_date{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
+                </th>
+                <th class="p-3 border border-gray-200">قيمة الأعمال</th>
+                <th class="p-3 border border-gray-200">عدد النسخ</th>
+                <th class="p-3 border border-gray-200">النسبة</th>
+                <th class="p-3 border border-gray-200">إجمالي الدمغه للمطالبة</th>
+            </tr>
+        </thead>
 
-            <tbody class="">
-                {% for s in page_obj %}
-                <tr class="border-b hover:bg-gray-50 transition-all">
-                    <td class="p-3 font-medium">{{ s.company.name }}</td>
-                    <td class="p-3">{{ s.value_of_work|floatformat:2|intcomma }}</td>
-                    <td class="p-3">{{ s.invoice_copies }}</td>
-                    <td class="p-3">{{ s.stamp_rate }}</td>
+        <tbody>
+            {% for s in page_obj %}
+            <tr class="hover:bg-gray-50 transition-all">
+                <td class="p-3 border border-gray-200 font-medium">{{ s.company.name }}</td>
+                <td class="p-3 border border-gray-200 text-s">{{ s.invoice_date|date:"Y-m-d" }}</td>
+                <td class="p-3 border border-gray-200">{{ s.value_of_work|millions }}</td>
+                <td class="p-3 border border-gray-200">{{ s.invoice_copies }}</td>
+                <td class="p-3 border border-gray-200">{{ s.stamp_rate }}</td>
+                <td class="p-3 border border-gray-200 font-semibold text-blue-700">{{ s.d1|millions }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center p-6 border border-gray-200 text-gray-500">
+                    لا توجد بيانات حتى الآن.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-                    <td class="p-3 font-semibold text-blue-700">
-                        {{ s.d1|floatformat:2|intcomma }}
-                    </td>
-
-                    <td class="p-3">
-                        {{ s.total_past_years|floatformat:2|intcomma }}
-                    </td>
-
-                    <td class="p-3 font-bold text-green-700">
-                        {{ s.total_stamp_for_company|floatformat:2|intcomma }}
-                    </td>
-
-                    <td class="p-3 text-gray-500 text-xs">
-                        {{ s.invoice_year }}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="9" class="text-center p-6 text-gray-500">
-                        لا توجد بيانات حتى الآن.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-
-        </table>
-        {% if not page_obj %}
-        {% else %}
-        <!-- Pagination -->
-        <div class="flex justify-center items-center gap-2 py-4">
-
-            {% if stamps.has_previous %}
-                <a href="?page={{ stamps.previous_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
-                    ‹ السابق
-                </a>
-            {% endif %}
-
-            <span class="px-4 py-1 bg-green-100 text-green-800 rounded">
-                الصفحة {{ stamps.number }} من {{ stamps.paginator.num_pages }}
-            </span>
-
-            {% if stamps.has_next %}
-                <a href="?page={{ stamps.next_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
-                    التالي ›
-                </a>
-            {% endif %}
-
-        </div>
+    <!-- Pagination -->
+    {% if stamps.has_other_pages %}
+    <div class="flex justify-center items-center gap-2 py-4">
+        {% if stamps.has_previous %}
+            <a href="?page={{ stamps.previous_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+               class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">‹ السابق</a>
         {% endif %}
 
+        <span class="px-4 py-1 bg-green-100 text-green-800 rounded">
+            الصفحة {{ stamps.number }} من {{ stamps.paginator.num_pages }}
+        </span>
+
+        {% if stamps.has_next %}
+            <a href="?page={{ stamps.next_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+               class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
+        {% endif %}
     </div>
+    {% endif %}
+</div>
+
 </div>
 
 

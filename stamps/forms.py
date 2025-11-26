@@ -21,7 +21,7 @@ class StampCalculationForm(forms.ModelForm):
             "company",
             "value_of_work",
             "invoice_copies",
-            "invoice_year",
+            "invoice_date",
             "stamp_rate",
             "exchange_rate",
             "note",
@@ -47,11 +47,12 @@ class StampCalculationForm(forms.ModelForm):
                     "placeholder": "عدد النسخ",
                 }
             ),
-            "invoice_year": forms.NumberInput(
+            "invoice_date": forms.DateInput(
                 attrs={
                     "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
                     "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
                     "placeholder": "سنة الفاتورة",
+                    "type": "date",  # Enables date picker
                 }
             ),
             "stamp_rate": forms.NumberInput(
@@ -100,7 +101,7 @@ class StampCalculationForm(forms.ModelForm):
             raise forms.ValidationError(
                 "يجب اختيار شركة أو إدخال شركة جديدة."
             )
-        
+
         if not cleaned_data.get("note"):
             raise forms.ValidationError(
                 "يجب ادخال المصادر في حقل الملاحظات."
