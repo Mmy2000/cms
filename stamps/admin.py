@@ -38,8 +38,10 @@ class StampCalculationAdmin(UnfoldModelAdmin):
         "total_display",
         "created_at",
     ]
+    readonly_fields = ["created_at", "total_past_years", "total_stamp_for_company", "d1"]
 
     search_fields = ["company__name"]
+    list_filter = ["invoice_date", "company"]
     ordering = ["-created_at"]
 
     # --- Custom display methods ---
