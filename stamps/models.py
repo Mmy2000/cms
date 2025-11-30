@@ -14,6 +14,17 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+class Sector(models.Model):
+    name = models.CharField(_("Sector name"), max_length=200, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = _("Sector")
+        verbose_name_plural = _("Sectors")
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class StampCalculation(models.Model):
@@ -71,3 +82,59 @@ class StampCalculation(models.Model):
 
     def __str__(self):
         return f"{self.company} "
+
+
+class ExpectedStamp(models.Model):
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name="expected_stamps",verbose_name=_("Sector"))
+    value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=0)
+    invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
+    invoice_date = models.DateField(_("Invoice Date"),null=True, blank=True)
+    stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
+    exchange_rate = models.DecimalField(_("Exchange Rate"), max_digits=10, decimal_places=4, default=1, validators=[MinValueValidator(0.0001)],help_text="سعر الصرف لتحويل القيمة إذا كانت بالعملة الأجنبية")
+
+    d1 = models.DecimalField(_("Total stamp duty for the claim"), max_digits=19, decimal_places=0, blank=True, null=True)
+    total_past_years = models.DecimalField(_("Past years total"), max_digits=19, decimal_places=0, default=0,help_text="إجمالي السنوات السابقة لنفس القطاع يتم حسابه تلقائيًا")
+    total_stamp_for_company = models.DecimalField(_("Total stamp"), max_digits=19, decimal_places=0, blank=True, null=True,help_text="الإجمالي بعد جمع كل السنوات السابقة مع الحالي يتم حسابه تلقائيًا")
+    note = models.TextField(
+        _("Note"),
+        blank=True,
+        null=True,
+        help_text="يتم ادخال المصادر هنا اذا وجدت",
+    )
+
+    created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Expected Stamp")
+        verbose_name_plural = _("Expected Stamps")
+
+    def save(self, *args, **kwargs):
+        # احسب D1
+        self.d1 = self.value_of_work * self.invoice_copies * self.stamp_rate * self.exchange_rate
+
+        # احسب كل السابق لنفس القطاع قبل إنشاء هذا السجل
+        if self.pk:  
+            # لو بنعمل تحديث → استثني التسجيل الحالي فقط
+            past_total = (
+                ExpectedStamp.objects
+                .filter(sector=self.sector)
+                .exclude(pk=self.pk)
+                .aggregate(models.Sum("d1"))["d1__sum"] or 0
+            )
+        else:
+            # لو أول مرة يتحفظ → اجمع كل السابق لنفس القطاع
+            past_total = (
+                ExpectedStamp.objects
+                .filter(sector=self.sector)
+                .aggregate(models.Sum("d1"))["d1__sum"] or 0
+            )
+
+        self.total_past_years = past_total
+
+        # احسب الإجمالي
+        self.total_stamp_for_company = self.d1 + self.total_past_years
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.sector} {self.invoice_date.year if self.invoice_date else ''}"

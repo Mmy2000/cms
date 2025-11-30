@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-26 10:53+0200\n"
+"POT-Creation-Date: 2025-11-30 08:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr "المحتوى الرئيسي"
 msgid "Image"
 msgstr "الصورة"
 
-#: .\content\models.py:22 .\stamps\models.py:37
+#: .\content\models.py:22 .\stamps\models.py:48 .\stamps\models.py:105
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
@@ -173,7 +173,7 @@ msgstr "حساب الدمغات"
 msgid "Company name"
 msgstr "اسم الشركه"
 
-#: .\stamps\models.py:12 .\stamps\models.py:20
+#: .\stamps\models.py:12 .\stamps\models.py:31
 msgid "Company"
 msgstr "الشركه"
 
@@ -181,49 +181,69 @@ msgstr "الشركه"
 msgid "Companies"
 msgstr "الشركات"
 
-#: .\stamps\models.py:21
+#: .\stamps\models.py:19
+msgid "Sector name"
+msgstr "اسم القطاع"
+
+#: .\stamps\models.py:23 .\stamps\models.py:88
+msgid "Sector"
+msgstr "القطاع"
+
+#: .\stamps\models.py:24
+msgid "Sectors"
+msgstr "القطاعات"
+
+#: .\stamps\models.py:32 .\stamps\models.py:89
 msgid "Value Of Work (A)"
 msgstr "قيمه الاعمال"
 
-#: .\stamps\models.py:22
+#: .\stamps\models.py:33 .\stamps\models.py:90
 msgid "Invoice Copies (B)"
 msgstr "عدد نسخ الفاتوره"
 
-#: .\stamps\models.py:23
+#: .\stamps\models.py:34 .\stamps\models.py:91
 msgid "Invoice Date"
 msgstr "تاريخ الفاتوره"
 
-#: .\stamps\models.py:24
+#: .\stamps\models.py:35 .\stamps\models.py:92
 msgid "Stamp rate (C)"
 msgstr "نسبه الدمغه"
 
-#: .\stamps\models.py:25
+#: .\stamps\models.py:36 .\stamps\models.py:93
 msgid "Exchange Rate"
 msgstr "سعر الصرف"
 
-#: .\stamps\models.py:27
+#: .\stamps\models.py:38 .\stamps\models.py:95
 msgid "Total stamp duty for the claim"
 msgstr "اجمالي الدمغه للمطالبه"
 
-#: .\stamps\models.py:28
+#: .\stamps\models.py:39 .\stamps\models.py:96
 msgid "Past years total"
 msgstr "اجمالي الدمغه عن سنوات"
 
-#: .\stamps\models.py:29
+#: .\stamps\models.py:40 .\stamps\models.py:97
 msgid "Total stamp"
 msgstr "اجمالي الدمغه"
 
-#: .\stamps\models.py:31
+#: .\stamps\models.py:42 .\stamps\models.py:99
 msgid "Note"
 msgstr "ملاحظات"
 
-#: .\stamps\models.py:41
+#: .\stamps\models.py:52
 msgid "Stamp Calculation"
 msgstr "حساب الدمغه"
 
-#: .\stamps\models.py:42
+#: .\stamps\models.py:53
 msgid "Stamp Calculations"
 msgstr "حساب الدمغات"
+
+#: .\stamps\models.py:108
+msgid "Expected Stamp"
+msgstr "الدمغه المتوقعه"
+
+#: .\stamps\models.py:109
+msgid "Expected Stamps"
+msgstr "الدمغات المتوقعه"
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
