@@ -117,7 +117,7 @@ class ExpectedStampForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(
             attrs={
-                "placeholder": "اكتب اسم الشركة إذا لم تكن موجودة",
+                "placeholder": "اكتب اسم القطاع إذا لم يكن موجود",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
             }
         ),
