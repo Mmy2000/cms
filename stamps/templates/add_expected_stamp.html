@@ -27,7 +27,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- الشركة -->
             <div>
-                <label class="font-semibold text-gray-700">الشركة</label>
+                <label class="font-semibold text-gray-700">القطاع</label>
                 {{ form.sector }}
 
                 {% if form.sector.errors %}
@@ -40,7 +40,7 @@
             <!-- شركة جديدة -->
             <div class="">
                 <div class="">
-                    <label class="font-semibold text-gray-700">شركة جديدة (اختياري)</label>
+                    <label class="font-semibold text-gray-700">قطاع جديد (اختياري)</label>
                     {{ form.new_sector_name }}
                     {% if form.new_sector_name.errors %}
                         <p class="text-red-600 mt-2 text-sm">{{ form.new_sector_name.errors.0 }}</p>
