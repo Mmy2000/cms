@@ -40,20 +40,20 @@ class StampCalculationAdmin(UnfoldModelAdmin):
         "stamp_rate",
         "d1_display",
         "past_display",
-        "total_display",
+        # "total_display",
         "created_at",
     ]
     readonly_fields = ["created_at", "total_past_years", "total_stamp_for_company", "d1"]
 
     search_fields = ["company__name"]
     list_filter = ["invoice_date", "company"]
-    ordering = ["-created_at"]
 
     # --- Custom display methods ---
     def value_of_work_display(self, obj):
         return format_millions(obj.value_of_work)
 
     value_of_work_display.short_description = "قيمه الاعمال"
+    value_of_work_display.admin_order_field = "value_of_work"
 
     def d1_display(self, obj):
         return format_millions(obj.d1)
@@ -70,6 +70,7 @@ class StampCalculationAdmin(UnfoldModelAdmin):
 
     total_display.short_description = "اجمالي الدمغه"
 
+
 @admin.register(ExpectedStamp)
 class ExpectedStampAdmin(UnfoldModelAdmin):
     list_display = [
@@ -80,20 +81,21 @@ class ExpectedStampAdmin(UnfoldModelAdmin):
         "stamp_rate",
         "d1_display",
         "past_display",
-        "total_display",
+        # "total_display",
         "created_at",
     ]
     readonly_fields = ["created_at", "total_past_years", "total_stamp_for_company", "d1"]
 
     search_fields = ["sector__name"]
     list_filter = ["sector"]
-    ordering = ["-created_at"]
+    ordering = ["-created_at","value_of_work"]
 
     # --- Custom display methods ---
     def value_of_work_display(self, obj):
         return format_millions(obj.value_of_work)
 
     value_of_work_display.short_description = "قيمه الاعمال"
+    value_of_work_display.admin_order_field = "value_of_work"
 
     def d1_display(self, obj):
         return format_millions(obj.d1)

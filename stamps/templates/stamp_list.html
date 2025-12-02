@@ -41,7 +41,7 @@
 
         <form method="GET" class="flex gap-4 items-center mt-2 lg:mt-0">
 
-            <select name="company" class="border p-2 border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select name="company" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">كل الشركات</option>
                 {% for c in companies %}
                     <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>

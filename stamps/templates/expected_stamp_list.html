@@ -36,12 +36,12 @@
     <div class="flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200 px-6 py-4 ">
         <h2 class="text-xl font-bold text-green-800 flex items-center gap-2">
             💰 إجمالي الدمغة المتوقعه بالمليون:
-            <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span>
+            <span class="text-green-900 text-2xl">{{ total_all_sectors|millions }}</span>
         </h2>
 
         <form method="GET" class="flex gap-4 items-center mt-2 lg:mt-0">
 
-            <select name="sector" class="border p-2 border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select name="sector" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">كل القطاعات</option>
                 {% for s in sectors %}
                     <option value="{{ s.id }}" {% if sector_filter == s.id|stringformat:"s" %}selected{% endif %}>
