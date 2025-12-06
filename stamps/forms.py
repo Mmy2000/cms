@@ -89,6 +89,7 @@ class StampCalculationForm(forms.ModelForm):
 
         company = cleaned_data.get("company")
         new_name = cleaned_data.get("new_company_name")
+        invoice_date = cleaned_data.get("invoice_date")
 
         # ❌ If both fields filled → user selected a company AND typed a new one
         if company and new_name:
@@ -105,6 +106,10 @@ class StampCalculationForm(forms.ModelForm):
         if not cleaned_data.get("note"):
             raise forms.ValidationError(
                 "يجب ادخال المصادر في حقل الملاحظات."
+            )
+        if not invoice_date:
+            raise forms.ValidationError(
+                "يجب ادخال سنة الفاتورة."
             )
 
         return cleaned_data
@@ -193,6 +198,7 @@ class ExpectedStampForm(forms.ModelForm):
 
         sector = cleaned_data.get("sector")
         new_name = cleaned_data.get("new_sector_name")
+        invoice_date = cleaned_data.get("invoice_date")
 
         if sector and new_name:
             raise forms.ValidationError(
@@ -207,6 +213,11 @@ class ExpectedStampForm(forms.ModelForm):
         if not cleaned_data.get("note"):
             raise forms.ValidationError(
                 "يجب ادخال المصادر في حقل الملاحظات."
+            )
+        
+        if not invoice_date:
+            raise forms.ValidationError(
+                "يجب ادخال سنة الفاتورة."
             )
 
         return cleaned_data

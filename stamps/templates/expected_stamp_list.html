@@ -123,19 +123,19 @@
     </table>
 
     <!-- Pagination -->
-    {% if expected_stamps.has_other_pages %}
+    {% if page_obj.has_other_pages %}
     <div class="flex justify-center items-center gap-2 py-4">
-        {% if expected_stamps.has_previous %}
-            <a href="?{% querystring request page=expected_stamps.previous_page_number %}"
+        {% if page_obj.has_previous %}
+            <a href="?{% querystring request page=page_obj.previous_page_number %}"
                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">‹ السابق</a>
         {% endif %}
 
         <span class="px-4 py-1 bg-green-100 text-green-800 rounded">
-            الصفحة {{ expected_stamps.number }} من {{ expected_stamps.paginator.num_pages }}
+            الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
         </span>
 
-        {% if expected_stamps.has_next %}
-            <a href="?{% querystring request page=expected_stamps.next_page_number %}"
+        {% if page_obj.has_next %}
+            <a href="?{% querystring request page=page_obj.next_page_number %}"
                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
         {% endif %}
     </div>
