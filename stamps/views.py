@@ -9,8 +9,8 @@ from django.utils.dateparse import parse_date
 
 def stamp_list(request):
     company_filter = request.GET.get("company")
-    date_from = request.GET.get("date_from").strip()
-    date_to = request.GET.get("date_to").strip()
+    date_from = request.GET.get("date_from", "").strip()
+    date_to = request.GET.get("date_to", "").strip()
 
     stamps = StampCalculation.objects.select_related("company")
 

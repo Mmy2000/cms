@@ -16,3 +16,17 @@ def millions(value):
 
     # Otherwise → format with commas (e.g. 530,000)
     return f"{int(value):,}"
+
+
+
+@register.simple_tag
+def querystring(request, **kwargs):
+    params = request.GET.copy()  # ✅ FIX HERE
+
+    for key, value in kwargs.items():
+        if value is None:
+            params.pop(key, None)
+        else:
+            params[key] = value
+
+    return params.urlencode()

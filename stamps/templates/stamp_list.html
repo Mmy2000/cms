@@ -4,7 +4,6 @@
 {% load number_filters %}
 
 
-
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
@@ -88,8 +87,8 @@
                         <th class="p-3 border border-gray-200">الشركة</th>
                         <th class="p-3 border border-gray-200">
                             تاريخ الفاتوره  
-                            <a href="?sort=invoice_date{% if company_filter %}&company={{ company_filter }}{% endif %}">⬆️</a>
-                            <a href="?sort=-invoice_date{% if company_filter %}&company={{ company_filter }}{% endif %}">⬇️</a>
+                            <a href="?{% querystring request sort='invoice_date' %}">⬆️</a>
+                           <a href="?{% querystring request sort='-invoice_date' %}">⬇️</a>
                         </th>
                         <th class="p-3 border border-gray-200">قيمة الأعمال</th>
                         <th class="p-3 border border-gray-200">عدد النسخ</th>
