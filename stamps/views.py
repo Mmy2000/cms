@@ -9,8 +9,8 @@ from django.utils.dateparse import parse_date
 
 def stamp_list(request):
     company_filter = request.GET.get("company")
-    date_from = request.GET.get("date_from")
-    date_to = request.GET.get("date_to")
+    date_from = request.GET.get("date_from").strip()
+    date_to = request.GET.get("date_to").strip()
 
     stamps = StampCalculation.objects.select_related("company")
 
@@ -39,7 +39,7 @@ def stamp_list(request):
     total_all_companies = stamps.aggregate(total=Sum("d1"))["total"] or 0
 
     # Pagination
-    paginator = Paginator(stamps, 1)
+    paginator = Paginator(stamps, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -92,10 +92,17 @@ def add_stamp(request):
 
 def expected_stamp_list(request):
     sector_filter = request.GET.get("sector")
+    date_from = request.GET.get("date_from", "").strip()
+    date_to = request.GET.get("date_to", "").strip()
     expected_stamps = ExpectedStamp.objects.select_related("sector").order_by("-created_at")
     if sector_filter:
         expected_stamps = expected_stamps.filter(sector__id=sector_filter)
 
+    # ✅ Date range filter
+    if date_from:
+        expected_stamps = expected_stamps.filter(invoice_date__gte=parse_date(date_from))
+    if date_to:
+        expected_stamps = expected_stamps.filter(invoice_date__lte=parse_date(date_to))
     # sorting
     sort_by = request.GET.get("sort", "-created_at")
     allowed_sorts = ["invoice_date", "-invoice_date"]
@@ -122,6 +129,8 @@ def expected_stamp_list(request):
         "sectors": sectors,
         "total_all_sectors": total_all_sectors,
         "sector_filter": sector_filter,
+        "date_from": date_from,
+        "date_to": date_to,
         "sort_by": sort_by,
     }
 
