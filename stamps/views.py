@@ -118,7 +118,7 @@ def expected_stamp_list(request):
 
     # ⭐ Pagination
     page_number = request.GET.get("page")
-    paginator = Paginator(expected_stamps, 1)  # ← number of rows per page
+    paginator = Paginator(expected_stamps, 10)  # ← number of rows per page
     page_obj = paginator.get_page(page_number)
 
     sectors = Sector.objects.all()
