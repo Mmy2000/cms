@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load number_filters %}
+
+
+{% block title %} قائمة حسابات الدمغة {% endblock %}
+
+{% block content %}
+
+    <div class="mt-10 flex justify-between">
+            <a href="{% url 'add_stamp' %}"
+        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+            ➕ إضافة حساب دمغة
+        </a>
+        <div class="">
+            <button onclick="window.history.back()" 
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl shadow-sm transition">
+            رجوع
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            </button>
+        </div>
+    </div>
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
+        <!-- العنوان -->
+        <div class=" flex justify-center bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
+            <h2 class="text-xl font-bold text-green-800 flex items-center gap-2 ">
+                💰 إجمالي الدمغة بالمليون:
+                <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span>
+            </h2>
+        </div>
+
+        <div class="overflow-auto max-h-[600px]">
+            <table class="min-w-full text-right border border-gray-200">
+                <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
+                    <tr class="text-sm lg:text-lg font-bold">
+                        <th class="p-3 border border-gray-200">الشركة</th>
+                        <th class="p-3 border border-gray-200">عدد النسخ</th>
+                        <th class="p-3 border border-gray-200">النسبة</th>
+                        <th class="p-3 border border-gray-200">إجمالي الدمغه للمطالبة</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in page_obj  %}
+                    <tr class="hover:bg-gray-50 transition-all font-medium text-lg">
+                        <td class="p-3 border border-gray-200 ">{{ s.company__name }}</td>
+                        <td class="p-3 border border-gray-200">{{ s.total_copies }}</td>
+                        <td class="p-3 border border-gray-200">{{ s.stamp_rate }}</td>
+                        <td class="p-3 border border-gray-200  text-blue-700">{{ s.total|millions }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center p-6 border border-gray-200 text-gray-500">
+                            لا توجد بيانات حتى الآن.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <div class="flex justify-center items-center gap-2 py-4">
+                {% if page_obj.has_previous %}
+                    <a href="?{% querystring request page=page_obj.previous_page_number %}"
+                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">‹ السابق</a>
+                {% endif %}
+
+                <span class="px-4 py-1 bg-green-100 text-green-800 rounded">
+                    الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?{% querystring request page=page_obj.next_page_number %}"
+                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

@@ -36,6 +36,14 @@ class StampService:
         return queryset.aggregate(total=Sum("d1"))["total"] or 0
 
     @staticmethod
+    def grouped_by_company(queryset):
+        return (
+            queryset.values("company__name", "stamp_rate")
+            .annotate(total=Sum("d1"),total_copies=Sum("invoice_copies"))
+            .order_by("-total")
+        )
+
+    @staticmethod
     def create_from_form(form):
         """
         Create stamp + handle new company logic

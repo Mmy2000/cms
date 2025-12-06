@@ -31,6 +31,14 @@ class ExpectedStampService:
     @staticmethod
     def total_amount(queryset):
         return queryset.aggregate(total=Sum("d1"))["total"] or 0
+    
+    @staticmethod
+    def grouped_by_sector(queryset):
+        return (
+            queryset.values("sector__name", "stamp_rate")
+            .annotate(total=Sum("d1"),total_copies=Sum("invoice_copies"))
+            .order_by("-total")
+        )
 
     @staticmethod
     def create_from_form(form):

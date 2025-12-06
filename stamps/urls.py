@@ -1,13 +1,19 @@
 from django.urls import path
 
-from stamps.views.stamp import StampCreateView, StampListView
-from stamps.views.expected_stamp import ExpectedStampListView, ExpectedStampCreateView
+from stamps.views.stamp import StampCreateView, StampListView, GroupedStampListView
+from stamps.views.expected_stamp import ExpectedStampListView, ExpectedStampCreateView, GroupedExpectedStampListView
 
 urlpatterns = [
     path("", StampListView.as_view(), name="stamp_list"),
     path("add/", StampCreateView.as_view(), name="add_stamp"),
+    path("grouped_by_company/", GroupedStampListView.as_view(), name="grouped_stamps"),
     path(
         "expected_stamps/", ExpectedStampListView.as_view(), name="expected_stamp_list"
     ),
     path("add_expected_stamp/",ExpectedStampCreateView.as_view() , name="add_expected_stamp"),
+    path(
+        "grouped_by_sector/",
+        GroupedExpectedStampListView.as_view(),
+        name="grouped_expected_stamps",
+    ),
 ]

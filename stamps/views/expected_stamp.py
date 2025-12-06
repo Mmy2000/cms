@@ -7,7 +7,7 @@ from ..forms import ExpectedStampForm
 from ..services.expected_stamp_service import ExpectedStampService
 
 class ExpectedStampListView(ListView):
-    template_name = "expected_stamp_list.html"
+    template_name = "expected_stamps/expected_stamp_list.html"
     context_object_name = "expected_stamps"
     paginate_by = 10
 
@@ -42,10 +42,26 @@ class ExpectedStampListView(ListView):
         })
         return context
 
+class GroupedExpectedStampListView(ListView):
+    template_name = "expected_stamps/expected_stamp_list_grouped.html"
+    context_object_name = "grouped_qs"
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = ExpectedStampService.get_queryset()
+        return ExpectedStampService.grouped_by_sector(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["total_all_sectors"] = ExpectedStampService.total_amount(
+            self.get_queryset()  # full queryset, not paginated
+        )
+        return context
 
 class ExpectedStampCreateView(SuccessMessageMixin,CreateView):
     form_class = ExpectedStampForm
-    template_name = "add_expected_stamp.html"
+    template_name = "expected_stamps/add_expected_stamp.html"
     success_url = reverse_lazy("expected_stamp_list")
     success_message = "تمت إضافة حساب الدمغة المتوقعة بنجاح."
 
