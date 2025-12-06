@@ -33,35 +33,53 @@
     </div>
     <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
         <!-- العنوان -->
-        <div class="overflow-auto flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200 px-6 py-4 ">
-            <h2 class="text-xl font-bold text-green-800 flex items-center gap-2">
+        <div class="overflow-auto flex flex-col lg:flex-row gap-4 items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
+            <h2 class="text-xl font-bold text-green-800 flex items-center lg:gap-2 lg:w-1/3">
                 💰 إجمالي الدمغة بالمليون:
                 <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span>
             </h2>
 
-            <form method="GET" class="flex gap-4 items-center mt-2 lg:mt-0">
+            <form method="GET" class="flex gap-4 items-center flex-wrap mt-2 lg:mt-0 lg:w-2/3">
 
-                <select name="company" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select name="company" class="w-full lg:w-auto border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">كل الشركات</option>
                     {% for c in companies %}
                         <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
-                            {{ c.name }} 
+                            {{ c.name }}
                         </option>
                     {% endfor %}
                 </select>
 
+                <!-- From date -->
+                <div class="flex flex-wrap gap-4 w-full lg:w-auto">
+                <div class="flex flex-col ">
+                    <label class="text-sm font-semibold text-gray-600 mb-2">من تاريخ</label>
+                    <input type="date"
+                        name="date_from"
+                        value="{{ date_from }}"
+                        class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- To date -->
+                <div class="flex flex-col ">
+                    <label class="text-sm font-semibold text-gray-600 mb-2">إلى تاريخ</label>
+                    <input type="date"
+                        name="date_to"
+                        value="{{ date_to }}"
+                        class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                </div>
+                <div class="flex gap-4 flex-wrap">
                 <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
                     بحث 🔍
                 </button>
 
-                <!-- زر Reset -->
                 <a href="{% url 'stamp_list' %}"
                 class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">
-                    إعادة التعيين 🔄
+                   اعاده تعيين 🔄
                 </a>
-
+                </div>
             </form>
-
         </div>
 
         <div class="overflow-auto max-h-[600px]">
@@ -83,13 +101,13 @@
 
                 <tbody>
                     {% for s in page_obj %}
-                    <tr class="hover:bg-gray-50 transition-all">
-                        <td class="p-3 border border-gray-200 font-medium">{{ s.company.name }}</td>
-                        <td class="p-3 border border-gray-200 text-s">{{ s.invoice_date|date:"Y-m-d" }}</td>
+                    <tr class="hover:bg-gray-50 transition-all font-medium text-lg">
+                        <td class="p-3 border border-gray-200 ">{{ s.company.name }}</td>
+                        <td class="p-3 border border-gray-200 ">{{ s.invoice_date|date:"Y-m-d" }}</td>
                         <td class="p-3 border border-gray-200">{{ s.value_of_work|millions }}</td>
                         <td class="p-3 border border-gray-200">{{ s.invoice_copies }}</td>
                         <td class="p-3 border border-gray-200">{{ s.stamp_rate }}</td>
-                        <td class="p-3 border border-gray-200 font-semibold text-blue-700">{{ s.d1|millions }}</td>
+                        <td class="p-3 border border-gray-200  text-blue-700">{{ s.d1|millions }}</td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -105,7 +123,8 @@
             {% if stamps.has_other_pages %}
             <div class="flex justify-center items-center gap-2 py-4">
                 {% if stamps.has_previous %}
-                    <a href="?page={{ stamps.previous_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+                    <a href="?page={{ stamps.previous_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}
+                        {% if date_to %}&date_to={{ date_to }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
                     class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">‹ السابق</a>
                 {% endif %}
 
@@ -114,7 +133,8 @@
                 </span>
 
                 {% if stamps.has_next %}
-                    <a href="?page={{ stamps.next_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+                    <a href="?page={{ stamps.next_page_number }}{% if company_filter %}&company={{ company_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}
+                            {% if date_to %}&date_to={{ date_to }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
                     class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
                 {% endif %}
             </div>

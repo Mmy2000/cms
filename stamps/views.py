@@ -4,16 +4,26 @@ from .forms import ExpectedStampForm, StampCalculationForm
 from .models import ExpectedStamp, Sector, StampCalculation, Company
 from django.db.models import Sum
 from django.core.paginator import Paginator
+from django.utils.dateparse import parse_date
 
 
 def stamp_list(request):
-
     company_filter = request.GET.get("company")
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
 
     stamps = StampCalculation.objects.select_related("company")
 
+    # Company filter
     if company_filter:
         stamps = stamps.filter(company__id=company_filter)
+
+    # ✅ Date range filter
+    if date_from:
+        stamps = stamps.filter(invoice_date__gte=parse_date(date_from))
+
+    if date_to:
+        stamps = stamps.filter(invoice_date__lte=parse_date(date_to))
 
     # Sorting
     sort_by = request.GET.get("sort", "-created_at")
@@ -28,19 +38,21 @@ def stamp_list(request):
     # Total
     total_all_companies = stamps.aggregate(total=Sum("d1"))["total"] or 0
 
-    # ⭐ Pagination
+    # Pagination
+    paginator = Paginator(stamps, 1)
     page_number = request.GET.get("page")
-    paginator = Paginator(stamps, 10)  # ← number of rows per page
     page_obj = paginator.get_page(page_number)
 
     companies = Company.objects.all()
 
     context = {
-        "page_obj": page_obj,  # ← send page_obj instead of stamps
-        "stamps": page_obj,  # optional for easier usage in template
+        "page_obj": page_obj,
+        "stamps": page_obj,
         "companies": companies,
-        "total_all_companies": total_all_companies,
         "company_filter": company_filter,
+        "date_from": date_from,
+        "date_to": date_to,
+        "total_all_companies": total_all_companies,
         "sort_by": sort_by,
     }
 

@@ -114,7 +114,7 @@
         </span>
 
         {% if expected_stamps.has_next %}
-            <a href="?page={{ stamps.next_page_number }}{% if sector_filter %}&company={{ sector_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+            <a href="?page={{ expected_stamps.next_page_number }}{% if sector_filter %}&company={{ sector_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
         {% endif %}
     </div>
