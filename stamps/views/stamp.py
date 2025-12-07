@@ -59,6 +59,9 @@ class GroupedStampListView(ListView):
         context["total_all_companies"] = StampService.total_amount(
             self.get_queryset()  # full queryset, not paginated
         )
+        context["total_companies"] = StampService.total_companies(
+            self.get_queryset()  # full queryset, not paginated
+        )
 
         return context
 

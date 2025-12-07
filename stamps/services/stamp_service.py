@@ -34,12 +34,16 @@ class StampService:
     @staticmethod
     def total_amount(queryset):
         return queryset.aggregate(total=Sum("d1"))["total"] or 0
+    
+    @staticmethod
+    def total_companies(queryset):
+        return queryset.values("company__name").distinct().count()
 
     @staticmethod
     def grouped_by_company(queryset):
         return (
             queryset.values("company__name", "stamp_rate")
-            .annotate(total=Sum("d1"),total_copies=Sum("invoice_copies"))
+            .annotate(total=Sum("d1"))
             .order_by("-total")
         )
 

@@ -29,6 +29,7 @@
             <h2 class="text-xl font-bold text-green-800 flex items-center gap-2 ">
                 💰 إجمالي الدمغة بالمليون:
                 <span class="text-green-900 text-2xl">{{ total_all_sectors|millions }}</span>
+                    <span class="text-green-900 text-2xl">لعدد {{ total_sectors }} قطاع</span>
             </h2>
         </div>
 
@@ -37,7 +38,6 @@
                 <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
                     <tr class="text-sm lg:text-lg font-bold">
                         <th class="p-3 border border-gray-200">القطاع</th>
-                        <th class="p-3 border border-gray-200">عدد النسخ</th>
                         <th class="p-3 border border-gray-200">النسبة</th>
                         <th class="p-3 border border-gray-200">إجمالي الدمغه للمطالبة</th>
                     </tr>
@@ -47,7 +47,6 @@
                     {% for s in page_obj  %}
                     <tr class="hover:bg-gray-50 transition-all font-medium text-lg">
                         <td class="p-3 border border-gray-200 ">{{ s.sector__name }}</td>
-                        <td class="p-3 border border-gray-200">{{ s.total_copies }}</td>
                         <td class="p-3 border border-gray-200">{{ s.stamp_rate }}</td>
                         <td class="p-3 border border-gray-200  text-blue-700">{{ s.total|millions }}</td>
                     </tr>

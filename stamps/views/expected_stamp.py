@@ -57,6 +57,9 @@ class GroupedExpectedStampListView(ListView):
         context["total_all_sectors"] = ExpectedStampService.total_amount(
             self.get_queryset()  # full queryset, not paginated
         )
+        context["total_sectors"] = ExpectedStampService.total_sectors(
+            self.get_queryset()  # full queryset, not paginated
+        )
         return context
 
 class ExpectedStampCreateView(SuccessMessageMixin,CreateView):
