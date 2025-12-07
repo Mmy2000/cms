@@ -37,6 +37,20 @@ class ExpectedStampService:
         return queryset.values("sector__name").distinct().count()
     
     @staticmethod
+    def export_pdf(queryset):
+        """
+        Placeholder for future PDF export logic
+        """
+        pass
+
+    @staticmethod
+    def export_excel(queryset):
+        """
+        Placeholder for future Excel export logic
+        """
+        pass
+    
+    @staticmethod
     def grouped_by_sector(queryset):
         return (
             queryset.values("sector__name", "stamp_rate")

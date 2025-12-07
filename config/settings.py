@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "content.apps.ContentConfig",
     "site_settings.apps.SettingsConfig",
     "stamps.apps.StampsConfig",
+    "accounts.apps.AccountsConfig",
 ]
 
 UNFOLD = {

@@ -34,10 +34,24 @@ class StampService:
     @staticmethod
     def total_amount(queryset):
         return queryset.aggregate(total=Sum("d1"))["total"] or 0
-    
+
     @staticmethod
     def total_companies(queryset):
         return queryset.values("company__name").distinct().count()
+
+    @staticmethod
+    def export_pdf(queryset):
+        """
+        Placeholder for future PDF export logic
+        """
+        pass
+
+    @staticmethod
+    def export_excel(queryset):
+        """
+        Placeholder for future Excel export logic
+        """
+        pass
 
     @staticmethod
     def grouped_by_company(queryset):
