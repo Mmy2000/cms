@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-30 08:52+0200\n"
+"POT-Creation-Date: 2025-12-08 00:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\accounts\apps.py:7
+msgid "Accounts Management"
+msgstr "إدارة الحسابات"
+
+#: .\accounts\models.py:8
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#: .\accounts\models.py:9
+msgid "Approved"
+msgstr "موافقة"
+
+#: .\accounts\models.py:10
+msgid "Rejected"
+msgstr "مرفوض"
+
+#: .\accounts\models.py:13
+#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\admin\guardian\model\obj_perms_manage_user.html:17
+#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\group_form.html:33
+#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\user_form.html:15
+#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\user_form.html:33
+#: .\venv\Lib\site-packages\unfold\templates\admin\object_history.html:14
+#: .\venv\Lib\site-packages\unfold\templates\admin\object_history.html:30
+msgid "User"
+msgstr "مستخدم"
+
+#: .\accounts\models.py:15
+msgid "Syndicate Number"
+msgstr "رقم النقابة"
+
+#: .\accounts\models.py:16
+msgid "Profile with this Syndicate Number already exists."
+msgstr "رقم العضوية بالنقابة مسجل بالفعل."
+
+#: .\accounts\models.py:18
+msgid "Syndicate Card"
+msgstr "بطاقة النقابة"
+
+#: .\accounts\models.py:19
+msgid "Status"
+msgstr "الحاله"
+
+#: .\accounts\models.py:20 .\content\models.py:22 .\stamps\models.py:48
+#: .\stamps\models.py:105
+msgid "created_at"
+msgstr "تاريخ الإنشاء"
+
+#: .\accounts\models.py:21 .\content\models.py:23
+msgid "updated_at"
+msgstr "تاريخ التحديث"
+
+#: .\accounts\models.py:24
+msgid "Profile"
+msgstr "حساب تعريفي"
+
+#: .\accounts\models.py:25
+msgid "Profiles"
+msgstr "حسابات تعريفيه"
 
 #: .\content\admin.py:50
 msgid "Basic Information"
@@ -51,14 +110,6 @@ msgstr "المحتوى الرئيسي"
 #: .\venv\Lib\site-packages\django\db\models\fields\files.py:420
 msgid "Image"
 msgstr "الصورة"
-
-#: .\content\models.py:22 .\stamps\models.py:48 .\stamps\models.py:105
-msgid "created_at"
-msgstr "تاريخ الإنشاء"
-
-#: .\content\models.py:23
-msgid "updated_at"
-msgstr "تاريخ التحديث"
 
 #: .\content\models.py:27 .\content\models.py:42 .\content\models.py:60
 msgid "Content"
@@ -1727,15 +1778,6 @@ msgstr ""
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\admin\guardian\model\obj_perms_manage_group.html:16
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\group_form.html:15
 msgid "Group"
-msgstr ""
-
-#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\admin\guardian\model\obj_perms_manage_user.html:17
-#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\group_form.html:33
-#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\user_form.html:15
-#: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\user_form.html:33
-#: .\venv\Lib\site-packages\unfold\templates\admin\object_history.html:14
-#: .\venv\Lib\site-packages\unfold\templates\admin\object_history.html:30
-msgid "User"
 msgstr ""
 
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\group_form.html:7

@@ -6,8 +6,10 @@ from django.urls import reverse_lazy
 from ..models import  Sector
 from ..forms import ExpectedStampForm
 from ..services.expected_stamp_service import ExpectedStampService
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class ExpectedStampListView(ListView):
+
+class ExpectedStampListView(LoginRequiredMixin,ListView):
     template_name = "expected_stamps/expected_stamp_list.html"
     context_object_name = "expected_stamps"
     paginate_by = 10
@@ -71,7 +73,8 @@ class ExpectedStampListView(ListView):
         })
         return context
 
-class GroupedExpectedStampListView(ListView):
+
+class GroupedExpectedStampListView(LoginRequiredMixin,ListView):
     template_name = "expected_stamps/expected_stamp_list_grouped.html"
     context_object_name = "grouped_qs"
     paginate_by = 10
@@ -91,7 +94,8 @@ class GroupedExpectedStampListView(ListView):
         )
         return context
 
-class ExpectedStampCreateView(SuccessMessageMixin,CreateView):
+
+class ExpectedStampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     form_class = ExpectedStampForm
     template_name = "expected_stamps/add_expected_stamp.html"
     success_url = reverse_lazy("expected_stamp_list")

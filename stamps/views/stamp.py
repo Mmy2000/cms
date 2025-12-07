@@ -5,9 +5,10 @@ from django.http import HttpResponse
 from ..forms import StampCalculationForm
 from ..models import Company
 from ..services.stamp_service import StampService
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class StampListView(ListView):
+class StampListView(LoginRequiredMixin,ListView):
     template_name = "stamps/stamp_list.html"
     context_object_name = "stamps"
     paginate_by = 10
@@ -72,7 +73,7 @@ class StampListView(ListView):
         return context
 
 
-class GroupedStampListView(ListView):
+class GroupedStampListView(LoginRequiredMixin,ListView):
     template_name = "stamps/stamp_list_grouped.html"
     context_object_name = "grouped_qs"
     paginate_by = 10
@@ -94,7 +95,7 @@ class GroupedStampListView(ListView):
         return context
 
 
-class StampCreateView(SuccessMessageMixin, CreateView):
+class StampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     form_class = StampCalculationForm
     template_name = "stamps/add_stamp.html"
     success_url = reverse_lazy("stamp_list")

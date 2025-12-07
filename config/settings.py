@@ -60,7 +60,6 @@ UNFOLD = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -69,7 +68,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+AUTHENTICATION_BACKENDS = [
+    "accounts.backends.EmailAuthBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+LOGIN_URL = "login"  # your login view name
+LOGIN_REDIRECT_URL = "stamp_list"
+LOGOUT_REDIRECT_URL = "login"
+
 
 ROOT_URLCONF = 'config.urls'
 
