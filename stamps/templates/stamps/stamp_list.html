@@ -31,6 +31,20 @@
         </a>
         <a href="{% url 'grouped_stamps' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">مجموعة حسب الشركة</a>
     </div>
+    <div>
+        <form method="GET" class="mt-6 gap-4 flex items-center justify-end">
+            <select name="download" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">تحميل كـ...</option>
+                <option value="pdf">📄 PDF</option>
+                <option value="excel">📊 Excel</option>
+            </select>
+
+            <button name="download_btn" value="1"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                تحميل
+            </button>
+        </form>
+    </div>
     <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
         <!-- العنوان -->
         <div class=" flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
@@ -87,7 +101,7 @@
                     <tr class="text-sm lg:text-lg font-bold">
                         <th class="p-3 border border-gray-200">الشركة</th>
                         <th class="p-3 border border-gray-200">
-                            تاريخ الفاتوره  
+                            تاريخ المطالبه  
                             <a href="?{% querystring request sort='invoice_date' %}">⬆️</a>
                            <a href="?{% querystring request sort='-invoice_date' %}">⬇️</a>
                         </th>
@@ -139,6 +153,8 @@
         </div>
 
     </div>
+
+
 
 
 

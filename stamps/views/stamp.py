@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-
+from django.http import HttpResponse
 from ..forms import StampCalculationForm
 from ..models import Company
 from ..services.stamp_service import StampService
@@ -28,6 +28,34 @@ class StampListView(ListView):
         )
 
         return qs
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        # Handle export
+        if request.GET.get("download_btn"):
+            file_type = request.GET.get("download")
+
+            if file_type == "pdf":
+                pdf = StampService.export_pdf(queryset)
+                response = HttpResponse(pdf, content_type="application/pdf")
+                response["Content-Disposition"] = (
+                    "attachment; filename=stamp_report.pdf"
+                )
+                return response
+
+            elif file_type == "excel":
+                excel = StampService.export_excel(queryset)
+                response = HttpResponse(
+                    excel,
+                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+                response["Content-Disposition"] = (
+                    "attachment; filename=stamp_report.xlsx"
+                )
+                return response
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
