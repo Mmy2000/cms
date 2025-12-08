@@ -37,9 +37,12 @@ class ExpectedStampListView(LoginRequiredMixin,ListView):
         # Handle export
         if request.GET.get("download_btn"):
             file_type = request.GET.get("download")
-
+            sector_id = self.request.GET.get("sector")
             if file_type == "pdf":
-                pdf = ExpectedStampService.export_pdf(queryset)
+                if sector_id:
+                    pdf = ExpectedStampService.export_to_pdf_for_spacific_sector(queryset, sector_id)
+                else:
+                    pdf = ExpectedStampService.export_pdf(queryset)
                 response = HttpResponse(pdf, content_type="application/pdf")
                 response["Content-Disposition"] = (
                     "attachment; filename=expected_stamp_report.pdf"

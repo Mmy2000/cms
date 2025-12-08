@@ -33,17 +33,26 @@
     </div>
     <div>
         <form method="GET" class="mt-6 gap-4 flex items-center justify-end">
-            <select name="download" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Preserve filters -->
+            <input type="hidden" name="company" value="{{ company_filter }}">
+            <input type="hidden" name="date_from" value="{{ date_from }}">
+            <input type="hidden" name="date_to" value="{{ date_to }}">
+            <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+
+            <select name="download"
+                class="border p-2 font-bold border-gray-300 rounded-xl">
                 <option value="">تحميل كـ...</option>
                 <option value="pdf">📄 PDF</option>
                 <option value="excel">📊 Excel</option>
             </select>
 
             <button name="download_btn" value="1"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg">
                 تحميل
             </button>
         </form>
+
     </div>
     <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
         <!-- العنوان -->

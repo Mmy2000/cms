@@ -34,6 +34,12 @@
     </div>
      <div>
         <form method="GET" class="mt-6 gap-4 flex items-center justify-end">
+            <!-- Preserve filters -->
+            <input type="hidden" name="sector" value="{{ sector_filter }}">
+            <input type="hidden" name="date_from" value="{{ date_from }}">
+            <input type="hidden" name="date_to" value="{{ date_to }}">
+            <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+            
             <select name="download" class="border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">تحميل كـ...</option>
                 <option value="pdf">📄 PDF</option>

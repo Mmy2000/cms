@@ -15,6 +15,19 @@ import openpyxl
 from openpyxl.utils import get_column_letter
 from arabic_reshaper import reshape
 from bidi.algorithm import get_display
+from openpyxl.utils import get_column_letter
+from arabic_reshaper import reshape
+from bidi.algorithm import get_display
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.units import cm
+from arabic_reshaper import reshape
+from bidi.algorithm import get_display
+from django.conf import settings
+import io
+from datetime import date
 
 class ExpectedStampService:
 
@@ -72,12 +85,13 @@ class ExpectedStampService:
         return expected_stamp
 
     @staticmethod
-    def export_pdf(queryset):
+    def fix_arabic(text):
+        if not text:
+            return ""
+        return get_display(reshape(str(text)))
 
-        def fix_arabic(text):
-            if not text:
-                return ""
-            return get_display(reshape(text))
+    @staticmethod
+    def export_pdf(queryset):
 
         buffer = BytesIO()
 
@@ -118,7 +132,7 @@ class ExpectedStampService:
         total_amount = ExpectedStampService.total_amount(queryset)
 
         total_paragraph = Paragraph(
-            fix_arabic(
+            ExpectedStampService.fix_arabic(
                 f"إجمالي الدمغة لكل القطاعات بالمليون: {format_millions(total_amount)}"
             ),
             arabic_style,
@@ -127,12 +141,12 @@ class ExpectedStampService:
 
         # RTL: REVERSED column order
         headers = [
-            fix_arabic("إجمالي الدمغة"),
-            fix_arabic("النسبة"),
-            fix_arabic("عدد النسخ"),
-            fix_arabic("قيمة الأعمال"),
-            fix_arabic("تاريخ المطالبه"),
-            fix_arabic("القطاع"),
+            ExpectedStampService.fix_arabic("إجمالي الدمغة"),
+            ExpectedStampService.fix_arabic("النسبة"),
+            ExpectedStampService.fix_arabic("عدد النسخ"),
+            ExpectedStampService.fix_arabic("قيمة الأعمال"),
+            ExpectedStampService.fix_arabic("تاريخ المطالبه"),
+            ExpectedStampService.fix_arabic("القطاع"),
         ]
 
         table_data = [[Paragraph(h, arabic_style) for h in headers]]
@@ -147,7 +161,7 @@ class ExpectedStampService:
                     s.invoice_date.strftime("%Y-%m-%d") if s.invoice_date else "—",
                     number_style,
                 ),
-                Paragraph(fix_arabic(s.sector.name), arabic_style),
+                Paragraph(ExpectedStampService.fix_arabic(s.sector.name), arabic_style),
             ]
 
             table_data.append(row)
@@ -179,6 +193,156 @@ class ExpectedStampService:
         pdf = buffer.getvalue()
         buffer.close()
         return pdf
+
+    @staticmethod
+    def export_to_pdf_for_spacific_sector(queryset, sector_id):
+        sector = Sector.objects.get(id=sector_id)
+        buffer = io.BytesIO()
+
+        c = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+
+        # ================= Fonts ================= #
+        pdfmetrics.registerFont(
+            TTFont("Amiri", settings.BASE_DIR / "static/fonts/Amiri-Regular.ttf")
+        )
+        pdfmetrics.registerFont(
+            TTFont("Amiri-Bold", settings.BASE_DIR / "static/fonts/Amiri-Bold.ttf")
+        )
+        # ================= Layout constants ================= #
+        HEADER_FONT = ("Amiri", 12)
+        TITLE_FONT = ("Amiri-Bold", 12)
+        TABLE_HEADER_FONT = ("Amiri-Bold", 11)
+        TABLE_ROW_FONT = ("Amiri", 11)
+
+        LINE_HEIGHT = 0.8 * cm
+        ROW_HEIGHT = 0.7 * cm
+        LEFT = 2 * cm
+        RIGHT = width - 2 * cm
+
+        y = height - 2 * cm
+
+        # ================= Header ================= #
+        c.setFont(*HEADER_FONT)
+        c.drawRightString(
+            RIGHT,
+            y,
+            ExpectedStampService.fix_arabic(
+                f"القاهرة في : {date.today().strftime('%Y-%m-%d')}"
+            ),
+        )
+        y -= 1 * cm
+        c.drawString(LEFT, y, ExpectedStampService.fix_arabic(f"السادة قطاع / {sector.name}"))
+
+        y -= 1.2 * cm
+        c.drawCentredString(width / 2, y, ExpectedStampService.fix_arabic("تحية طيبة و بعد"))
+
+        y -= 1 * cm
+        c.setFont(*TITLE_FONT)
+        c.drawCentredString(width / 2, y, ExpectedStampService.fix_arabic("مطالبة نموذج رقم (1)"))
+
+        y -= 1.2 * cm
+        c.setFont(*HEADER_FONT)
+        intro = (
+            "مراجعة حجم أعمالكم وجد لديكم كدفعة هندسية لم تورد طبقاً للقانون "
+            "رقم 66 لسنة 1974 و مواد الدمغة أرقام ..."
+        )
+        c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic(intro))
+        # ================= Table ================= #
+        y -= 1.5 * cm
+
+        headers = [
+            "التاريخ",
+            "حجم الأعمال",
+            "الدمغة الهندسية",
+            "عدد النسخ",
+            "إجمالي الدمغة",
+        ]
+
+        col_widths = [
+            3 * cm,
+            4 * cm,
+            3.5 * cm,
+            3 * cm,
+            4.5 * cm,
+        ]
+        # ---------- Table header ---------- #
+        c.setFont(*TABLE_HEADER_FONT)
+        x = RIGHT
+
+        c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
+
+        for header, w in zip(headers, col_widths):
+            c.drawRightString(x, y, ExpectedStampService.fix_arabic(header))
+            x -= w
+
+        c.line(LEFT, y - 0.3 * cm, RIGHT, y - 0.3 * cm)
+
+        y -= LINE_HEIGHT
+
+        # ---------- Table rows ---------- #
+        total = 0
+        c.setFont(*TABLE_ROW_FONT)
+
+        for obj in queryset:
+            x = RIGHT
+
+            row = [
+                obj.invoice_date.strftime("%Y-%m-%d") if obj.invoice_date else "—",
+                format_millions(obj.value_of_work),
+                f"{obj.stamp_rate}",
+                obj.invoice_copies,
+                format_millions(obj.d1),
+            ]
+
+            total += obj.d1
+
+            for value, w in zip(row, col_widths):
+                c.drawRightString(x, y, ExpectedStampService.fix_arabic(value))
+                x -= w
+
+            # light row separator
+            c.setStrokeColorRGB(0.8, 0.8, 0.8)
+            c.line(LEFT, y - 0.2 * cm, RIGHT, y - 0.2 * cm)
+            c.setStrokeColorRGB(0, 0, 0)
+
+            y -= ROW_HEIGHT
+
+            if y < 4 * cm:
+                c.showPage()
+                c.setFont(*TABLE_ROW_FONT)
+                y = height - 2 * cm
+
+        # ================= Total ================= #
+        y -= 1.2 * cm
+        c.setFont("Amiri-Bold", 12)
+
+        c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
+
+        c.drawRightString(
+            RIGHT,
+            y,
+            ExpectedStampService.fix_arabic(f"الإجمالي : {format_millions(total)} جنيه مصري"),
+        )
+
+        # ================= Footer ================= #
+        y -= 1.8 * cm
+        c.setFont("Amiri", 11)
+        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
+
+        y -= 1.2 * cm
+        c.setFont("Amiri-Bold", 11)
+        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("أمين الصندوق"))
+
+        y -= 0.8 * cm
+        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("د / معتز طلبة"))
+
+        # ================= Save ================= #
+        c.showPage()
+        c.save()
+
+        buffer.seek(0)
+        return buffer.getvalue()
 
     @staticmethod
     def export_excel(queryset):

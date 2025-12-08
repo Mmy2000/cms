@@ -36,9 +36,13 @@ class StampListView(LoginRequiredMixin,ListView):
         # Handle export
         if request.GET.get("download_btn"):
             file_type = request.GET.get("download")
+            company_id = request.GET.get("company")
 
             if file_type == "pdf":
-                pdf = StampService.export_pdf(queryset)
+                if company_id:
+                    pdf = StampService.export_to_pdf_for_spacific_company(queryset, company_id)
+                else:
+                    pdf = StampService.export_pdf(queryset)
                 response = HttpResponse(pdf, content_type="application/pdf")
                 response["Content-Disposition"] = (
                     "attachment; filename=stamp_report.pdf"
