@@ -96,3 +96,54 @@ class LoginForm(forms.Form):
             raise forms.ValidationError("كلمة المرور.يجب أن لا تكون فارغة.")
 
         return cleaned_data
+
+
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        label="البريد الإلكتروني",
+        widget=forms.EmailInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+            }
+        ),
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError("لا يوجد مستخدم بهذا البريد الإلكتروني.")
+        return email
+    
+class ResetPasswordForm(forms.Form):
+    new_password = forms.CharField(
+        label="كلمة المرور الجديدة",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+            }
+        ),
+    )
+    confirm_password = forms.CharField(
+        label="تأكيد كلمة المرور",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+            }
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if not new_password:
+            raise forms.ValidationError("كلمة المرور الجديدة.يجب أن لا تكون فارغة.")
+
+        if not confirm_password:
+            raise forms.ValidationError("تأكيد كلمة المرور.يجب أن لا يكون فارغًا.")
+
+        if new_password and confirm_password and new_password != confirm_password:
+            raise forms.ValidationError("كلمتا المرور غير متطابقتين.")
+
+        return cleaned_data

@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 
-from .utils import send_activation_email
-from .forms import LoginForm, RegisterForm
+from .utils import send_activation_email, send_reset_password_email
+from .forms import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from .tokens import account_activation_token
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
 
 
 def activate_account(request, uidb64, token):
@@ -77,9 +78,65 @@ def login_view(request):
 
     return render(request, "accounts/login.html", {"form": form})
 
-
 @login_required(login_url="login")
 def logout(request):
     auth.logout(request)
     messages.success(request, "تم تسجيل الخروج بنجاح.")
     return redirect("login")
+
+
+def forgotPassword(request):
+    if request.method == "POST":
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            try:
+                user = User.objects.get(email=email)
+                token = default_token_generator.make_token(user)
+                send_reset_password_email(request, user, token)
+                messages.success(
+                    request,
+                    "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.",
+                )
+                return redirect("login")
+            except User.DoesNotExist:
+                messages.error(request, "لا يوجد مستخدم بهذا البريد الإلكتروني.")
+    else:
+        form = ForgotPasswordForm()
+    return render(request, "accounts/forgotPassword.html", {"form": form})
+
+
+def resetpassword_validate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session["uid"] = uid
+        messages.success(request, "يرجى إعادة تعيين كلمة المرور الخاصة بك.")
+        return redirect("reset_password")
+    else:
+        messages.error(request, "❌ رابط التفعيل غير صالح.")
+        return redirect("login")
+
+def resetPassword(request):
+    if request.method == "POST":
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data["new_password"]
+            confirm_password = form.cleaned_data["confirm_password"]
+
+            if password == confirm_password:
+                uid = request.session.get("uid")
+                user = User.objects.get(pk=uid)
+                user.set_password(password)
+                user.save()
+                messages.success(request, "تم إعادة تعيين كلمة المرور بنجاح.")
+                return redirect("login")
+            else:
+                messages.error(request, "كلمتا المرور غير متطابقتين.")
+    else:
+        form = ResetPasswordForm()
+    return render(request, "accounts/resetPassword.html", {"form": form})
