@@ -39,7 +39,7 @@ class StampListView(LoginRequiredMixin,ListView):
             company_id = request.GET.get("company")
 
             if file_type == "pdf":
-                if company_id:
+                if company_id not in ["", "None", None]:
                     pdf = StampService.export_to_pdf_for_spacific_company(queryset, company_id)
                 else:
                     pdf = StampService.export_pdf(queryset)

@@ -20,6 +20,7 @@ from bidi.algorithm import get_display
 from django.conf import settings
 import io
 from datetime import date
+import textwrap
 
 class ExpectedStampService:
 
@@ -29,7 +30,7 @@ class ExpectedStampService:
 
     @staticmethod
     def filter(queryset, sector_id=None, date_from=None, date_to=None):
-        if sector_id:
+        if sector_id not in [None, "", "None"]:
             queryset = queryset.filter(sector_id=sector_id)
 
         if date_from:
@@ -188,7 +189,8 @@ class ExpectedStampService:
 
     @staticmethod
     def export_to_pdf_for_spacific_sector(queryset, sector_id):
-        sector = Sector.objects.get(id=sector_id)
+
+        company = Sector.objects.get(id=sector_id)
         buffer = io.BytesIO()
 
         c = canvas.Canvas(buffer, pagesize=A4)
@@ -201,9 +203,11 @@ class ExpectedStampService:
         pdfmetrics.registerFont(
             TTFont("Amiri-Bold", settings.BASE_DIR / "static/fonts/Amiri-Bold.ttf")
         )
+
         # ================= Layout constants ================= #
         HEADER_FONT = ("Amiri", 12)
-        TITLE_FONT = ("Amiri-Bold", 12)
+        TITLE_FONT = ("Amiri-Bold", 14)
+        PARA_FONT = ("Amiri", 11)
         TABLE_HEADER_FONT = ("Amiri-Bold", 11)
         TABLE_ROW_FONT = ("Amiri", 11)
 
@@ -223,25 +227,45 @@ class ExpectedStampService:
                 f"القاهرة في : {date.today().strftime('%Y-%m-%d')}"
             ),
         )
-        y -= 1 * cm
-        c.drawString(LEFT, y, ExpectedStampService.fix_arabic(f"السادة قطاع / {sector.name}"))
 
         y -= 1.2 * cm
+        c.drawRightString(
+            RIGHT, y, ExpectedStampService.fix_arabic(f"السادة قطاع / {company.name}")
+        )
+
+        # "تحية طيبة وبعد"
+        y -= 1.5 * cm
+        c.setFont("Amiri-Bold", 13)
         c.drawCentredString(width / 2, y, ExpectedStampService.fix_arabic("تحية طيبة و بعد"))
 
-        y -= 1 * cm
-        c.setFont(*TITLE_FONT)
-        c.drawCentredString(width / 2, y, ExpectedStampService.fix_arabic("مطالبة نموذج رقم (1)"))
-
+        # Title
         y -= 1.2 * cm
-        c.setFont(*HEADER_FONT)
-        intro = (
-            "مراجعة حجم أعمالكم وجد لديكم كدفعة هندسية لم تورد طبقاً للقانون "
-            "رقم 66 لسنة 1974 و مواد الدمغة أرقام ..."
+        c.setFont(*TITLE_FONT)
+        c.drawCentredString(
+            width / 2, y, ExpectedStampService.fix_arabic("مطالبة نموذج رقم ( 1 )")
         )
-        c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic(intro))
+
+        # ================= Intro paragraph ================= #
+        y -= 2 * cm
+        c.setFont(*PARA_FONT)
+
+        paragraph_text = (
+            "بمراجعة حجم اعمالكم وجد لديكم كدمغة هندسية لم تورد طبقا للقانون رقم 66 لسنة 1974 "
+            "و مواد الدمغة ارقام 45&46&47&48&99 و مواد اللائحة التنفيذية ارقام 130&131&132&149 "
+            "وحكم الدستورية في الدعوي رقم 16 لسنة 38 ق دستورية في 5-12-2020. "
+            "وحكم جنح مستانف سمالوط رقم 206لسنة 2018"
+        )
+
+        # WRAP paragraph across full width (RIGHT → LEFT)
+        max_width = RIGHT - LEFT
+        wrapped_lines = textwrap.wrap(paragraph_text, width=85)
+
+        for line in wrapped_lines:
+            c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic(line))
+            y -= 0.7 * cm
+
         # ================= Table ================= #
-        y -= 1.5 * cm
+        y -= 1.2 * cm
 
         headers = [
             "التاريخ",
@@ -258,7 +282,7 @@ class ExpectedStampService:
             3 * cm,
             4.5 * cm,
         ]
-        # ---------- Table header ---------- #
+
         c.setFont(*TABLE_HEADER_FONT)
         x = RIGHT
 
@@ -281,20 +305,19 @@ class ExpectedStampService:
 
             row = [
                 obj.invoice_date.strftime("%Y-%m-%d") if obj.invoice_date else "—",
-                format_millions(obj.value_of_work),
+                f"{obj.value_of_work:,}",
                 f"{obj.stamp_rate}",
                 obj.invoice_copies,
-                format_millions(obj.d1),
+                f"{obj.d1:,}",
             ]
 
             total += obj.d1
 
             for value, w in zip(row, col_widths):
-                c.drawRightString(x, y, ExpectedStampService.fix_arabic(value))
+                c.drawRightString(x, y, ExpectedStampService.fix_arabic(str(value)))
                 x -= w
 
-            # light row separator
-            c.setStrokeColorRGB(0.8, 0.8, 0.8)
+            c.setStrokeColorRGB(0.85, 0.85, 0.85)
             c.line(LEFT, y - 0.2 * cm, RIGHT, y - 0.2 * cm)
             c.setStrokeColorRGB(0, 0, 0)
 
@@ -306,30 +329,42 @@ class ExpectedStampService:
                 y = height - 2 * cm
 
         # ================= Total ================= #
-        y -= 1.2 * cm
+        y -= 0.5 * cm
         c.setFont("Amiri-Bold", 12)
 
         c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
 
         c.drawRightString(
-            RIGHT,
-            y,
-            ExpectedStampService.fix_arabic(f"الإجمالي : {format_millions(total)} جنيه مصري"),
+            RIGHT, y, ExpectedStampService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
         )
 
         # ================= Footer ================= #
-        y -= 1.8 * cm
-        c.setFont("Amiri", 11)
-        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
+        last_points = [
+            "١- في الاعتراض التقدم بمستنداتكم خلال شهر لإدارة الدمغة بنقابة المهندسين.",
+            "٢- عدم الاعتراض أو الطعن خلال ١٥ يوم يعتبر مصادقة علي المديونية.",
+            "٣- تطبق المادة ٩٩ عند التقاعس مدة ثلاث شهور عن الدفع.",
+        ]
+
+        y -= 1.6 * cm
+        c.setFont("Amiri", 10)
+
+        for point in last_points:
+            c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic(point))
+            y -= 0.7 * cm  # المسافة بين النقاط
 
         y -= 1.2 * cm
+        c.setFont("Amiri", 11)
+        c.drawRightString(
+            RIGHT, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
+        )
+
+        y -= 1.3 * cm
         c.setFont("Amiri-Bold", 11)
-        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("أمين الصندوق"))
+        c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic("أمين الصندوق"))
 
-        y -= 0.8 * cm
-        c.drawString(LEFT, y, ExpectedStampService.fix_arabic("د / معتز طلبة"))
+        y -= 0.9 * cm
+        c.drawRightString(RIGHT, y, ExpectedStampService.fix_arabic("د / معتز طلبة"))
 
-        # ================= Save ================= #
         c.showPage()
         c.save()
 

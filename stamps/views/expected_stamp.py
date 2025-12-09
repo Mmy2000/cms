@@ -39,7 +39,7 @@ class ExpectedStampListView(LoginRequiredMixin,ListView):
             file_type = request.GET.get("download")
             sector_id = self.request.GET.get("sector")
             if file_type == "pdf":
-                if sector_id:
+                if sector_id not in ["", "None", None]:
                     pdf = ExpectedStampService.export_to_pdf_for_spacific_sector(queryset, sector_id)
                 else:
                     pdf = ExpectedStampService.export_pdf(queryset)
