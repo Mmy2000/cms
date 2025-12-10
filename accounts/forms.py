@@ -7,8 +7,8 @@ class RegisterForm(forms.ModelForm):
     # User fields
     first_name = forms.CharField(label="الاسم الأول")
     last_name = forms.CharField(label="الاسم الأخير")
-    email = forms.EmailField()
-    password = forms.CharField()
+    email = forms.EmailField(label="البريد الإلكتروني")
+    password = forms.CharField(label="كلمة المرور", widget=forms.PasswordInput)
 
     class Meta:
         model = Profile
@@ -19,6 +19,7 @@ class RegisterForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.update(
                 {
+                    "placeholder": f"اكتب {field.label}",
                     "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
                 }
             )
@@ -71,14 +72,16 @@ class LoginForm(forms.Form):
         label="البريد الإلكتروني",
         widget=forms.EmailInput(
             attrs={
+                "placeholder": "اكتب بريدك الإلكتروني",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-            }
+            },
         ),
     )
     password = forms.CharField(
         label="كلمة المرور",
         widget=forms.PasswordInput(
             attrs={
+                "placeholder": "اكتب كلمة المرور الخاصة بك",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
             }
         ),
@@ -103,6 +106,7 @@ class ForgotPasswordForm(forms.Form):
         label="البريد الإلكتروني",
         widget=forms.EmailInput(
             attrs={
+                "placeholder": "اكتب بريدك الإلكتروني",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
             }
         ),
@@ -119,6 +123,7 @@ class ResetPasswordForm(forms.Form):
         label="كلمة المرور الجديدة",
         widget=forms.PasswordInput(
             attrs={
+                "placeholder": "اكتب كلمة المرور الجديدة",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
             }
         ),
@@ -127,6 +132,7 @@ class ResetPasswordForm(forms.Form):
         label="تأكيد كلمة المرور",
         widget=forms.PasswordInput(
             attrs={
+                "placeholder": "اكتب تأكيد كلمة المرور",
                 "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
             }
         ),
