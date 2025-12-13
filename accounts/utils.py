@@ -5,7 +5,6 @@ from django.utils.encoding import force_bytes
 from django.contrib.sites.shortcuts import get_current_site
 
 from .tokens import account_activation_token
-from .tasks import send_email
 
 
 def send_activation_email(request, user):
@@ -21,9 +20,8 @@ def send_activation_email(request, user):
             "token": account_activation_token.make_token(user),
         },
     )
-    send_email.delay(
-        user.email, user.first_name, mail_subject, message
-    )
+    email = EmailMessage(mail_subject, message, to=[user.email])
+    email.send()
 
 def send_reset_password_email(request, user, token):
     current_site = get_current_site(request)
@@ -38,6 +36,5 @@ def send_reset_password_email(request, user, token):
             "token": token,
         },
     )
-    send_email.delay(
-        user.email, user.first_name, mail_subject, message
-    )
+    email = EmailMessage(mail_subject, message, to=[user.email])
+    email.send()

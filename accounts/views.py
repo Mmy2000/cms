@@ -92,6 +92,12 @@ def forgotPassword(request):
             email = form.cleaned_data["email"]
             try:
                 user = User.objects.get(email=email)
+                if user.profile.status != "approved":
+                    messages.error(
+                        request,
+                        "لا يمكن إعادة تعيين كلمة المرور لحساب غير مفعل.",
+                    )
+                    return redirect("forgot_password")
                 token = default_token_generator.make_token(user)
                 send_reset_password_email(request, user, token)
                 messages.success(
