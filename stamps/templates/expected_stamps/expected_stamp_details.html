@@ -15,7 +15,7 @@
     <!-- Header -->
     <div class="bg-green-700 text-white px-6 py-4">
         <h1 class="text-2xl font-bold tracking-wide">
-            بيان حساب دمغة متوقعه
+            بيان حساب دمغة متوقعه (ملحوظه: هذه القيم تقديرية بالمليون)
         </h1>
         <p class=" opacity-80">
             تاريخ المطالبة: {{ stamp.invoice_date }}
@@ -25,7 +25,7 @@
     <!-- Body -->
     <div class="p-6 space-y-8">
 
-        <!-- بيانات الشركة -->
+        <!-- بيانات القطاع -->
         <div>
             <h2 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">
                 بيانات القطاع
@@ -33,7 +33,7 @@
 
             <div class="grid grid-cols-2 gap-6">
                 <div>
-                    <span class="text-gray-500">اسم الشركة</span>
+                    <span class="text-gray-500">اسم القطاع</span>
                     <p class="font-semibold text-gray-900">{{ stamp.sector.name }}</p>
                 </div>
 
@@ -130,7 +130,7 @@
     <!-- Footer Total -->
     <div class="bg-yellow-50 border-t border-yellow-300 p-6 text-center">
         <p class="text-lg font-bold text-gray-800">
-            إجمالي الشركة الكلي
+            إجمالي القطاع الكلي
         </p>
         <p class="text-3xl font-extrabold text-red-600 mt-2">
             {{ total_amount_for_sector|millions }}
