@@ -97,6 +97,21 @@ class GroupedExpectedStampListView(ListView):
         )
         return context
 
+class ExpectedStampDetailView(ListView):
+    template_name = "expected_stamps/expected_stamp_details.html"
+    context_object_name = "expected_stamps"
+
+    def get_queryset(self):
+        stamp_id = self.kwargs.get("stamp_id")
+        qs = ExpectedStampService.get_queryset().filter(id=stamp_id)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.get_queryset()
+        sector_id = qs.first().sector_id if qs.exists() else None
+        context["total_amount_for_sector"] = ExpectedStampService.total_amount_for_sector(ExpectedStampService.get_queryset(),sector_id)
+        return context
 
 class ExpectedStampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     form_class = ExpectedStampForm

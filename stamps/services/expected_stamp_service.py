@@ -54,6 +54,10 @@ class ExpectedStampService:
     @staticmethod
     def total_sectors(queryset):
         return queryset.values("sector__name").distinct().count()
+    
+    @staticmethod
+    def total_amount_for_sector(queryset, sector_id):
+        return queryset.filter(sector_id=sector_id).aggregate(total=Sum("d1"))["total"] or 0
 
     @staticmethod
     def grouped_by_sector(queryset):

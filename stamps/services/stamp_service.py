@@ -58,6 +58,10 @@ class StampService:
     @staticmethod
     def total_companies(queryset):
         return queryset.values("company__name").distinct().count()
+    
+    @staticmethod
+    def total_amount_for_company(queryset, company_id):
+        return queryset.filter(company_id=company_id).aggregate(total=Sum("d1"))["total"] or 0
 
     @staticmethod
     def grouped_by_company(queryset):

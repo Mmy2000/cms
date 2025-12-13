@@ -126,7 +126,7 @@
         <tbody>
             {% for s in page_obj %}
             <tr class="hover:bg-gray-50 transition-all font-medium text-lg">
-                <td class="p-3 border border-gray-200 ">{{ s.sector.name }}</td>
+                <td class="p-3 border border-gray-200 "><a href="{% url 'expected_stamp_detail' s.id %}">{{ s.sector.name }}</a></td>
                 <td class="p-3 border border-gray-200 ">{{ s.invoice_date|date:"Y-m-d" }}</td>
                 <td class="p-3 border border-gray-200">{{ s.value_of_work|millions }}</td>
                 <td class="p-3 border border-gray-200">{{ s.invoice_copies }}</td>

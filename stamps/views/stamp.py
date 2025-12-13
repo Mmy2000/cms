@@ -98,6 +98,24 @@ class GroupedStampListView(ListView):
 
         return context
 
+class StampDetailView( ListView):
+    template_name = "stamps/stamp_detail.html"
+    context_object_name = "stamps"
+    paginate_by = 10
+
+    def get_queryset(self):
+        stamp_id = self.kwargs.get("stamp_id")
+        qs = StampService.get_queryset().filter(id=stamp_id)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.get_queryset()
+        company_id = qs.first().company.id if qs.exists() else None
+        context["total_amount_for_company"] = StampService.total_amount_for_company(
+            StampService.get_queryset(), company_id
+        )
+        return context
 
 class StampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     form_class = StampCalculationForm
