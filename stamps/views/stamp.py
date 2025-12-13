@@ -8,7 +8,7 @@ from ..services.stamp_service import StampService
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class StampListView(LoginRequiredMixin,ListView):
+class StampListView(ListView):
     template_name = "stamps/stamp_list.html"
     context_object_name = "stamps"
     paginate_by = 10
@@ -77,7 +77,7 @@ class StampListView(LoginRequiredMixin,ListView):
         return context
 
 
-class GroupedStampListView(LoginRequiredMixin,ListView):
+class GroupedStampListView(ListView):
     template_name = "stamps/stamp_list_grouped.html"
     context_object_name = "grouped_qs"
     paginate_by = 10

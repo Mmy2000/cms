@@ -9,7 +9,7 @@ from ..services.expected_stamp_service import ExpectedStampService
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class ExpectedStampListView(LoginRequiredMixin,ListView):
+class ExpectedStampListView(ListView):
     template_name = "expected_stamps/expected_stamp_list.html"
     context_object_name = "expected_stamps"
     paginate_by = 10
@@ -77,7 +77,7 @@ class ExpectedStampListView(LoginRequiredMixin,ListView):
         return context
 
 
-class GroupedExpectedStampListView(LoginRequiredMixin,ListView):
+class GroupedExpectedStampListView(ListView):
     template_name = "expected_stamps/expected_stamp_list_grouped.html"
     context_object_name = "grouped_qs"
     paginate_by = 10
