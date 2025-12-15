@@ -4,6 +4,21 @@
 {% block content %}
 <section dir="rtl" class="max-w-6xl mx-auto px-6 py-12">
 
+  <div class="my-3">
+    {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-3 rounded-lg text-sm
+                    {% if message.tags == 'success' %}
+                        bg-green-100 text-green-700
+                    {% else %}
+                        bg-red-100 text-red-700
+                    {% endif %}
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+      </div>
   <!-- Page Header -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
     <h1 class="text-3xl font-bold text-gray-900 ">📚 العناوين الرئيسية</h1>

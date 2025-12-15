@@ -117,7 +117,7 @@ class ForgotPasswordForm(forms.Form):
         if not User.objects.filter(email=email).exists():
             raise forms.ValidationError("لا يوجد مستخدم بهذا البريد الإلكتروني.")
         return email
-    
+
 class ResetPasswordForm(forms.Form):
     new_password = forms.CharField(
         label="كلمة المرور الجديدة",
@@ -153,3 +153,30 @@ class ResetPasswordForm(forms.Form):
             raise forms.ValidationError("كلمتا المرور غير متطابقتين.")
 
         return cleaned_data
+
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                "placeholder": "كلمة المرور الحالية",
+            }
+        ),
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                "placeholder": "كلمة المرور الجديدة",
+            }
+        ),
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                "placeholder": "تأكيد كلمة المرور الجديدة",
+            }
+        ),
+    )

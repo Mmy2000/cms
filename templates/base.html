@@ -99,6 +99,10 @@
           <a href="{% url 'logout' %}" class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-lg">
             تسجيل الخروج
           </a>
+          <a href="{% url 'change_password' %}" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-lg">
+             تغيير كلمه المرور
+          </a>
+
         {% else %}
           <a href="{% url 'login' %}" class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-lg">
             تسجيل الدخول
@@ -130,10 +134,13 @@
         </a>
       {% endfor %}
       {% if user.is_authenticated %}
-      <div class="w-1/2 mb-2">
+      <div class="flex justify-center items-center gap-4 mb-4">
         <a href="{% url 'logout' %}" class="block px-6 py-3 text-lg bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors mt-2">
           تسجيل الخروج
         </a>
+        <a href="{% url 'change_password' %}" class="block px-6 py-3 text-lg bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors mt-2">
+             تغيير كلمه المرور
+          </a>
       </div>
       {% else %}
       <div class="flex justify-center items-center gap-4 mb-4">
