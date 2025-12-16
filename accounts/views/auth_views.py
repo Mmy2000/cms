@@ -14,6 +14,8 @@ from django.contrib.auth.decorators import login_required
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("main_topics")
     form = RegisterForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
@@ -46,6 +48,9 @@ def activate_account(request, uidb64, token):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("main_topics")
+    
     form = LoginForm(request.POST or None)
 
     if form.is_valid():
