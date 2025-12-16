@@ -58,7 +58,7 @@ class StampService:
     @staticmethod
     def total_companies(queryset):
         return queryset.values("company__name").distinct().count()
-    
+
     @staticmethod
     def total_amount_for_company(queryset, company_id):
         return queryset.filter(company_id=company_id).aggregate(total=Sum("d1"))["total"] or 0
@@ -347,7 +347,7 @@ class StampService:
 
         # ================= Footer ================= #
         last_points = [
-            "١- في الاعتراض التقدم بمستنداتكم خلال شهر لإدارة الدمغة بنقابة المهندسين.",
+            "١- يمكنكم الطعن و التقدم بمستنداتكم خلال خمسه عشر  يوما من تاريخ الاستلام لإدارة الدمغة بالنقابة العامة للمهندسين.. مع اثبات تسليم الطعن.",
             "٢- عدم الاعتراض أو الطعن خلال ١٥ يوم يعتبر مصادقة علي المديونية.",
             "٣- تطبق المادة ٩٩ عند التقاعس مدة ثلاث شهور عن الدفع.",
         ]
