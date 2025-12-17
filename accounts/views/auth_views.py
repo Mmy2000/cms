@@ -4,6 +4,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.contrib.auth import login
 from django.core.exceptions import ValidationError
+from accounts.decorators import anonymous_required
 from accounts.forms import RegisterForm, LoginForm
 from accounts.services.user_service import UserService
 from accounts.services.auth_service import AuthService
@@ -13,9 +14,8 @@ from accounts.tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
 
 
+@anonymous_required(path_url="main_topics")
 def register_view(request):
-    if request.user.is_authenticated:
-        return redirect("main_topics")
     form = RegisterForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
@@ -47,10 +47,8 @@ def activate_account(request, uidb64, token):
     return redirect("register")
 
 
+@anonymous_required(path_url="main_topics")
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("main_topics")
-    
     form = LoginForm(request.POST or None)
 
     if form.is_valid():
