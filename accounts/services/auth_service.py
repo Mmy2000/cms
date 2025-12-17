@@ -1,8 +1,5 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.utils.http import url_has_allowed_host_and_scheme
 
 class AuthService:
     @staticmethod
