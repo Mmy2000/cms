@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "site_settings.apps.SettingsConfig",
     "stamps.apps.StampsConfig",
     "accounts.apps.AccountsConfig",
+    "pwa",
 ]
 
 UNFOLD = {
@@ -56,6 +57,49 @@ UNFOLD = {
     ],
     "THEME": "light",
 }
+
+
+# ================= PWA CONFIG =================
+
+PWA_APP_NAME = "My Company"
+PWA_APP_SHORT_NAME = "Company"
+PWA_APP_DESCRIPTION = "Official Company Web App"
+PWA_APP_THEME_COLOR = "#0f172a"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_START_URL = "/"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "portrait"
+
+PWA_APP_ICONS = [
+    {
+        "src": "/static/icons/logo2024.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
+    {
+        "src": "/static/icons/logo2025.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    },
+]
+
+
+PWA_APP_SCREENSHOTS = [
+    {
+        "src": "/static/icons/logo2023.png", "sizes": "320x320",
+        "type": "image/png",
+    },
+    {
+        "src": "/static/icons/logo2023.png", "sizes": "320x320",
+        "type": "image/png",
+        "form_factor": "wide",
+    },
+]
+PWA_APP_SPLASH_SCREEN = [{"src": "/static/icons/logo2022.png", "sizes": "448x286"}]
+
+PWA_APP_DIR = "rtl"
+PWA_APP_LANG = "ar"
 
 
 MIDDLEWARE = [
