@@ -61,8 +61,8 @@ UNFOLD = {
 
 # ================= PWA CONFIG =================
 
-PWA_APP_NAME = "My Company"
-PWA_APP_SHORT_NAME = "Company"
+PWA_APP_NAME = "Hinet Stamps"
+PWA_APP_SHORT_NAME = "Stamps"
 PWA_APP_DESCRIPTION = "Official Company Web App"
 PWA_APP_THEME_COLOR = "#0f172a"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
