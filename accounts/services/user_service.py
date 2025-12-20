@@ -27,5 +27,6 @@ class UserService:
 
     @staticmethod
     def validate_token(user, token):
+        print(default_token_generator.check_token(user, token))
         return default_token_generator.check_token(user, token)
 

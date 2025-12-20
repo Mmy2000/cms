@@ -40,7 +40,7 @@ def forgot_password(request):
 def resetpassword_validate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = UserSelector.get_by_id(uid)
+        user = UserSelector.get_user_by_uid(uid)
     except Exception:
         user = None
 
