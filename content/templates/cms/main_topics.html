@@ -12,9 +12,9 @@
     <h1 class="text-3xl font-bold text-gray-900 ">📚 العناوين الرئيسية</h1>
 
     <!-- Sorting Form -->
-    <form method="get" class="flex items-center gap-2">
-      <label for="sort" class="text-gray-700  text-sm font-medium">ترتيب حسب:</label>
+    <form method="get" class="flex items-center gap-2 ">
       <select name="sort" id="sort" class="select select-success">
+        <option disabled selected value="">ترتيب حسب</option>
         <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
         <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
         <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>

@@ -21,7 +21,7 @@ class RegisterForm(forms.ModelForm):
             field.widget.attrs.update(
                 {
                     "placeholder": f"اكتب {field.label}",
-                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                    "class": "input-style"
                 }
             )
 
@@ -74,7 +74,7 @@ class LoginForm(forms.Form):
         widget=forms.EmailInput(
             attrs={
                 "placeholder": "اكتب بريدك الإلكتروني",
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                "class": "input-style"
             },
         ),
     )
@@ -83,7 +83,7 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "اكتب كلمة المرور الخاصة بك",
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                "class": "input-style"
             }
         ),
     )
@@ -108,7 +108,7 @@ class ForgotPasswordForm(forms.Form):
         widget=forms.EmailInput(
             attrs={
                 "placeholder": "اكتب بريدك الإلكتروني",
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                "class": "input-style mt-2"
             }
         ),
     )
@@ -125,7 +125,7 @@ class ResetPasswordForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "اكتب كلمة المرور الجديدة",
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                "class": "input-style mt-2"
             }
         ),
     )
@@ -134,7 +134,7 @@ class ResetPasswordForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "اكتب تأكيد كلمة المرور",
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                "class": "input-style mt-2"
             }
         ),
     )
@@ -160,7 +160,7 @@ class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                "class": "input-style",
                 "placeholder": "كلمة المرور الحالية",
             }
         ),
@@ -168,7 +168,7 @@ class ChangePasswordForm(forms.Form):
     new_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                "class": "input-style",
                 "placeholder": "كلمة المرور الجديدة",
             }
         ),
@@ -176,7 +176,7 @@ class ChangePasswordForm(forms.Form):
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                "class": "input-style",
                 "placeholder": "تأكيد كلمة المرور الجديدة",
             }
         ),
@@ -190,13 +190,13 @@ class UserEditForm(forms.ModelForm):
         widgets = {
             "first_name": forms.TextInput(
                 attrs={
-                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                    "class": "input-style",
                     "placeholder": "أدخل الاسم الأول",
                 }
             ),
             "last_name": forms.TextInput(
                 attrs={
-                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                    "class": "input-style",
                     "placeholder": "أدخل الاسم الأخير",
                 }
             ),
@@ -214,7 +214,7 @@ class ProfileEditForm(forms.ModelForm):
         widgets = {
             "syndicate_number": forms.TextInput(
                 attrs={
-                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200",
+                    "class": "input-style",
                     "placeholder": "أدخل رقم النقابة",
                 }
             ),

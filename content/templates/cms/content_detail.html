@@ -132,8 +132,8 @@
         <h2 class="text-2xl font-semibold text-gray-900">📂 العناوين الفرعية</h2>
 
         <form method="get" class="flex items-center gap-2">
-          <label for="sort" class="text-gray-700 text-sm font-medium">ترتيب حسب:</label>
           <select name="sort" id="sort" class="select select-success">
+            <option disabled selected value="">ترتيب حسب</option>
             <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
             <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
             <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>

@@ -10,7 +10,7 @@ class StampCalculationForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "اكتب اسم الشركة إذا لم تكن موجودة",
-                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+                "class": "input-style mt-2",
             }
         ),
     )
@@ -29,49 +29,42 @@ class StampCalculationForm(forms.ModelForm):
 
         widgets = {
             "company": forms.Select(
-                attrs={
-                    "class": "w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-                }
+                attrs={"class": "select select-success select-lg mt-2"}
             ),
             "value_of_work": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "قيمة العمل",
                 }
             ),
             "invoice_copies": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "عدد النسخ",
                 }
             ),
             "invoice_date": forms.DateInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "سنة الفاتورة",
                     "type": "date",  # Enables date picker
                 }
             ),
             "stamp_rate": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "نسبة الدمغة",
                 }
             ),
             "exchange_rate": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "سعر الصرف",
                 }
             ),
             "note": forms.Textarea(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 mt-2",
                     "placeholder": "يجب ادخال المصادر هنا",
                     "rows": 4,
                 }
@@ -123,7 +116,7 @@ class ExpectedStampForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "اكتب اسم القطاع إذا لم يكن موجود",
-                "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+                "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 mt-2",
             }
         ),
     )
@@ -140,53 +133,46 @@ class ExpectedStampForm(forms.ModelForm):
         ]
         widgets = {
             "sector": forms.Select(
-                attrs={
-                    "class": "w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
-                }
+                attrs={"class": "select select-success select-lg mt-2"}
             ),
             "value_of_work": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "قيمة العمل",
                 }
             ),
             "invoice_copies": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "عدد النسخ",
                 }
             ),
             "invoice_date": forms.DateInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "سنة الفاتورة",
                     "type": "date",  # Enables date picker
                 }
             ),
             "stamp_rate": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "نسبة الدمغة",
                 }
             ),
             "exchange_rate": forms.NumberInput(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg "
-                    "focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "input-style mt-2",
                     "placeholder": "سعر الصرف",
                 }
             ),
             "note": forms.Textarea(
                 attrs={
-                    "class": "w-full px-4 mt-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition",
+                    "class": "w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 mt-2",
                     "placeholder": "يجب ادخال المصادر هنا",
                     "rows": 4,
                 }
-            ),  
+            ),
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -204,7 +190,7 @@ class ExpectedStampForm(forms.ModelForm):
             raise forms.ValidationError(
                 "لا يمكن اختيار قطاع وإدخال قطاع جديد في نفس الوقت. اختر واحدة فقط."
             )
-        
+
         if not sector and not new_name:
             raise forms.ValidationError(
                 "يجب اختيار قطاع أو إدخال قطاع جديد."
@@ -214,7 +200,7 @@ class ExpectedStampForm(forms.ModelForm):
             raise forms.ValidationError(
                 "يجب ادخال المصادر في حقل الملاحظات."
             )
-        
+
         if not invoice_date:
             raise forms.ValidationError(
                 "يجب ادخال سنة الفاتورة."
