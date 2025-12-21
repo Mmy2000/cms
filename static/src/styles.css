@@ -4,8 +4,13 @@
   .input-style {
     @apply w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 ;
   }
+.button_style {
+    @apply px-6 py-3 text-sm font-semibold rounded-xl bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-700 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 cursor-pointer;
+}
+.button-secondary {
+    @apply  px-6 py-3 text-sm font-semibold rounded-xl border-2 border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer;
 
-  
+}
 }
 
 .bg-grid-white\/10 {
@@ -53,3 +58,4 @@
     .animate-in {
         animation: fade-in 0.3s ease-out;
     }
+
