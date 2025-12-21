@@ -7,10 +7,10 @@
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
-<div class="mt-10">
+<div class="mt-10 ">
 {% include "includes/alerts.html" %}
 </div>
-    <div class="mt-10 flex flex-col gap-2 md:flex-row justify-between ">
+    <div class="mt-10 flex flex-col gap-2 md:flex-row justify-between items-center ">
             <a href="{% url 'add_stamp' %}"
         class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
             ➕ إضافة حساب دمغة
@@ -18,7 +18,7 @@
         <a href="{% url 'grouped_stamps' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">مجموعة حسب الشركة</a>
     </div>
     <div>
-        <form method="GET" class="mt-6 gap-4 flex items-center justify-end">
+        <form method="GET" class="mt-6 gap-4 flex items-center justify-center sm:justify-start">
 
             <!-- Preserve filters -->
             <input type="hidden" name="company" value="{{ company_filter }}">
