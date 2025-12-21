@@ -7,24 +7,10 @@
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
-{% if messages %}
-    <div class="mt-8">
-        {% for message in messages %}
-            <div class="p-4 rounded-lg border 
-                        {% if message.tags == 'success' %}
-                            bg-green-100 text-green-800 border-green-300
-                        {% elif message.tags == 'error' %}
-                            bg-red-100 text-red-800 border-red-300
-                        {% else %}
-                            bg-gray-100 text-gray-800 border-gray-300
-                        {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-    <div class="mt-10 flex flex-col gap-2 lg:flex-row justify-between ">
+<div class="mt-10">
+{% include "includes/alerts.html" %}
+</div>
+    <div class="mt-10 flex flex-col gap-2 md:flex-row justify-between ">
             <a href="{% url 'add_stamp' %}"
         class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
             ➕ إضافة حساب دمغة
@@ -40,8 +26,7 @@
             <input type="hidden" name="date_to" value="{{ date_to }}">
             <input type="hidden" name="sort" value="{{ request.GET.sort }}">
 
-            <select name="download"
-                class="border p-2 font-bold border-gray-300 rounded-xl">
+            <select class="select select-success" name="download">
                 <option value="">تحميل كـ...</option>
                 <option value="pdf">📄 PDF</option>
                 <option value="excel">📊 Excel</option>
@@ -56,24 +41,28 @@
     </div>
     <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
         <!-- العنوان -->
-        <div class=" flex flex-col lg:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
-            <h2 class="text-xl font-bold text-green-800 flex items-center lg:gap-2 lg:w-1/3">
+        <div class=" flex flex-col md:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
+            <div class="flex flex-col md:flex-row items-center md:gap-2 md:w-1/4">
+            <h2 class="text-xl font-bold text-green-800 ">
                 💰 إجمالي الدمغة بالمليون:
-                <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span>
+                <div class="text-green-900 text-2xl text-center">{{ total_all_companies|millions }}</div>
             </h2>
+            </div>
 
-            <form method="GET" class="flex gap-4 items-center justify-center flex-wrap mt-2 lg:mt-0 lg:w-2/3">
-                <select name="company" class=" border p-2 font-bold border-gray-300 rounded-xl bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">كل الشركات</option>
+            <form method="GET" class="flex gap-4 items-center md:justify-center  flex-wrap mt-2 md:mt-0 md:w-3/4">
+                <div class="flex flex-wrap w-full md:w-1/4 justify-center">
+                <select name="company" class="select select-success">
+                    <option value="" selected>كل الشركات</option>
                     {% for c in companies %}
                         <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
-                            {{ c.name|truncatewords:2 }}
+                            {{ c.name }}
                         </option>
                     {% endfor %}
                 </select>
+                </div>
 
                 <!-- From date -->
-                <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-center">
+                <div class="flex flex-wrap gap-4 w-full md:w-auto justify-center">
                     <div class="flex flex-col ">
                         <label class="text-sm font-semibold text-gray-600 mb-2">من تاريخ</label>
                         <input type="date"
@@ -91,7 +80,7 @@
                             class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
-                <div class="flex gap-4 flex-wrap">
+                <div class="flex flex-wrap gap-4 w-full md:w-auto justify-center">
                     <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
                         بحث 🔍
                     </button>
@@ -110,7 +99,7 @@
                     <tr class="text-sm lg:text-lg font-bold">
                         <th class="p-3 border border-gray-200">الشركة</th>
                         <th class="p-3 border border-gray-200">
-                            تاريخ المطالبه  
+                            تاريخ المعامله  
                             <a href="?{% querystring request sort='invoice_date' %}">⬆️</a>
                            <a href="?{% querystring request sort='-invoice_date' %}">⬇️</a>
                         </th>
@@ -159,11 +148,17 @@
                 {% endif %}
             </div>
             {% endif %}
+            
         </div>
 
     </div>
 
 
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold text-green-800 ">
+            💰 المعاش المتوقع بالمليون :<span class="text-green-900 text-2xl">{{ total_pension|millions }}</span>
+        </h2>
+    </div>
 
 
 

@@ -66,14 +66,17 @@ class StampListView(ListView):
         context = super().get_context_data(**kwargs)
         qs = self.object_list
 
-        context.update({
-            "companies": Company.objects.all(),
-            "company_filter": self.request.GET.get("company"),
-            "date_from": self.request.GET.get("date_from", ""),
-            "date_to": self.request.GET.get("date_to", ""),
-            "sort_by": self.request.GET.get("sort", "-created_at"),
-            "total_all_companies": StampService.total_amount(qs),
-        })
+        context.update(
+            {
+                "companies": Company.objects.all(),
+                "company_filter": self.request.GET.get("company"),
+                "date_from": self.request.GET.get("date_from", ""),
+                "date_to": self.request.GET.get("date_to", ""),
+                "sort_by": self.request.GET.get("sort", "-created_at"),
+                "total_all_companies": StampService.total_amount(qs),
+                "total_pension": StampService.total_pension(qs),
+            }
+        )
         return context
 
 

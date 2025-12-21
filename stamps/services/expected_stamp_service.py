@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db.models import Sum
 from django.utils.dateparse import parse_date
 from stamps.admin import format_millions
@@ -50,6 +51,28 @@ class ExpectedStampService:
     @staticmethod
     def total_amount(queryset):
         return queryset.aggregate(total=Sum("d1"))["total"] or 0
+
+    @staticmethod
+    def total_for_previous_year(queryset, current_year=None):
+        if current_year is None:
+            current_year = date.today().year
+
+        stamps = (
+            queryset
+            .filter(invoice_date__year=current_year - 1)
+            .order_by("invoice_date")
+        )
+
+        total = stamps.aggregate(total=Sum("d1"))["total"] or Decimal("0")
+        total = total * Decimal("0.7")
+        return total
+
+    @staticmethod
+    def total_pension(queryset,current_year=date.today().year):
+        total = ExpectedStampService.total_amount(queryset)
+        previous_years = ExpectedStampService.total_for_previous_year(queryset,current_year)
+        pension = (total * Decimal("0.2")) + previous_years
+        return pension
 
     @staticmethod
     def total_sectors(queryset):

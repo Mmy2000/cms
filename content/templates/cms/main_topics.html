@@ -5,19 +5,7 @@
 <section dir="rtl" class="max-w-6xl mx-auto px-6 py-12">
 
   <div class="my-3">
-    {% if messages %}
-            {% for message in messages %}
-                <div class="mb-4 p-3 rounded-lg text-sm
-                    {% if message.tags == 'success' %}
-                        bg-green-100 text-green-700
-                    {% else %}
-                        bg-red-100 text-red-700
-                    {% endif %}
-                ">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+    {% include "includes/alerts.html" %}
       </div>
   <!-- Page Header -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
@@ -26,7 +14,7 @@
     <!-- Sorting Form -->
     <form method="get" class="flex items-center gap-2">
       <label for="sort" class="text-gray-700  text-sm font-medium">ترتيب حسب:</label>
-      <select name="sort" id="sort" class="border border-gray-300  rounded-xl py-2 px-3 bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <select name="sort" id="sort" class="select select-success">
         <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>العنوان</option>
         <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>الأحدث</option>
         <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>الأقدم</option>

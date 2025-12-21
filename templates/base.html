@@ -39,10 +39,13 @@
 
   <!-- Tailwind CSS -->
   <link rel="stylesheet" href="{% static 'dist/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/custom_styles.css' %}">
 
   <!-- Optional: Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+
 
   <style>
     body {
@@ -96,25 +99,96 @@
         {% endfor %}
       </div>
 
-      <div class="hidden md:flex items-center gap-4">
-        <!-- User Auth Links -->
-        {% if user.is_authenticated %}
-          <a href="{% url 'logout' %}" class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-lg">
-            تسجيل الخروج
-          </a>
-          <a href="{% url 'change_password' %}" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-lg">
-             تغيير كلمه المرور
-          </a>
+      <div class="hidden md:flex items-center relative">
 
-        {% else %}
-          <a href="{% url 'login' %}" class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-lg">
-            تسجيل الدخول
-          </a>
-          <a href="{% url 'register' %}" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-lg">
-            إنشاء حساب
-          </a>
-        {% endif %}
+      {% if user.is_authenticated %}
+
+        <!-- User Dropdown -->
+        <div class="relative">
+        <!-- Icon Button -->
+        <button
+          id="userMenuButton"
+          type="button"
+          class="flex items-center justify-center w-10 h-10 rounded-full
+                bg-green-600 text-white hover:bg-green-700 active:bg-green-800
+                transition-colors duration-200 focus:outline-none focus:ring-2 
+                focus:ring-green-500 focus:ring-offset-2"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <!-- User Icon (SVG) -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown -->
+        <div
+          id="userMenuDropdown"
+          class="hidden absolute left-0 mt-3 w-48 bg-white border border-gray-200
+                rounded-lg shadow-lg origin-top-left z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="userMenuButton"
+        >
+          <div class="px-4 py-3 border-b border-gray-200">
+            <p class="text-sm font-semibold text-gray-800">
+              {{ user.get_full_name|default:user.username }}
+            </p>
+            <p class="text-xs text-gray-500 truncate">
+              {{ user.email }}
+            </p>
+          </div>
+
+          <div class="py-1">
+            <a href="{% url 'profile' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+              role="menuitem">
+              الملف الشخصي
+            </a>
+
+            <a href="{% url 'change_password' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+              role="menuitem">
+              تغيير كلمة المرور
+            </a>
+          </div>
+
+          <div class="border-t border-gray-200"></div>
+
+          <div class="py-1">
+            <a href="{% url 'logout' %}"
+              class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
+              role="menuitem">
+              تسجيل الخروج
+            </a>
+          </div>
+        </div>
       </div>
+
+      {% else %}
+
+      <div class="flex items-center gap-3">
+        <!-- Login / Register -->
+        <a href="{% url 'login' %}"
+          class="px-4 py-2 text-sm font-medium rounded-lg
+                  border border-gray-300 text-gray-700 hover:bg-gray-100 transition">
+          تسجيل الدخول
+        </a>
+
+        <a href="{% url 'register' %}"
+          class="ml-3 px-4 py-2 text-sm font-medium rounded-lg
+                  bg-green-600 text-white hover:bg-green-700 transition">
+          إنشاء حساب
+        </a>
+      </div>
+
+      {% endif %}
+
+      </div>
+
 
       <!-- Mobile Menu Button -->
       <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">
@@ -122,40 +196,108 @@
       </button>
     </div>
 
-    <!-- Mobile Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white  border-gray-200 ">
-      {% for page in pages%}
-        <a href="{{ page.page_url }}"
-          class="block px-6 py-3 text-lg transition rounded-lg
-                  {% if request.path == page.page_url %}
-                      bg-green-100 text-green-700 font-semibold border-r-4 border-green-600
-                  {% else %}
-                      text-gray-700 hover:bg-gray-100
-                  {% endif %}
-          ">
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+        class="hidden md:hidden bg-white border-t border-gray-200 shadow-sm">
+
+      <!-- Pages -->
+      <div class="py-3">
+        {% for page in pages %}
+          <a href="{{ page.page_url }}"
+            class="block px-6 py-3 text-base transition
+                    {% if request.path == page.page_url %}
+                        bg-green-50 text-green-700 font-semibold border-r-4 border-green-600
+                    {% else %}
+                        text-gray-700 hover:bg-gray-100
+                    {% endif %}">
             {{ page.page_name }}
-        </a>
-      {% endfor %}
-      {% if user.is_authenticated %}
-      <div class="flex justify-center items-center gap-4 mb-4">
-        <a href="{% url 'logout' %}" class="block px-6 py-3 text-lg bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors mt-2">
-          تسجيل الخروج
-        </a>
-        <a href="{% url 'change_password' %}" class="block px-6 py-3 text-lg bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors mt-2">
-             تغيير كلمه المرور
           </a>
+        {% endfor %}
       </div>
+
+      <!-- Divider -->
+      <div class="border-t my-2"></div>
+
+      {% if user.is_authenticated %}
+
+      <!-- User Section -->
+      <div class="px-6 py-4">
+
+        <!-- User Button -->
+        <button onclick="toggleMobileUserMenu()"
+                class="w-full flex items-center justify-between px-4 py-3
+                      bg-gray-50 rounded-lg border hover:bg-gray-100 transition border-green-600">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center">
+              <!-- Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+
+            <div class="text-left">
+              <p class="text-sm font-semibold text-gray-800">
+                {{ user.get_full_name|default:user.username }}
+              </p>
+              <p class="text-xs text-gray-500 truncate">
+                {{ user.email }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <svg class="w-5 h-5 text-gray-500 transition-transform"
+              id="mobile-user-arrow"
+              xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- User Dropdown -->
+        <div id="mobile-user-menu" class="hidden mt-3 space-y-1">
+
+          <a href="{% url 'profile' %}"
+            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:bg-gray-100">
+            الملف الشخصي
+          </a>
+
+          <a href="{% url 'change_password' %}"
+            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:bg-gray-100">
+            تغيير كلمة المرور
+          </a>
+
+          <a href="{% url 'logout' %}"
+            class="block px-4 py-2 text-sm rounded-lg text-red-600 hover:bg-red-50">
+            تسجيل الخروج
+          </a>
+
+        </div>
+      </div>
+
       {% else %}
-      <div class="flex justify-center items-center gap-4 mb-4">
-        <a href="{% url 'login' %}" class="block px-6 py-3 text-lg bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors mt-2">
+
+      <!-- Auth Buttons -->
+      <div class="px-6 py-4 flex flex-col gap-3">
+        <a href="{% url 'login' %}"
+          class="w-full text-center px-4 py-3 text-sm rounded-lg
+                  bg-gray-600 text-white hover:bg-gray-700 transition">
           تسجيل الدخول
         </a>
-        <a href="{% url 'register' %}" class="block px-6 py-3 text-lg bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors mt-2">
+
+        <a href="{% url 'register' %}"
+          class="w-full text-center px-4 py-3 text-sm rounded-lg
+                  bg-green-600 text-white hover:bg-green-700 transition">
           إنشاء حساب
         </a>
       </div>
+
       {% endif %}
     </div>
+
   </nav>
 
   <!-- 🧩 Main Content -->
@@ -216,6 +358,7 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script src="{% static 'js/main.js' %}"></script>
 
 </body>

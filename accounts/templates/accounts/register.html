@@ -12,19 +12,7 @@
         </h2>
 
         <!-- Messages -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="mb-4 p-3 rounded-lg text-sm
-                    {% if message.tags == 'success' %}
-                        bg-green-100 text-green-700
-                    {% else %}
-                        bg-red-100 text-red-700
-                    {% endif %}
-                ">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        {% include "includes/alerts.html" %}
 
         <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             {% csrf_token %}
@@ -32,7 +20,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- First name -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         الاسم الأول
                     </label>
                     {{ form.first_name }}
@@ -43,7 +31,7 @@
 
                 <!-- Last name -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         الاسم الأخير
                     </label>
                     {{ form.last_name }}
@@ -55,7 +43,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Email -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         البريد الإلكتروني
                     </label>
                     {{ form.email }}
@@ -66,7 +54,7 @@
 
                 <!-- Password -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         كلمة المرور
                     </label>
                     {{ form.password }}
@@ -78,7 +66,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Syndicate Number -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         رقم العضوية بالنقابة
                     </label>
                     {{ form.syndicate_number }}
@@ -89,7 +77,7 @@
 
                 <!-- Syndicate Card -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">
                         صورة كارنيه النقابة
                     </label>
                     {{ form.syndicate_card }}
