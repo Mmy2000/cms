@@ -39,7 +39,6 @@
 
   <!-- Tailwind CSS -->
   <link rel="stylesheet" href="{% static 'dist/styles.css' %}">
-  <link rel="stylesheet" href="{% static 'css/custom_styles.css' %}">
 
   <!-- Optional: Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -283,14 +282,14 @@
       <!-- Auth Buttons -->
       <div class="px-6 py-4 flex flex-col gap-3">
         <a href="{% url 'login' %}"
-          class="w-full text-center px-4 py-3 text-sm rounded-lg
-                  bg-gray-600 text-white hover:bg-gray-700 transition">
+          class="px-4 py-2 text-sm font-medium rounded-lg text-center
+                  border border-gray-300 text-gray-700 hover:bg-gray-100 transition">
           تسجيل الدخول
         </a>
 
         <a href="{% url 'register' %}"
-          class="w-full text-center px-4 py-3 text-sm rounded-lg
-                  bg-green-600 text-white hover:bg-green-700 transition">
+          class=" px-4 py-2 text-sm font-medium rounded-lg
+                  bg-green-600 text-white hover:bg-green-700 transition text-center">
           إنشاء حساب
         </a>
       </div>

@@ -12,12 +12,17 @@
 {% include "includes/alerts.html" %}
 </div>
 
-    <div class="mt-10 flex flex-col gap-2 md:flex-row justify-between items-center">
+    <div class="mt-10 flex flex-col gap-2 lg:flex-row justify-between items-center">
             <a href="{% url 'add_expected_stamp' %}"
-        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+        class="button_style">
             ➕  إضافة حساب دمغة متوقعه
         </a>
-        <a href="{% url 'grouped_expected_stamps' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">مجموعة حسب الشركة</a>
+        <div class="">
+            <h2 class="text-2xl font-bold text-green-800 ">
+                💰 المعاش المتوقع بالمليون :<span class="text-green-900 text-2xl">{{ total_pension|millions }}</span>
+            </h2>
+        </div>
+        <a href="{% url 'grouped_expected_stamps' %}" class="button_style">مجموعة حسب الشركة</a>
     </div>
      <div>
         <form method="GET" class="mt-6 gap-4 flex items-center justify-center sm:justify-start">
@@ -34,7 +39,7 @@
             </select>
 
             <button name="download_btn" value="1"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                class="button_style">
                 تحميل
             </button>
         </form>
@@ -81,13 +86,13 @@
                 </div>
             </div>
             <div class="flex gap-4 flex-wrap w-full md:w-auto justify-center">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                <button class="button_style">
                     بحث 🔍
                 </button>
 
                 <!-- زر Reset -->
                 <a href="{% url 'expected_stamp_list' %}"
-                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">
+                class="button-secondary">
                     إعادة التعيين 🔄
                 </a>
             </div>
@@ -154,13 +159,5 @@
 </div>
 
 </div>
-
-<div class="mt-8">
-        <h2 class="text-2xl font-bold text-green-800 ">
-            💰 المعاش المتوقع بالمليون :<span class="text-green-900 text-2xl">{{ total_pension|millions }}</span>
-        </h2>
-    </div>
-
-
 
 {% endblock %}
