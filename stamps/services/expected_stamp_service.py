@@ -23,80 +23,126 @@ import io
 from datetime import date
 import textwrap
 
+from decimal import Decimal
+from django.db.models import Sum, Q
+from django.utils.dateparse import parse_date
+from django.utils import timezone
+from typing import Optional
+
+
 class ExpectedStampService:
+    """
+    Business logic for ExpectedStamp calculations with improved error handling,
+    performance optimizations, and better separation of concerns.
+    """
+
+    PREVIOUS_YEAR_MULTIPLIER = Decimal("0.7")
+    PENSION_MULTIPLIER = Decimal("0.2")
 
     @staticmethod
     def get_queryset():
         return ExpectedStamp.objects.select_related("sector")
 
+    @classmethod
+    def get_filtered_queryset(
+        cls,
+        sector_id: Optional[int] = None,
+        date_from: Optional[str] = None,
+        date_to: Optional[str] = None,
+        sort: str = "-created_at",
+    ):
+        queryset = cls.get_queryset()
+        queryset = cls.filter(queryset, sector_id, date_from, date_to)
+        return cls.sort(queryset, sort)
+
     @staticmethod
     def filter(queryset, sector_id=None, date_from=None, date_to=None):
-        if sector_id not in [None, "", "None"]:
-            queryset = queryset.filter(sector_id=sector_id)
+        filters = Q()
+
+        if sector_id and str(sector_id).lower() not in ["none", ""]:
+            filters &= Q(sector_id=sector_id)
 
         if date_from:
-            queryset = queryset.filter(invoice_date__gte=parse_date(date_from))
+            parsed_date = parse_date(date_from)
+            if parsed_date:
+                filters &= Q(invoice_date__gte=parsed_date)
 
         if date_to:
-            queryset = queryset.filter(invoice_date__lte=parse_date(date_to))
+            parsed_date = parse_date(date_to)
+            if parsed_date:
+                filters &= Q(invoice_date__lte=parsed_date)
 
-        return queryset
-
-    @staticmethod
-    def sort(queryset, sort):
-        if sort in ["invoice_date", "-invoice_date"]:
-            return queryset.order_by(sort)
-        return queryset.order_by("-created_at")
+        return queryset.filter(filters) if filters else queryset
 
     @staticmethod
-    def total_amount(queryset):
-        return queryset.aggregate(total=Sum("d1"))["total"] or 0
+    def sort(queryset, sort: str = "-created_at"):
+        allowed_sorts = ["invoice_date", "-invoice_date", "created_at", "-created_at"]
+        return queryset.order_by(sort if sort in allowed_sorts else "-created_at")
 
     @staticmethod
-    def total_for_previous_year(queryset, current_year=None):
-        if current_year is None:
-            current_year = date.today().year
+    def total_amount(queryset) -> Decimal:
+        result = queryset.aggregate(total=Sum("d1"))["total"]
+        return Decimal(str(result)) if result else Decimal("0")
 
-        stamps = (
-            queryset
-            .filter(invoice_date__year=current_year - 1)
-            .order_by("invoice_date")
-        )
+    @classmethod
+    def total_for_previous_year(
+        cls, queryset, current_year: Optional[int] = None
+    ) -> Decimal:
+        year = current_year if current_year is not None else timezone.now().year
+        previous_year = year - 1
 
-        total = stamps.aggregate(total=Sum("d1"))["total"] or Decimal("0")
-        total = total * Decimal("0.7")
-        return total
+        stamps = queryset.filter(invoice_date__year=previous_year)
+        total = stamps.aggregate(total=Sum("d1"))["total"]
 
-    @staticmethod
-    def total_pension(queryset,current_year=date.today().year):
-        total = ExpectedStampService.total_amount(queryset)
-        previous_years = ExpectedStampService.total_for_previous_year(queryset,current_year)
-        pension = (total * Decimal("0.2")) + previous_years
+        if not total:
+            return Decimal("0")
+
+        return Decimal(str(total)) * cls.PREVIOUS_YEAR_MULTIPLIER
+
+    @classmethod
+    def calculate_pension(cls, queryset, current_year: Optional[int] = None) -> Decimal:
+        year = current_year if current_year is not None else timezone.now().year
+
+        # Filter queryset to current year only for main calculation
+        current_year_queryset = queryset.filter(invoice_date__year=year)
+
+        current_total = cls.total_amount(current_year_queryset)
+        previous_total = cls.total_for_previous_year(queryset, year)
+
+        pension = (current_total * cls.PENSION_MULTIPLIER) + previous_total
         return pension
 
     @staticmethod
-    def total_sectors(queryset):
-        return queryset.values("sector__name").distinct().count()
+    def total_sectors(queryset) -> int:
+        return queryset.values("sector_id").distinct().count()
 
     @staticmethod
-    def total_amount_for_sector(queryset, sector_id):
-        return queryset.filter(sector_id=sector_id).aggregate(total=Sum("d1"))["total"] or 0
+    def total_amount_for_sector(queryset, sector_id: int) -> Decimal:
+        result = queryset.filter(sector_id=sector_id).aggregate(total=Sum("d1"))[
+            "total"
+        ]
+        return Decimal(str(result)) if result else Decimal("0")
 
     @staticmethod
     def grouped_by_sector(queryset):
         return (
-            queryset.values("sector__name", "stamp_rate")
+            queryset.values("sector__name", "sector_id", "stamp_rate")
             .annotate(total=Sum("d1"))
             .order_by("-total")
         )
 
     @staticmethod
     def create_from_form(form):
-        new_sector_name = form.cleaned_data.get("new_sector_name")
+        new_sector_name = form.cleaned_data.get("new_sector_name", "").strip()
         sector = form.cleaned_data.get("sector")
 
         if new_sector_name:
-            sector, _ = Sector.objects.get_or_create(name=new_sector_name)
+            sector, created = Sector.objects.get_or_create(
+                name__iexact=new_sector_name, defaults={"name": new_sector_name}
+            )
+
+        if not sector:
+            raise ValueError("Either sector or new_sector_name must be provided")
 
         expected_stamp = form.save(commit=False)
         expected_stamp.sector = sector

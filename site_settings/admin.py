@@ -11,8 +11,22 @@ class SiteConfigurationAdmin(UnfoldModelAdmin):
     search_fields = ("copyright_info", "about_site")
     ordering = ("-id",)
     fieldsets = (
-        (None, {"fields": ("site_name","site_logo", "about_site", "copyright_info")}),
-        ("Social Links", {"fields": ("instagram_link", "facebook_link", "linkedIn_link")}),
+        (
+            None,
+            {
+                "fields": (
+                    "site_name",
+                    "site_logo",
+                    "about_site",
+                    "copyright_info",
+                    "number_of_retired_engineers",
+                )
+            },
+        ),
+        (
+            "Social Links",
+            {"fields": ("instagram_link", "facebook_link", "linkedIn_link")},
+        ),
     )
 
     def preview_logo(self, obj):
@@ -42,4 +56,3 @@ class SEOSettingsAdmin(UnfoldModelAdmin):
     fieldsets = (
         (None, {"fields": ("page", "meta_title", "meta_keywords", "meta_description")}),
     )
-    

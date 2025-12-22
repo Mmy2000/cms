@@ -23,89 +23,151 @@ import io
 from datetime import date
 import textwrap
 from django.utils.timezone import now
+from site_settings.models import SiteConfiguration
 
 
-current_year = now().year
+from decimal import Decimal
+from django.db.models import Sum, Q
+from django.utils.dateparse import parse_date
+from django.utils import timezone
+from typing import Optional
+
 
 class StampService:
     """
-    Business logic for StampCalculation
+    Business logic for StampCalculation with improved error handling,
+    performance optimizations, and better separation of concerns.
     """
+
+    PREVIOUS_YEAR_MULTIPLIER = Decimal("0.7")
+    PENSION_MULTIPLIER = Decimal("0.2")
+    MONTHS_PER_YEAR = 12
+
+    def __init__(self, retired_engineers: Optional[int] = None):
+        if retired_engineers is None:
+            config = SiteConfiguration.objects.only(
+                "number_of_retired_engineers"
+            ).first()
+            retired_engineers = (
+                getattr(config, "number_of_retired_engineers", 0) if config else 0
+            )
+
+        self.retired_engineers = retired_engineers or 0
+        self.current_year = timezone.now().year
 
     @staticmethod
     def get_queryset():
+        """Get optimized base queryset with related data."""
         return StampCalculation.objects.select_related("company")
+
+    @classmethod
+    def get_filtered_queryset(
+        cls,
+        company_id: Optional[int] = None,
+        date_from: Optional[str] = None,
+        date_to: Optional[str] = None,
+        sort: str = "-created_at",
+    ):
+        queryset = cls.get_queryset()
+        queryset = cls.filter(queryset, company_id, date_from, date_to)
+        return cls.sort(queryset, sort)
 
     @staticmethod
     def filter(queryset, company_id=None, date_from=None, date_to=None):
-        if company_id not in [None, "", "None"]:
-            queryset = queryset.filter(company_id=company_id)
+        filters = Q()
+
+        if company_id and str(company_id).lower() not in ["none", ""]:
+            filters &= Q(company_id=company_id)
 
         if date_from:
-            queryset = queryset.filter(invoice_date__gte=parse_date(date_from))
+            parsed_date = parse_date(date_from)
+            if parsed_date:
+                filters &= Q(invoice_date__gte=parsed_date)
 
         if date_to:
-            queryset = queryset.filter(invoice_date__lte=parse_date(date_to))
+            parsed_date = parse_date(date_to)
+            if parsed_date:
+                filters &= Q(invoice_date__lte=parsed_date)
 
-        return queryset
-
-    @staticmethod
-    def sort(queryset, sort):
-        if sort in ["invoice_date", "-invoice_date"]:
-            return queryset.order_by(sort)
-        return queryset.order_by("-created_at")
+        return queryset.filter(filters) if filters else queryset
 
     @staticmethod
-    def total_amount(queryset):
-        return queryset.aggregate(total=Sum("d1"))["total"] or 0
+    def sort(queryset, sort: str = "-created_at"):
+        allowed_sorts = ["invoice_date", "-invoice_date", "created_at", "-created_at"]
+        return queryset.order_by(sort if sort in allowed_sorts else "-created_at")
 
     @staticmethod
-    def total_for_previous_year(queryset, current_year=None):
-        if current_year is None:
-            current_year = date.today().year
+    def total_amount(queryset) -> Decimal:
+        """Calculate total amount from d1 field."""
+        result = queryset.aggregate(total=Sum("d1"))["total"]
+        return Decimal(str(result)) if result else Decimal("0")
 
-        stamps = (
-            queryset.filter(invoice_date__year=current_year - 1)
-            .order_by("invoice_date")
+    def _total_for_previous_year(
+        self, queryset, current_year: Optional[int] = None
+    ) -> Decimal:
+
+        year = current_year if current_year is not None else self.current_year
+        previous_year = year - 1
+
+        stamps = queryset.filter(invoice_date__year=previous_year)
+        total = stamps.aggregate(total=Sum("d1"))["total"]
+
+        if not total:
+            return Decimal("0")
+
+        return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
+
+    def calculate_pension(
+        self, queryset, current_year: Optional[int] = None
+    ) -> Decimal:
+        if self.retired_engineers <= 0:
+            raise ValueError("Number of retired engineers must be greater than 0")
+
+        year = current_year if current_year is not None else self.current_year
+
+        # Filter queryset to current year only for main calculation
+        current_year_queryset = queryset.filter(invoice_date__year=year)
+
+        current_total = self.total_amount(current_year_queryset)
+        previous_total = self._total_for_previous_year(queryset, year)
+
+        pension = ((current_total * self.PENSION_MULTIPLIER) + previous_total) / (
+            self.retired_engineers * self.MONTHS_PER_YEAR
         )
 
-        total = stamps.aggregate(total=Sum("d1"))["total"] or Decimal("0")
-        total = total * Decimal("0.7")
-        return total
-
-    @staticmethod
-    def total_pension(queryset, current_year=current_year):
-        total = StampService.total_amount(queryset)
-        previous_years = StampService.total_for_previous_year(queryset, current_year)
-        pension = (total * Decimal("0.2")) + previous_years
         return pension
 
     @staticmethod
-    def total_companies(queryset):
-        return queryset.values("company__name").distinct().count()
+    def total_companies(queryset) -> int:
+        return queryset.values("company_id").distinct().count()
 
     @staticmethod
-    def total_amount_for_company(queryset, company_id):
-        return queryset.filter(company_id=company_id).aggregate(total=Sum("d1"))["total"] or 0
+    def total_amount_for_company(queryset, company_id: int) -> Decimal:
+        result = queryset.filter(company_id=company_id).aggregate(total=Sum("d1"))[
+            "total"
+        ]
+        return Decimal(str(result)) if result else Decimal("0")
 
     @staticmethod
     def grouped_by_company(queryset):
         return (
-            queryset.values("company__name", "stamp_rate")
+            queryset.values("company__name", "company_id", "stamp_rate")
             .annotate(total=Sum("d1"))
             .order_by("-total")
         )
 
     @staticmethod
     def create_from_form(form):
-        """
-        Create stamp + handle new company logic
-        """
-        new_company_name = form.cleaned_data.get("new_company_name")
+        new_company_name = form.cleaned_data.get("new_company_name", "").strip()
         company = form.cleaned_data.get("company")
 
         if new_company_name:
-            company, _ = Company.objects.get_or_create(name=new_company_name)
+            company, created = Company.objects.get_or_create(
+                name__iexact=new_company_name, defaults={"name": new_company_name}
+            )
+
+        if not company:
+            raise ValueError("Either company or new_company_name must be provided")
 
         stamp = form.save(commit=False)
         stamp.company = company
