@@ -19,8 +19,8 @@
             ➕  إضافة حساب دمغة متوقعه
         </a>
         <div class="">
-            <h2 class="text-2xl font-bold text-green-800 ">
-                💰 المعاش المتوقع :<span class="text-green-900 text-2xl">{{ total_pension|millions }}</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-green-800 ">
+                💰 المعاش ميتر :<span class="text-green-900 text-2xl sm:text-3xl">{{ total_pension|floatformat:2|intcomma }} جنيه</span>
             </h2>
         </div>
         <a href="{% url 'grouped_expected_stamps' %}" class="button_style">مجموعة حسب الشركة</a>
