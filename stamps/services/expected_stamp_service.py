@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.db.models import Sum
 from django.utils.dateparse import parse_date
+from site_settings.models import SiteConfiguration
 from stamps.admin import format_millions
 from stamps.models import ExpectedStamp, Sector
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -38,6 +39,18 @@ class ExpectedStampService:
 
     PREVIOUS_YEAR_MULTIPLIER = Decimal("0.7")
     PENSION_MULTIPLIER = Decimal("0.2")
+    MONTHS_PER_YEAR = 12
+
+    def __init__(self, retired_engineers: Optional[int] = None):
+        if retired_engineers is None:
+            config = SiteConfiguration.objects.only(
+                "number_of_retired_engineers"
+            ).first()
+            retired_engineers = (
+                getattr(config, "number_of_retired_engineers", 0) if config else 0
+            )
+        self.retired_engineers = retired_engineers or 0
+        self.current_year = timezone.now().year
 
     @staticmethod
     def get_queryset():
@@ -84,11 +97,11 @@ class ExpectedStampService:
         result = queryset.aggregate(total=Sum("d1"))["total"]
         return Decimal(str(result)) if result else Decimal("0")
 
-    @classmethod
-    def total_for_previous_year(
-        cls, queryset, current_year: Optional[int] = None
+    def _total_for_previous_year(
+        self, queryset, current_year: Optional[int] = None
     ) -> Decimal:
-        year = current_year if current_year is not None else timezone.now().year
+
+        year = current_year if current_year is not None else self.current_year
         previous_year = year - 1
 
         stamps = queryset.filter(invoice_date__year=previous_year)
@@ -97,19 +110,22 @@ class ExpectedStampService:
         if not total:
             return Decimal("0")
 
-        return Decimal(str(total)) * cls.PREVIOUS_YEAR_MULTIPLIER
+        return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
-    @classmethod
-    def calculate_pension(cls, queryset, current_year: Optional[int] = None) -> Decimal:
-        year = current_year if current_year is not None else timezone.now().year
+    def calculate_pension(self, queryset, current_year: Optional[int] = None) -> Decimal:
+        if self.retired_engineers <= 0:
+            raise ValueError("Number of retired engineers must be greater than 0")
+        year = current_year if current_year is not None else self.current_year
 
         # Filter queryset to current year only for main calculation
         current_year_queryset = queryset.filter(invoice_date__year=year)
 
-        current_total = cls.total_amount(current_year_queryset)
-        previous_total = cls.total_for_previous_year(queryset, year)
+        current_total = self.total_amount(current_year_queryset)
+        previous_total = self._total_for_previous_year(queryset, year)
 
-        pension = (current_total * cls.PENSION_MULTIPLIER) + previous_total
+        pension = ((current_total * self.PENSION_MULTIPLIER) + previous_total) / (
+            self.retired_engineers * self.MONTHS_PER_YEAR
+        )
         return pension
 
     @staticmethod
