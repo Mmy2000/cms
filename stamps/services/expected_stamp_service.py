@@ -115,10 +115,7 @@ class ExpectedStampService:
     def calculate_pension(self, queryset, current_year: Optional[int] = None) -> Decimal:
         year = current_year if current_year is not None else self.current_year
 
-        # Filter queryset to current year only for main calculation
-        current_year_queryset = queryset.filter(invoice_date__year=year)
-
-        current_total = self.total_amount(current_year_queryset)
+        current_total = self.total_amount(queryset)
         previous_total = self._total_for_previous_year(queryset, year)
 
         pension = ((current_total * self.PENSION_MULTIPLIER) + previous_total) / (
