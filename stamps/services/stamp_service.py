@@ -120,8 +120,6 @@ class StampService:
     def calculate_pension(
         self, queryset, current_year: Optional[int] = None
     ) -> Decimal:
-        if self.retired_engineers <= 0:
-            raise ValueError("Number of retired engineers must be greater than 0")
 
         year = current_year if current_year is not None else self.current_year
 
