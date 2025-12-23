@@ -7,6 +7,7 @@ class SiteConfiguration(models.Model):
     site_logo = models.ImageField(_("Site Logo"),upload_to='site_logos/', blank=True, null=True)
     site_name = models.CharField(_("Site Name"),max_length=255, blank=True, null=True)
     about_site = models.TextField(_("About Site"),blank=True, null=True)
+    number_of_retired_engineers = models.PositiveIntegerField(_("Number of Retired Engineers"),default=0)
     copyright_info = models.CharField(_("Copyright Info"),max_length=255, blank=True, null=True)
     instagram_link = models.URLField(_("Instagram Link"),max_length=200, blank=True, null=True)
     facebook_link = models.URLField(_("Facebook Link"),max_length=200, blank=True, null=True)

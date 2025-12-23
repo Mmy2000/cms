@@ -65,6 +65,7 @@ class StampListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         qs = self.object_list
+        service = StampService()
 
         context.update(
             {
@@ -74,7 +75,7 @@ class StampListView(ListView):
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_companies": StampService.total_amount(qs),
-                "total_pension": StampService.total_pension(qs),
+                "total_pension": service.calculate_pension(qs),
             }
         )
         return context

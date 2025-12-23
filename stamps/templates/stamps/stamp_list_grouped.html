@@ -7,8 +7,8 @@
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
-
-    <div class="flex flex-col gap-2 sm:flex-row justify-between items-center mt-10">
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center mt-10">
             <a href="{% url 'add_stamp' %}"
         class="button_style">
             ➕ إضافة حساب دمغة
@@ -26,7 +26,7 @@
     <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
         <!-- العنوان -->
         <div class=" flex justify-center bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
-            <h2 class="text-xl font-bold text-green-800 flex items-center gap-2 ">
+            <h2 class="text-xl font-bold text-green-800 flex flex-col md:flex-row items-center gap-2 ">
                 💰 إجمالي الدمغة بالمليون:
                 <span class="text-green-900 text-2xl">{{ total_all_companies|millions }}</span> 
                  <span class="text-green-900 text-2xl">لعدد {{ total_companies }} شركة</span>
@@ -81,7 +81,7 @@
         </div>
 
     </div>
-
+</div>
 
 
 {% endblock %}

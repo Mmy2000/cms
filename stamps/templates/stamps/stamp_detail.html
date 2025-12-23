@@ -7,13 +7,29 @@
 {% block title %}تفاصيل حسابات الدمغة{% endblock %}
 
 {% block content %}
-
-<div dir="rtl" class="max-w-5xl mx-auto bg-white shadow-xl rounded-xl mt-10 overflow-hidden">
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="mt-10 flex justify-between items-center">
+            <a href="{% url 'add_expected_stamp' %}"
+        class="button_style">
+            ➕ إضافة حساب دمغة
+        </a>
+        <div class="">
+            <button onclick="window.history.back()" 
+            class="button-secondary flex items-center gap-2">
+            رجوع
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            </button>
+        </div>
+    </div>
+<div dir="rtl" class="bg-white shadow-xl rounded-xl mt-6 overflow-hidden">
 
     {% for stamp in stamps %}
 
     <!-- Header -->
-    <div class="bg-green-700 text-white px-6 py-4">
+    <div class="relative bg-gradient-to-br from-green-600 via-green-500 to-emerald-500 text-white px-6 py-4">
+        <div class="absolute inset-0 bg-grid-white/10"></div>
         <h1 class="text-2xl font-bold tracking-wide">
             بيان حساب دمغة (ملحوظه:  هذه القيم تقديرية بالمليون)
         </h1>
@@ -138,5 +154,5 @@
     </div>
 
 </div>
-
+</div>
 {% endblock %}
