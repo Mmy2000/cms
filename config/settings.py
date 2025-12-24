@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "stamps.apps.StampsConfig",
     "accounts.apps.AccountsConfig",
     "pwa",
+    "compressor",  # new
 ]
 
 UNFOLD = {
@@ -58,6 +59,11 @@ UNFOLD = {
     "THEME": "light",
 }
 
+# COMPRESS_ROOT = BASE_DIR / "static"
+
+# COMPRESS_ENABLED = True
+
+# STATICFILES_FINDERS = ("compressor.finders.CompressorFinder",)
 
 # ================= PWA CONFIG =================
 

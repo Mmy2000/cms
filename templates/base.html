@@ -1,3 +1,4 @@
+{% load compress %}
 {% load static %}
 {% load pwa %}
 
@@ -38,7 +39,9 @@
   <link rel="shortcut icon" type="image/x-icon" href="{{site_configuration.site_logo.url}}" />
 
   <!-- Tailwind CSS -->
+  {% compress css %}
   <link rel="stylesheet" href="{% static 'dist/styles.css' %}">
+  {% endcompress %}
 
   <!-- Optional: Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -406,6 +409,8 @@
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
+
 <script src="{% static 'js/main.js' %}"></script>
 
 </body>

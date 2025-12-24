@@ -1,0 +1,176 @@
+
+{% extends "base.html" %}
+{% load number_filters %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto w-full bg-neutral-primary-soft border border-default rounded-base shadow-xs p-4 md:p-6 mt-10">
+  <div class="flex justify-between mb-4 md:mb-6">
+    <div class="grid gap-4 grid-cols-2">
+      <div>
+        <h5 class="inline-flex items-center text-body">اجمالي الدمغه بالمليون
+          <svg data-popover-target="clicks-info" data-popover-placement="bottom" class="w-4 h-4 text-body hover:text-heading cursor-pointer ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+          </svg>
+          <div data-popover id="clicks-info" role="tooltip" class="absolute z-10 p-3 invisible inline-block text-sm text-body transition-opacity duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-xs opacity-0 w-72">
+            <div>
+              <h3 class="font-semibold text-heading mb-2">اجمالي الدمغه</h3>
+              <p class="mb-4">إجمالي قيمة حسابات الدمغة لجميع الشركات في الفترة المحددة</p>
+            </div>
+            <div data-popper-arrow></div>
+          </div>
+        </h5>
+        <p class="text-heading text-2xl font-semibold">{{total_stamps|millions}}</p>
+      </div>
+      <div>
+        <h5 class="inline-flex items-center text-body">اجمالي الدمغه المتوقعه بالمليون
+          <svg data-popover-target="cpc-info" data-popover-placement="bottom" class="w-4 h-4 text-body hover:text-heading cursor-pointer ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+          </svg>
+          <div data-popover id="cpc-info" role="tooltip" class="absolute z-10 p-3 invisible inline-block text-sm text-body transition-opacity duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-xs opacity-0 w-72">
+            <div>
+              <h3 class="font-semibold text-heading mb-2">الدمغه المتوقعه</h3>
+              <p class="mb-4">إجمالي قيمة الدمغة المتوقعة لجميع القطاعات في الفترة المحددة</p>
+            </div>
+            <div data-popper-arrow></div>
+          </div>
+        </h5>
+        <p class="text-heading text-2xl font-semibold">{{total_excepted_stamps|millions}}</p>
+      </div>
+    </div>
+    <div>
+      <button id="dropdownDefaultButton" data-dropdown-toggle="lastDaysdropdown" data-dropdown-placement="bottom" type="button" class="inline-flex items-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-3 py-2 focus:outline-none">
+        {% if current_filter == 'last_year' %}
+          اخر سنه
+        {% elif current_filter == 'last_5_years' %}
+          اخر 5 سنوات
+        {% elif current_filter == 'last_10_years' %}
+          اخر 10 سنوات
+        {% else %}
+          كل السنوات
+        {% endif %}
+        <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+        </svg>
+      </button>
+      <div id="lastDaysdropdown" class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
+        <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownDefaultButton">
+          <li>
+            <a href="?filter=all" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded {% if current_filter == 'all' %}bg-neutral-tertiary-medium{% endif %}">كل السنوات</a>
+          </li>
+          <li>
+            <a href="?filter=last_year" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded {% if current_filter == 'last_year' %}bg-neutral-tertiary-medium{% endif %}">اخر سنه</a>
+          </li>
+          <li>
+            <a href="?filter=last_5_years" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded {% if current_filter == 'last_5_years' %}bg-neutral-tertiary-medium{% endif %}">اخر 5 سنوات</a>
+          </li>
+          <li>
+            <a href="?filter=last_10_years" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded {% if current_filter == 'last_10_years' %}bg-neutral-tertiary-medium{% endif %}">اخر 10 سنوات</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="line-chart"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+
+<script>
+// Get the CSS variable --color-brand and convert it to hex for ApexCharts
+const getBrandColor = () => {
+  const computedStyle = getComputedStyle(document.documentElement);
+  return computedStyle.getPropertyValue('--color-fg-brand').trim() || "#1447E6";
+};
+
+const getBrandSecondaryColor = () => {
+  const computedStyle = getComputedStyle(document.documentElement);
+  return computedStyle.getPropertyValue('--color-fg-brand-subtle').trim() || "#1447E6";
+};
+
+const brandColor = getBrandColor();
+const brandSecondaryColor = getBrandSecondaryColor();
+
+// Data from Django template
+const chartCategories = {{ chart_categories|safe }};
+const stampData = {{ stamp_data|safe }};
+const exceptedStampData = {{ excepted_stamp_data|safe }};
+
+const options = {
+  chart: {
+    height: "100%",
+    maxWidth: "100%",
+    type: "line",
+    fontFamily: "Inter, sans-serif",
+    dropShadow: {
+      enabled: false,
+    },
+    toolbar: {
+      show: false,
+    },
+  },
+  tooltip: {
+    enabled: true,
+    x: {
+      show: false,
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    width: 6,
+    curve: 'smooth'
+  },
+  grid: {
+    show: true,
+    strokeDashArray: 4,
+    padding: {
+      left: 2,
+      right: 2,
+      top: -26
+    },
+  },
+  series: [
+    {
+      name: "حساب الدمغه",
+      data: stampData,
+      color: brandColor,
+    },
+    {
+      name: "الدمغه المتوقعه",
+      data: exceptedStampData,
+      color: brandSecondaryColor,
+    },
+  ],
+  legend: {
+    show: false
+  },
+  xaxis: {
+    categories: chartCategories,
+    labels: {
+      show: true,
+      style: {
+        fontFamily: "Inter, sans-serif",
+        cssClass: 'text-xs font-normal fill-body'
+      }
+    },
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  yaxis: {
+    show: false,
+  },
+}
+
+if (document.getElementById("line-chart") && typeof ApexCharts !== 'undefined') {
+  const chart = new ApexCharts(document.getElementById("line-chart"), options);
+  chart.render();
+}
+</script>
+
+{% endblock content %}
