@@ -1,6 +1,3 @@
-from decimal import Decimal
-from django.db.models import Sum
-from django.utils.dateparse import parse_date
 from site_settings.models import SiteConfiguration
 from stamps.admin import format_millions
 from stamps.models import ExpectedStamp, Sector
@@ -21,14 +18,14 @@ from reportlab.lib.units import cm
 from bidi.algorithm import get_display
 from django.conf import settings
 import io
-from datetime import date
+from datetime import date,timedelta
 import textwrap
-
 from decimal import Decimal
 from django.db.models import Sum, Q
 from django.utils.dateparse import parse_date
 from django.utils import timezone
 from typing import Optional
+from django.db.models.functions import TruncYear
 
 
 class ExpectedStampService:
@@ -88,6 +85,14 @@ class ExpectedStampService:
         return queryset.filter(filters) if filters else queryset
 
     @staticmethod
+    def filter_by_years(queryset, years: int | None):
+        if not years:
+            return queryset
+
+        start_date = timezone.now().date() - timedelta(days=365 * years)
+        return queryset.filter(invoice_date__gte=start_date)
+
+    @staticmethod
     def sort(queryset, sort: str = "-created_at"):
         allowed_sorts = ["invoice_date", "-invoice_date", "created_at", "-created_at"]
         return queryset.order_by(sort if sort in allowed_sorts else "-created_at")
@@ -141,6 +146,38 @@ class ExpectedStampService:
             .annotate(total=Sum("d1"))
             .order_by("-total")
         )
+
+    @staticmethod
+    def yearly_chart(queryset):
+        expected_stamps = (
+            queryset.filter(invoice_date__isnull=False)
+            .annotate(year=TruncYear("invoice_date"))
+            .values("year")
+            .annotate(total=Sum("d1"))
+            .order_by("year")
+        )
+
+        categories = []
+        yearly = []
+        cumulative = []
+
+        running_total = 0
+
+        for item in expected_stamps:
+            year = item["year"].strftime("%Y")
+            value = round(float(item["total"]), 2)
+
+            categories.append(year)
+            yearly.append(value)
+
+            running_total += value
+            cumulative.append(round(running_total, 2))
+
+        return {
+            "categories": categories,
+            "yearly": yearly,
+            "cumulative": cumulative,
+        }
 
     @staticmethod
     def create_from_form(form):

@@ -6,6 +6,11 @@ from ..forms import StampCalculationForm
 from ..models import Company
 from ..services.stamp_service import StampService
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
+from django.db.models.functions import TruncYear
+from datetime import timedelta
+from django.utils import timezone
+from django.shortcuts import render
 
 
 class StampListView(ListView):
@@ -130,3 +135,35 @@ class StampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         StampService.create_from_form(form)
         return super().form_valid(form)
+
+
+FILTER_MAP = {
+    "last_3_year": 3,
+    "last_5_years": 5,
+    "last_7_years": 7,
+    "last_10_years": 10,
+}
+
+def stamp_dashboard(request):
+    # Get filter parameter (default to 'all')
+    time_filter = request.GET.get("filter", "all")
+    years = FILTER_MAP.get(time_filter)
+
+    # Filter querysets based on date range
+    stamps = StampService.get_queryset()
+    stamps = StampService.filter_by_years(stamps, years)
+
+    # Calculate totals
+    total_stamps = StampService.total_amount(stamps)
+    chart = StampService.yearly_chart(stamps)
+    service = StampService()
+    context = {
+        "total_stamps": total_stamps,
+        "chart_categories": chart["categories"],
+        "stamp_data": chart["yearly"],
+        "total_past_stamp_data": chart["cumulative"],
+        "total_pension": service.calculate_pension(stamps),
+        "current_filter": time_filter,
+    }
+
+    return render(request, "stamps/stamp_dashboard.html", context)

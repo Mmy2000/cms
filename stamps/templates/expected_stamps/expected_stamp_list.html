@@ -13,15 +13,31 @@
     {% include "includes/alerts.html" %}
     </div>
 
-    <div class="mt-10 flex flex-col gap-2 lg:flex-row justify-between items-center">
+    <div class="mt-10 flex flex-col gap-4 lg:flex-row justify-between items-center">
             <a href="{% url 'add_expected_stamp' %}"
         class="button_style">
             ➕  إضافة حساب دمغة متوقعه
         </a>
-        <div class="">
-            <h2 class="text-2xl sm:text-3xl font-bold text-green-800 ">
-                💰 المعاش ميتر :<span class="text-green-900 text-2xl sm:text-3xl">{{ total_pension|floatformat:2|intcomma }} جنيه</span>
-            </h2>
+        <div class="text-center flex-1 px-4">
+            <div class="inline-block bg-white rounded-2xl shadow-md px-8 py-4 border-2 border-green-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-3xl">💰</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-green-800">
+                         المعاش ميتر
+                    </h2>
+                </div>
+                <p class="text-3xl sm:text-4xl font-extrabold text-green-900 mb-3">
+                    {{ total_pension|floatformat:2|intcomma }} <span class="text-2xl text-green-700">جنيه</span>
+                </p>
+                <a href="{% url 'expected_stamp_dashboard' %}" 
+                   class="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                    <span class="text-lg">📊</span>
+                    <span>عرض الرسم البياني</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+            </div>
         </div>
         <a href="{% url 'grouped_expected_stamps' %}" class="button_style">مجموعة حسب الشركة</a>
     </div>

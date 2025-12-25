@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
-from site_settings.views import custom_404_view, dashboard
+from site_settings.views import custom_404_view
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -10,7 +10,6 @@ urlpatterns = [
     path("stamps/", include("stamps.urls")),
     path("accounts/", include("accounts.urls")),
     path("", include("pwa.urls")),
-    path("dashboard/", dashboard, name="index"),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

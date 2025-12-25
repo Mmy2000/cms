@@ -2,11 +2,15 @@ from django.http import HttpResponse
 from django.views.generic import ListView, CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-
 from ..models import  Sector
 from ..forms import ExpectedStampForm
 from ..services.expected_stamp_service import ExpectedStampService
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
+from django.db.models.functions import TruncYear
+from datetime import  timedelta
+from django.utils import timezone
+from django.shortcuts import render
 
 
 class ExpectedStampListView(ListView):
@@ -126,3 +130,36 @@ class ExpectedStampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView
     def form_valid(self, form):
         ExpectedStampService.create_from_form(form)
         return super().form_valid(form)
+
+
+FILTER_MAP = {
+    "last_3_year": 3,
+    "last_5_years": 5,
+    "last_7_years": 7,
+    "last_10_years": 10,
+}
+
+def expexted_stamp_dashboard(request):
+
+    time_filter = request.GET.get("filter", "all")
+    years = FILTER_MAP.get(time_filter)
+
+    # Filter querysets based on date range
+    excepted_stamps = ExpectedStampService.get_queryset()
+    excepted_stamps = ExpectedStampService.filter_by_years(excepted_stamps, years)
+
+    # Calculate totals
+    total_excepted_stamps = ExpectedStampService.total_amount(excepted_stamps)
+    chart = ExpectedStampService.yearly_chart(excepted_stamps)
+
+    service = ExpectedStampService()
+
+    context = {
+        "total_excepted_stamps": total_excepted_stamps,
+        "chart_categories": chart["categories"],
+        "excepted_stamp_data": chart["yearly"],
+        "total_past_excepted_stamps_data": chart["cumulative"],
+        "total_pension": service.calculate_pension(excepted_stamps),
+        "current_filter": time_filter,
+    }
+    return render(request, "expected_stamps/expected_stamp_dashboard.html", context)
