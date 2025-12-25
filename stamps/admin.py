@@ -21,10 +21,7 @@ def format_millions(value):
     except (TypeError, ValueError):
         return 0.0
 
-    if value >= 1_000_000:
-        return round(value / 1_000_000, 2)
-
-    return round(value, 2)
+    return round(value / 1_000_000, 2)
 
 
 @admin.register(Company)
