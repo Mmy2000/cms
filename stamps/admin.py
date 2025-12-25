@@ -4,18 +4,27 @@ from unfold.admin import ModelAdmin as UnfoldModelAdmin
 
 
 def format_millions(value):
-    """Helper: format numbers in millions."""
+    """
+    Convert large numbers to millions (numeric).
+    Always returns a float.
+
+    Examples:
+    1_500_000 -> 1.5
+    500_000   -> 500000.0
+    None      -> 0.0
+    """
     if value is None:
-        return "-"
+        return 0.0
+
     try:
         value = float(value)
-    except:
-        return value
+    except (TypeError, ValueError):
+        return 0.0
 
     if value >= 1_000_000:
-        return f"{round(value / 1_000_000, 2)}M"
+        return round(value / 1_000_000, 2)
 
-    return f"{int(value):,}"
+    return round(value, 2)
 
 
 @admin.register(Company)
