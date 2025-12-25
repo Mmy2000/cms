@@ -25,7 +25,7 @@
             <div data-popover id="clicks-info" role="tooltip" class="absolute z-10 p-3 invisible inline-block text-sm text-body transition-opacity duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-xs opacity-0 w-72">
               <div>
                 <h3 class="font-semibold text-heading mb-2">اجمالي الدمغه</h3>
-                <p class="mb-4">إجمالي قيمة حسابات الدمغة لجميع الشركات في الفترة المحددة</p>
+                <p class="mb-4">إجمالي قيمة حسابات الدمغة لجميع الشركات في الفترة المحددة بالمليون (تم القسمه علي مليون لتقريب الرقم)</p>
               </div>
               <div data-popper-arrow></div>
             </div>
@@ -148,12 +148,12 @@ const options = {
   },
   series: [
     {
-      name: "اجمالي الدمغه",
+      name: "اجمالي الدمغة بالمليون",
       data: stampData,
       color: brandColor,
     },
     {
-      name: "الدمغه لكل سنه",
+      name: "الدمغه لكل سنه بالمليون",
       data: singleStampData,
       color: brandSecondaryColor,
     },
