@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% load humanize %}
 {% load number_filters %}
 
 {% block content %}
@@ -45,7 +46,7 @@
                 <div data-popper-arrow></div>
             </div>
             </h5>
-            <p class="text-heading text-2xl font-semibold">{{total_pension|millions}}</p>
+            <p class="text-heading text-2xl font-semibold">{{total_pension|floatformat:2|intcomma }}</p>
         </div>
         </div>
         <div>

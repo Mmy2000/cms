@@ -173,8 +173,8 @@ class ExpectedStampService:
             running_total += value
             cumulative.append(round(running_total, 2))
 
-        yearly = [format_millions(v) for v in yearly]
-        cumulative = [format_millions(v) for v in cumulative]
+        # yearly = [format_millions(v) for v in yearly]
+        # cumulative = [format_millions(v) for v in cumulative]
 
         return {
             "categories": categories,

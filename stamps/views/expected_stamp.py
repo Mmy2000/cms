@@ -152,8 +152,6 @@ def expexted_stamp_dashboard(request):
     total_excepted_stamps = ExpectedStampService.total_amount(excepted_stamps)
     chart = ExpectedStampService.yearly_chart(excepted_stamps)
 
-    print(chart)
-
     service = ExpectedStampService()
 
     context = {
