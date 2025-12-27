@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from content.selectors.content_selector import ContentSelector
+from content.services.PaginationService import PaginationService
 from content.services.content_service import ContentSortService
 
 
@@ -9,7 +10,17 @@ def main_topics(request):
     topics_qs = ContentSelector.main_topics()
     topics = ContentSortService.apply_sort(topics_qs, sort)
 
-    return render(request, "cms/main_topics.html", {"topics": topics})
+    # Get pagination context
+    pagination_context = PaginationService.get_context(topics, request, page_size=9)
+
+    return render(
+        request,
+        "cms/main_topics.html",
+        {
+            "topics": pagination_context["page"],
+            "paginator": pagination_context["paginator"],
+        },
+    )
 
 
 def content_detail(request, id):
@@ -18,12 +29,16 @@ def content_detail(request, id):
 
     subcontents_qs = ContentSelector.subcontents(content)
     subcontents = ContentSortService.apply_sort(subcontents_qs, sort)
+    
+    # Apply pagination
+    pagination_context = PaginationService.get_context(subcontents, request, page_size=9)
 
     return render(
         request,
         "cms/content_detail.html",
         {
             "content": content,
-            "subcontents": subcontents,
+            "subcontents": pagination_context["page"],
+            "paginator": pagination_context["paginator"],
         },
     )

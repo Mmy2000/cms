@@ -3,177 +3,284 @@
 {% load humanize %}
 {% load number_filters %}
 
-
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
 <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-    <div class="mt-10 ">
-    {% include "includes/alerts.html" %}
+    
+    <!-- Alerts -->
+    <div class="max-w-7xl mx-auto mb-6">
+        {% include "includes/alerts.html" %}
     </div>
-    <div class="mt-10 flex flex-col gap-4 lg:flex-row justify-between items-center ">
-            <a href="{% url 'add_stamp' %}"
-        class="button_style">
-            ➕ إضافة حساب دمغة
-        </a>
-        <!-- Pension Meter Section -->
-        <div class="text-center flex-1 px-4">
-            <div class="inline-block bg-white rounded-2xl shadow-md px-8 py-4 border-2 border-green-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <span class="text-3xl">💰</span>
-                    <h2 class="text-xl sm:text-2xl font-bold text-green-800">
-                        المعاش ميتر
-                    </h2>
+
+    <!-- Page Header -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                
+                <!-- Left: Add Button -->
+                <a href="{% url 'add_stamp' %}"
+                   class="button_style flex items-center justify-center gap-2">
+                    <span class="text-xl">➕</span>
+                    <span>إضافة حساب دمغة</span>
+                </a>
+
+                <!-- Center: Pension Meter -->
+                <div class="flex-1 flex justify-center">
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg px-8 py-5 border-2 border-green-300 transform hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center justify-center gap-3 mb-3">
+                            <span class="text-4xl animate-pulse">💰</span>
+                            <h2 class="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
+                                المعاش ميتر
+                            </h2>
+                        </div>
+                        <p class="text-4xl font-extrabold text-green-900 mb-4 text-center">
+                            {{ total_pension|floatformat:2|intcomma }}
+                            <span class="text-2xl text-green-700">جنيه</span>
+                        </p>
+                        <a href="{% url 'stamp_dashboard' %}" 
+                           class="group inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                            <span class="text-xl">📊</span>
+                            <span>عرض الرسم البياني</span>
+                            <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <p class="text-3xl sm:text-4xl font-extrabold text-green-900 mb-3">
-                    {{ total_pension|floatformat:2|intcomma }} <span class="text-2xl text-green-700">جنيه</span>
-                </p>
-                <a href="{% url 'stamp_dashboard' %}" 
-                   class="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
-                    <span class="text-lg">📊</span>
-                    <span>عرض الرسم البياني</span>
-                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
+
+                <!-- Right: Grouped Button -->
+                <a href="{% url 'grouped_stamps' %}" 
+                   class="group inline-flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-green-700 font-bold rounded-xl shadow-md hover:shadow-xl border-2 border-green-600 transition-all duration-300 transform hover:-translate-y-0.5">
+                    <span class="text-xl">📊</span>
+                    <span>مجموعة حسب الشركة</span>
                 </a>
             </div>
         </div>
-        <a href="{% url 'grouped_stamps' %}" class="button_style">مجموعة حسب الشركة</a>
     </div>
-    <div>
-        <form method="GET" class="mt-6 gap-4 flex items-center justify-center sm:justify-start">
 
-            <!-- Preserve filters -->
-            <input type="hidden" name="company" value="{{ company_filter }}">
-            <input type="hidden" name="date_from" value="{{ date_from }}">
-            <input type="hidden" name="date_to" value="{{ date_to }}">
-            <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+    <!-- Download Section -->
+    <div class="max-w-7xl mx-auto mb-6">
+        <form method="GET" class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <!-- Preserve filters -->
+                <input type="hidden" name="company" value="{{ company_filter }}">
+                <input type="hidden" name="date_from" value="{{ date_from }}">
+                <input type="hidden" name="date_to" value="{{ date_to }}">
+                <input type="hidden" name="sort" value="{{ request.GET.sort }}">
 
-            <select class="select select-success" name="download">
-                <option value="">تحميل كـ...</option>
-                <option value="pdf">📄 PDF</option>
-                <option value="excel">📊 Excel</option>
-            </select>
+                <div class="flex items-center gap-3">
+                    <label class="text-sm font-bold text-gray-700">تحميل التقرير:</label>
+                    <select class="select select-bordered select-success shadow-sm" name="download">
+                        <option value="">اختر الصيغة...</option>
+                        <option value="pdf">📄 PDF</option>
+                        <option value="excel">📊 Excel</option>
+                    </select>
+                </div>
 
-            <button name="download_btn" value="1"
-                class="btn btn-md bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm transition-all duration-300 hover:shadow-md">
-                تحميل
-            </button>
+                <button name="download_btn" value="1"
+                    class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                    <span class="flex items-center gap-2">
+                        <span>⬇️</span>
+                        <span>تحميل</span>
+                    </span>
+                </button>
+            </div>
         </form>
-
     </div>
-    <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6 border border-gray-200">
-        <!-- العنوان -->
-        <div class=" flex flex-col md:flex-row items-center justify-between bg-gradient-to-l from-green-100 to-green-50 border-b border-green-200  px-6 py-4 ">
-            <div class="flex flex-col md:flex-row items-center md:gap-2 md:w-1/4">
-            <h2 class="text-xl font-bold text-green-800 ">
-                💰 إجمالي الدمغة بالمليون:
-                <div class="text-green-900 text-2xl text-center">{{ total_all_companies|millions }}</div>
-            </h2>
+
+    <!-- Main Content Card -->
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+            
+            <!-- Header with Filters -->
+            <div class="bg-gradient-to-l from-green-100 via-green-50 to-emerald-50 border-b-2 border-green-300 px-6 py-6">
+                
+                <!-- Total Display -->
+                <div class="mb-6 text-center">
+                    <div class="inline-block bg-white rounded-xl shadow-lg px-8 py-4 border-2 border-green-300">
+                        <h2 class="text-lg font-bold text-green-700 mb-2">
+                            💰 إجمالي الدمغة بالمليون
+                        </h2>
+                        <div class="text-4xl font-extrabold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
+                            {{ total_all_companies|millions }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Form -->
+                <form method="GET" class="space-y-4">
+                    <div class="flex flex-wrap gap-4 items-end justify-center">
+                        
+                        <!-- Company Filter -->
+                        <div class="flex flex-col min-w-[200px]">
+                            <label class="text-sm font-bold text-gray-700 mb-2">🏢 الشركة</label>
+                            <select name="company" class="select select-bordered select-success shadow-md hover:shadow-lg transition-shadow">
+                                <option value="" selected>كل الشركات</option>
+                                {% for c in companies %}
+                                    <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ c.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Date From -->
+                        <div class="flex flex-col min-w-[180px]">
+                            <label class="text-sm font-bold text-gray-700 mb-2">📅 من تاريخ</label>
+                            <input type="date"
+                                name="date_from"
+                                value="{{ date_from }}"
+                                class="input input-bordered input-success shadow-md hover:shadow-lg transition-shadow">
+                        </div>
+
+                        <!-- Date To -->
+                        <div class="flex flex-col min-w-[180px]">
+                            <label class="text-sm font-bold text-gray-700 mb-2">📅 إلى تاريخ</label>
+                            <input type="date"
+                                name="date_to"
+                                value="{{ date_to }}"
+                                class="input input-bordered input-success shadow-md hover:shadow-lg transition-shadow">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3">
+                            <button class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5" type="submit">
+                                🔍 بحث
+                            </button>
+
+                            <a href="{% url 'stamp_list' %}"
+                               class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                                🔄 إعادة تعيين
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <form method="GET" class="flex gap-4 items-center md:justify-center  flex-wrap mt-2 md:mt-0 md:w-3/4">
-                <div class="flex flex-wrap w-full md:w-1/4 justify-center">
-                <select name="company" class="select select-success">
-                    <option value="" selected>كل الشركات</option>
-                    {% for c in companies %}
-                        <option value="{{ c.id }}" {% if company_filter == c.id|stringformat:"s" %}selected{% endif %}>
-                            {{ c.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                </div>
+            <!-- Table Container -->
+            <div class="overflow-auto max-h-[600px]">
+                <table class="min-w-full text-right">
+                    <thead class="bg-gradient-to-r from-gray-800 to-gray-700 text-white sticky top-0 z-10 shadow-lg">
+                        <tr class="text-sm lg:text-base font-bold">
+                            <th class="p-4 border-r border-gray-600">
+                                <div class="flex items-center justify-center gap-2">
+                                    <span>🏢</span>
+                                    <span>الشركة</span>
+                                </div>
+                            </th>
+                            <th class="p-4 border-r border-gray-600">
+                                <div class="flex items-center justify-center gap-2 flex-wrap">
+                                    <span>📅 تاريخ المعاملة</span>
+                                    <div class="flex gap-1">
+                                        <a href="?{% querystring request sort='invoice_date' %}" 
+                                           class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">⬆️</a>
+                                        <a href="?{% querystring request sort='-invoice_date' %}" 
+                                           class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">⬇️</a>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="p-4 border-r border-gray-600">💵 قيمة الأعمال</th>
+                            <th class="p-4 border-r border-gray-600">📋 عدد النسخ</th>
+                            <th class="p-4 border-r border-gray-600">📊 النسبة</th>
+                            <th class="p-4">💰 إجمالي الدمغة</th>
+                        </tr>
+                    </thead>
 
-                <!-- From date -->
-                <div class="flex flex-wrap gap-4 w-full md:w-auto justify-center">
-                    <div class="flex flex-col ">
-                        <label class="text-sm font-semibold text-gray-600 mb-2">من تاريخ</label>
-                        <input type="date"
-                            name="date_from"
-                            value="{{ date_from }}"
-                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for s in page_obj %}
+                        <tr class="hover:bg-green-50 transition-colors duration-200 text-base lg:text-lg">
+                            <td class="p-4 border-r border-gray-200">
+                                <a href="{% url 'stamp_detail' s.id %}" 
+                                   class="text-green-700 hover:text-green-900 font-bold hover:underline transition-colors">
+                                    {{ s.company.name }}
+                                </a>
+                            </td>
+                            <td class="p-4 border-r border-gray-200 text-gray-700 font-medium">
+                                {{ s.invoice_date|date:"Y-m-d" }}
+                            </td>
+                            <td class="p-4 border-r border-gray-200 text-gray-800 font-bold">
+                                {{ s.value_of_work|millions }}
+                            </td>
+                            <td class="p-4 border-r border-gray-200 text-center text-gray-700 font-medium">
+                                {{ s.invoice_copies }}
+                            </td>
+                            <td class="p-4 border-r border-gray-200 text-center text-gray-700 font-medium">
+                                {{ s.stamp_rate }}
+                            </td>
+                            <td class="p-4 text-blue-700 font-extrabold text-lg">
+                                {{ s.d1|millions }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center p-12">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <span class="text-4xl">📭</span>
+                                    </div>
+                                    <p class="text-xl font-bold text-gray-600">لا توجد بيانات حتى الآن</p>
+                                    <p class="text-gray-500">جرب تعديل معايير البحث</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- To date -->
-                    <div class="flex flex-col ">
-                        <label class="text-sm font-semibold text-gray-600 mb-2">إلى تاريخ</label>
-                        <input type="date"
-                            name="date_to"
-                            value="{{ date_to }}"
-                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-4 w-full md:w-auto justify-center">
-                    <button class="btn btn-md bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm transition-all duration-300 hover:shadow-md" type="submit">
-                        بحث 🔍
-                    </button>
-
-                    <a href="{% url 'stamp_list' %}"
-                    class="button-secondary">
-                    اعاده تعيين 🔄
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <div class="overflow-auto max-h-[600px]">
-            <table class="min-w-full text-right border border-gray-200">
-                <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10 shadow-sm">
-                    <tr class="text-sm lg:text-lg font-bold">
-                        <th class="p-3 border border-gray-200">الشركة</th>
-                        <th class="p-3 border border-gray-200">
-                            تاريخ المعامله  
-                            <a href="?{% querystring request sort='invoice_date' %}">⬆️</a>
-                           <a href="?{% querystring request sort='-invoice_date' %}">⬇️</a>
-                        </th>
-                        <th class="p-3 border border-gray-200">قيمة الأعمال</th>
-                        <th class="p-3 border border-gray-200">عدد النسخ</th>
-                        <th class="p-3 border border-gray-200">النسبة</th>
-                        <th class="p-3 border border-gray-200">إجمالي الدمغه للمطالبة</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for s in page_obj %}
-                    <tr class="hover:bg-gray-50 transition-all font-medium text-lg">
-                        <td class="p-3 border border-gray-200 "><a href="{% url 'stamp_detail' s.id %}">{{ s.company.name }}</a></td>
-                        <td class="p-3 border border-gray-200 ">{{ s.invoice_date|date:"Y-m-d" }}</td>
-                        <td class="p-3 border border-gray-200">{{ s.value_of_work|millions }}</td>
-                        <td class="p-3 border border-gray-200">{{ s.invoice_copies }}</td>
-                        <td class="p-3 border border-gray-200">{{ s.stamp_rate }}</td>
-                        <td class="p-3 border border-gray-200  text-blue-700">{{ s.d1|millions }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center p-6 border border-gray-200 text-gray-500">
-                            لا توجد بيانات حتى الآن.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
+            <!-- Enhanced Pagination -->
             {% if page_obj.has_other_pages %}
-            <div class="flex justify-center items-center gap-2 py-4">
-                {% if page_obj.has_previous %}
-                    <a href="?{% querystring request page=page_obj.previous_page_number %}"
-                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">‹ السابق</a>
-                {% endif %}
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-200 px-6 py-4">
+                <div class="flex flex-wrap justify-center items-center gap-3">
+                    
+                    {% if page_obj.has_previous %}
+                        <a href="?{% querystring request page=page_obj.previous_page_number %}"
+                           class="px-5 py-2.5 bg-white hover:bg-green-600 text-gray-700 hover:text-white font-bold rounded-lg shadow-md hover:shadow-lg border border-gray-300 transition-all duration-300 transform hover:-translate-y-0.5">
+                            ‹ السابق
+                        </a>
+                    {% else %}
+                        <span class="px-5 py-2.5 bg-gray-200 text-gray-400 font-bold rounded-lg shadow-inner cursor-not-allowed">
+                            ‹ السابق
+                        </span>
+                    {% endif %}
 
-                <span class="px-4 py-1 bg-green-100 text-green-800 rounded">
-                    الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
-                </span>
+                    <div class="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-lg shadow-lg">
+                        <span class="flex items-center gap-2">
+                            <span>صفحة</span>
+                            <span class="text-xl">{{ page_obj.number }}</span>
+                            <span>من</span>
+                            <span class="text-xl">{{ page_obj.paginator.num_pages }}</span>
+                        </span>
+                    </div>
 
-                {% if page_obj.has_next %}
-                    <a href="?{% querystring request page=page_obj.next_page_number %}"
-                    class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">التالي ›</a>
-                {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="?{% querystring request page=page_obj.next_page_number %}"
+                           class="px-5 py-2.5 bg-white hover:bg-green-600 text-gray-700 hover:text-white font-bold rounded-lg shadow-md hover:shadow-lg border border-gray-300 transition-all duration-300 transform hover:-translate-y-0.5">
+                            التالي ›
+                        </a>
+                    {% else %}
+                        <span class="px-5 py-2.5 bg-gray-200 text-gray-400 font-bold rounded-lg shadow-inner cursor-not-allowed">
+                            التالي ›
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Page Info -->
+                <div class="mt-3 text-center">
+                    <p class="text-sm text-gray-600 font-medium">
+                        عرض 
+                        <span class="font-bold text-green-700">{{ page_obj.start_index }}</span>
+                        - 
+                        <span class="font-bold text-green-700">{{ page_obj.end_index }}</span>
+                        من أصل 
+                        <span class="font-bold text-green-700">{{ page_obj.paginator.count }}</span>
+                        سجل
+                    </p>
+                </div>
             </div>
             {% endif %}
-            
         </div>
-
     </div>
 </div>
 {% endblock %}
