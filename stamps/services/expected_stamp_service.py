@@ -66,7 +66,7 @@ class ExpectedStampService:
         return cls.sort(queryset, sort)
 
     @staticmethod
-    def filter(queryset, sector_id=None, date_from=None, date_to=None):
+    def filter(queryset, sector_id=None, date_from=None, date_to=None,user=None):
         filters = Q()
 
         if sector_id and str(sector_id).lower() not in ["none", ""]:
@@ -81,6 +81,9 @@ class ExpectedStampService:
             parsed_date = parse_date(date_to)
             if parsed_date:
                 filters &= Q(invoice_date__lte=parsed_date)
+
+        if user:
+            filters &= Q(user=user)
 
         return queryset.filter(filters) if filters else queryset
 
@@ -183,7 +186,7 @@ class ExpectedStampService:
         }
 
     @staticmethod
-    def create_from_form(form):
+    def create_from_form(form,user):
         new_sector_name = form.cleaned_data.get("new_sector_name", "").strip()
         sector = form.cleaned_data.get("sector")
 
@@ -197,6 +200,7 @@ class ExpectedStampService:
 
         expected_stamp = form.save(commit=False)
         expected_stamp.sector = sector
+        expected_stamp.user = user
         expected_stamp.save()
 
         return expected_stamp
@@ -250,7 +254,7 @@ class ExpectedStampService:
 
         total_paragraph = Paragraph(
             ExpectedStampService.fix_arabic(
-                f"إجمالي الدمغة لكل القطاعات بالمليون: {format_millions(total_amount)}"
+                f"إجمالي الدمغة لكل القطاعات بالمليون: {total_amount:,} جنيه مصري"
             ),
             arabic_style,
         )
@@ -270,10 +274,10 @@ class ExpectedStampService:
 
         for s in queryset:
             row = [
-                Paragraph(format_millions(s.d1), number_style),
+                Paragraph(f"{s.d1:,}", number_style),
                 Paragraph(str(s.stamp_rate), number_style),
                 Paragraph(str(s.invoice_copies), number_style),
-                Paragraph(format_millions(s.value_of_work), number_style),
+                Paragraph(f"{s.value_of_work:,}", number_style),
                 Paragraph(
                     s.invoice_date.strftime("%Y-%m-%d") if s.invoice_date else "—",
                     number_style,

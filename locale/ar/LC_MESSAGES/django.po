@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-08 00:52+0200\n"
+"POT-Creation-Date: 2025-12-28 09:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,22 @@ msgstr ""
 msgid "Accounts Management"
 msgstr "إدارة الحسابات"
 
+#: .\accounts\forms.py:205
+msgid "الاسم الأول"
+msgstr ""
+
+#: .\accounts\forms.py:206
+msgid "الاسم الأخير"
+msgstr ""
+
+#: .\accounts\forms.py:230
+msgid "رقم النقابة"
+msgstr ""
+
+#: .\accounts\forms.py:231
+msgid "كارنيه النقابة"
+msgstr ""
+
 #: .\accounts\models.py:8
 msgid "Pending"
 msgstr "قيد الانتظار"
@@ -35,7 +51,7 @@ msgstr "موافقة"
 msgid "Rejected"
 msgstr "مرفوض"
 
-#: .\accounts\models.py:13
+#: .\accounts\models.py:13 .\stamps\models.py:36 .\stamps\models.py:100
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\admin\guardian\model\obj_perms_manage_user.html:17
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\group_form.html:33
 #: .\venv\Lib\site-packages\unfold\contrib\guardian\templates\unfold\guardian\user_form.html:15
@@ -61,8 +77,8 @@ msgstr "بطاقة النقابة"
 msgid "Status"
 msgstr "الحاله"
 
-#: .\accounts\models.py:20 .\content\models.py:22 .\stamps\models.py:48
-#: .\stamps\models.py:105
+#: .\accounts\models.py:20 .\content\models.py:22 .\stamps\models.py:56
+#: .\stamps\models.py:120
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
@@ -77,6 +93,14 @@ msgstr "حساب تعريفي"
 #: .\accounts\models.py:25
 msgid "Profiles"
 msgstr "حسابات تعريفيه"
+
+#: .\accounts\views\auth_views.py:94
+msgid "تم تحديث الملف الشخصي بنجاح"
+msgstr ""
+
+#: .\accounts\views\auth_views.py:97
+msgid "يرجى تصحيح الأخطاء أدناه"
+msgstr ""
 
 #: .\content\admin.py:50
 msgid "Basic Information"
@@ -157,62 +181,66 @@ msgid "About Site"
 msgstr "عن الموقع"
 
 #: .\site_settings\models.py:10
+msgid "Number of Retired Engineers"
+msgstr "عدد المهندسين المتقاعدين"
+
+#: .\site_settings\models.py:11
 msgid "Copyright Info"
 msgstr "حقوق الطبع والنشر"
 
-#: .\site_settings\models.py:11
+#: .\site_settings\models.py:12
 msgid "Instagram Link"
 msgstr "لينك الانستجرام"
 
-#: .\site_settings\models.py:12
+#: .\site_settings\models.py:13
 msgid "Facebook Link"
 msgstr "لينك الفيس بوك"
 
-#: .\site_settings\models.py:13
+#: .\site_settings\models.py:14
 msgid "LinkedIn Link"
 msgstr "لينك اللينكدان"
 
-#: .\site_settings\models.py:16
+#: .\site_settings\models.py:17
 msgid "Site Configuration"
 msgstr "تكوين الموقع"
 
-#: .\site_settings\models.py:17
+#: .\site_settings\models.py:18
 msgid "Site Configurations"
 msgstr "تكوينات الموقع"
 
-#: .\site_settings\models.py:24
+#: .\site_settings\models.py:25
 msgid "Page Name"
 msgstr "اسم الصفحه"
 
-#: .\site_settings\models.py:25
+#: .\site_settings\models.py:26
 msgid "Page URL"
 msgstr "لينك الصفحه"
 
-#: .\site_settings\models.py:28 .\site_settings\models.py:35
+#: .\site_settings\models.py:29 .\site_settings\models.py:36
 msgid "Page"
 msgstr "الصفحه"
 
-#: .\site_settings\models.py:29
+#: .\site_settings\models.py:30
 msgid "Pages"
 msgstr "الصفحات"
 
-#: .\site_settings\models.py:36
+#: .\site_settings\models.py:37
 msgid "Meta Title"
 msgstr "عنوان ميتا"
 
-#: .\site_settings\models.py:37
+#: .\site_settings\models.py:38
 msgid "Meta Keywords"
 msgstr "الكلمات الرئيسية التعريفية"
 
-#: .\site_settings\models.py:38
+#: .\site_settings\models.py:39
 msgid "Meta Description"
 msgstr "وصف الميتا"
 
-#: .\site_settings\models.py:41
+#: .\site_settings\models.py:42
 msgid "SEO Setting"
 msgstr "إعدادات تحسين محركات البحث"
 
-#: .\site_settings\models.py:42
+#: .\site_settings\models.py:43
 msgid "SEO Settings"
 msgstr "إعدادات تحسين محركات البحث"
 
@@ -220,81 +248,392 @@ msgstr "إعدادات تحسين محركات البحث"
 msgid "Calculating stamps"
 msgstr "حساب الدمغات"
 
-#: .\stamps\models.py:8
+#: .\stamps\models.py:9
 msgid "Company name"
 msgstr "اسم الشركه"
 
-#: .\stamps\models.py:12 .\stamps\models.py:31
+#: .\stamps\models.py:13 .\stamps\models.py:39
 msgid "Company"
 msgstr "الشركه"
 
-#: .\stamps\models.py:13
+#: .\stamps\models.py:14
 msgid "Companies"
 msgstr "الشركات"
 
-#: .\stamps\models.py:19
+#: .\stamps\models.py:20
 msgid "Sector name"
 msgstr "اسم القطاع"
 
-#: .\stamps\models.py:23 .\stamps\models.py:88
+#: .\stamps\models.py:24 .\stamps\models.py:103
 msgid "Sector"
 msgstr "القطاع"
 
-#: .\stamps\models.py:24
+#: .\stamps\models.py:25
 msgid "Sectors"
 msgstr "القطاعات"
 
-#: .\stamps\models.py:32 .\stamps\models.py:89
+#: .\stamps\models.py:40 .\stamps\models.py:104
 msgid "Value Of Work (A)"
 msgstr "قيمه الاعمال"
 
-#: .\stamps\models.py:33 .\stamps\models.py:90
+#: .\stamps\models.py:41 .\stamps\models.py:105
 msgid "Invoice Copies (B)"
 msgstr "عدد نسخ الفاتوره"
 
-#: .\stamps\models.py:34 .\stamps\models.py:91
+#: .\stamps\models.py:42 .\stamps\models.py:106
 msgid "Invoice Date"
 msgstr "تاريخ الفاتوره"
 
-#: .\stamps\models.py:35 .\stamps\models.py:92
+#: .\stamps\models.py:43 .\stamps\models.py:107
 msgid "Stamp rate (C)"
 msgstr "نسبه الدمغه"
 
-#: .\stamps\models.py:36 .\stamps\models.py:93
+#: .\stamps\models.py:44 .\stamps\models.py:108
 msgid "Exchange Rate"
 msgstr "سعر الصرف"
 
-#: .\stamps\models.py:38 .\stamps\models.py:95
+#: .\stamps\models.py:46 .\stamps\models.py:110
 msgid "Total stamp duty for the claim"
 msgstr "اجمالي الدمغه للمطالبه"
 
-#: .\stamps\models.py:39 .\stamps\models.py:96
+#: .\stamps\models.py:47 .\stamps\models.py:111
 msgid "Past years total"
 msgstr "اجمالي الدمغه عن سنوات"
 
-#: .\stamps\models.py:40 .\stamps\models.py:97
+#: .\stamps\models.py:48 .\stamps\models.py:112
 msgid "Total stamp"
 msgstr "اجمالي الدمغه"
 
-#: .\stamps\models.py:42 .\stamps\models.py:99
+#: .\stamps\models.py:50 .\stamps\models.py:114
 msgid "Note"
 msgstr "ملاحظات"
 
-#: .\stamps\models.py:52
+#: .\stamps\models.py:60
 msgid "Stamp Calculation"
 msgstr "حساب الدمغه"
 
-#: .\stamps\models.py:53
+#: .\stamps\models.py:61
 msgid "Stamp Calculations"
 msgstr "حساب الدمغات"
 
-#: .\stamps\models.py:108
+#: .\stamps\models.py:123
 msgid "Expected Stamp"
 msgstr "الدمغه المتوقعه"
 
-#: .\stamps\models.py:109
+#: .\stamps\models.py:124
 msgid "Expected Stamps"
 msgstr "الدمغات المتوقعه"
+
+#: .\venv\Lib\site-packages\click\_termui_impl.py:613
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\_termui_impl.py:617
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1114
+#: .\venv\Lib\site-packages\click\core.py:1151
+#, python-brace-format
+msgid "{text} {deprecated_message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1170
+msgid "Options"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1245
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\core.py:1264
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1448
+msgid "Aborted!"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1822
+msgid "Commands"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1853
+msgid "Missing command."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:1931
+msgid "No such command {name!r}."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:2355
+msgid "Value must be an iterable."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:2378
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\core.py:2567
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:3015
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:3018
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\core.py:3082
+msgid "(dynamic)"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\decorators.py:465
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\decorators.py:522
+msgid "Show the version and exit."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\decorators.py:548
+msgid "Show this message and exit."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:50
+#: .\venv\Lib\site-packages\click\exceptions.py:89
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:81
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:130
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:132
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:190
+msgid "Missing argument"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:192
+msgid "Missing option"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:194
+msgid "Missing parameter"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:196
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:203
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:223
+#, python-brace-format
+msgid "No such option: {name}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:235
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:282
+msgid "unknown error"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\exceptions.py:289
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\parser.py:199
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\parser.py:381
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\parser.py:444
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\shell_completion.py:332
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\shell_completion.py:339
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:165
+msgid "Repeat for confirmation"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:181
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:183
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:194
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:253
+msgid "Error: invalid input"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\termui.py:872
+msgid "Press any key to continue..."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:332
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:369
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\types.py:460
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\venv\Lib\site-packages\click\types.py:482
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:538
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:719
+msgid "{value!r} is not a valid boolean. Recognized values: {states}"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:747
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:937
+#, fuzzy
+#| msgid "Profile"
+msgid "file"
+msgstr "حساب تعريفي"
+
+#: .\venv\Lib\site-packages\click\types.py:939
+#, fuzzy
+#| msgid "Sector"
+msgid "directory"
+msgstr "القطاع"
+
+#: .\venv\Lib\site-packages\click\types.py:941
+msgid "path"
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:988
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:997
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:1005
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:1014
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:1023
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:1032
+msgid "{name} {filename!r} is not executable."
+msgstr ""
+
+#: .\venv\Lib\site-packages\click\types.py:1099
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
@@ -1547,6 +1886,21 @@ msgstr ""
 
 #: .\venv\Lib\site-packages\django_summernote\views.py:160
 msgid "Failed to save attachment"
+msgstr ""
+
+#: .\venv\Lib\site-packages\kombu\transport\qpid.py:1311
+#, python-format
+msgid "Attempting to connect to qpid with SASL mechanism %s"
+msgstr ""
+
+#: .\venv\Lib\site-packages\kombu\transport\qpid.py:1316
+#, python-format
+msgid "Connected to qpid with SASL mechanism %s"
+msgstr ""
+
+#: .\venv\Lib\site-packages\kombu\transport\qpid.py:1334
+#, python-format
+msgid "Unable to connect to qpid with SASL mechanism %s"
 msgstr ""
 
 #: .\venv\Lib\site-packages\modeltranslation\forms.py:71

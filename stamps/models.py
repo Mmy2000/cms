@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 
 class Company(models.Model):
@@ -14,20 +15,16 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-    
-class Sector(models.Model):
-    name = models.CharField(_("Sector name"), max_length=200, unique=True)
-
-    class Meta:
-        ordering = ["name"]
-        verbose_name = _("Sector")
-        verbose_name_plural = _("Sectors")
-
-    def __str__(self):
-        return f"{self.name}"
 
 
 class StampCalculation(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="stamp_calculations",
+        verbose_name=_("User"),
+        default=1,
+    )
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="stamp_calculations",verbose_name=_("Company"))
     value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=0)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
@@ -84,7 +81,25 @@ class StampCalculation(models.Model):
         return f"{self.company} "
 
 
+class Sector(models.Model):
+    name = models.CharField(_("Sector name"), max_length=200, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = _("Sector")
+        verbose_name_plural = _("Sectors")
+
+    def __str__(self):
+        return f"{self.name}"
+
 class ExpectedStamp(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="expected_stamps",
+        verbose_name=_("User"),
+        default=1,
+    )
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name="expected_stamps",verbose_name=_("Sector"))
     value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=0)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))

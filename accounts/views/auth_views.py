@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect
 from django.contrib import messages,auth
 from django.utils.http import urlsafe_base64_decode
@@ -6,6 +7,7 @@ from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from accounts.decorators import anonymous_required
 from accounts.forms import ProfileEditForm, RegisterForm, LoginForm, UserEditForm
+from accounts.services.certificate_service import CertificateService
 from accounts.services.profile_sevice import ProfileService
 from accounts.services.user_service import UserService
 from accounts.services.auth_service import AuthService
@@ -14,6 +16,14 @@ from accounts.selectors.user_selector import UserSelector
 from accounts.tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+from stamps.models import Company, ExpectedStamp, Sector, StampCalculation
+from stamps.services.expected_stamp_service import ExpectedStampService
+from stamps.services.stamp_service import StampService
+from django.http import FileResponse, HttpResponse
+from django.views import View
+from datetime import datetime
 
 
 @anonymous_required(path_url="main_topics")
@@ -105,3 +115,168 @@ def edit_profile(request):
         "profile": profile,
     }
     return render(request, "profile/edit_profile.html", context)
+
+
+class MyStampListView(LoginRequiredMixin, ListView):
+    model = StampCalculation
+    template_name = "stamps/my_stamps.html"
+    context_object_name = "stamps"
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = StampService.get_queryset()
+
+        qs = StampService.filter(
+            qs,
+            company_id=self.request.GET.get("company"),
+            date_from=self.request.GET.get("date_from"),
+            date_to=self.request.GET.get("date_to"),
+            user=self.request.user,
+        )
+
+        qs = StampService.sort(qs, self.request.GET.get("sort"))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.object_list
+        context.update(
+            {
+                "companies": Company.objects.filter(
+                    stamp_calculations__user=self.request.user
+                ).distinct(),
+                "company_filter": self.request.GET.get("company"),
+                "date_from": self.request.GET.get("date_from", ""),
+                "date_to": self.request.GET.get("date_to", ""),
+                "sort_by": self.request.GET.get("sort", "-created_at"),
+                "total_all_companies": StampService.total_amount(qs),
+            }
+        )
+        return context
+
+class MyExpectedStampListView(LoginRequiredMixin, ListView):
+    model = ExpectedStamp
+    template_name = "stamps/my_expected_stamps.html"
+    context_object_name = "expected_stamps"
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = ExpectedStampService.get_queryset()
+
+        qs = ExpectedStampService.filter(
+            qs,
+            sector_id=self.request.GET.get("sector"),
+            date_from=self.request.GET.get("date_from"),
+            date_to=self.request.GET.get("date_to"),
+            user=self.request.user,
+        )
+
+        qs = ExpectedStampService.sort(qs, self.request.GET.get("sort"))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.object_list
+        context.update(
+            {
+                "sectors": Sector.objects.all(),
+                "sector_filter": self.request.GET.get("sector"),
+                "date_from": self.request.GET.get("date_from", ""),
+                "date_to": self.request.GET.get("date_to", ""),
+                "sort_by": self.request.GET.get("sort", "-created_at"),
+                "total_all_sectors": ExpectedStampService.total_amount(qs),
+            }
+        )
+        return context
+
+class GenerateStampCertificateView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        # الحصول على البيانات المفلترة
+        if request.GET.get("type") == "sector":
+            qs = self.get_filtered__expected_stamps_queryset()
+        else:
+            qs = self.get_filtered_stamps_queryset()
+
+        # التحقق من وجود بيانات
+        if not qs.exists():
+            return self._no_data_response()
+
+        # توليد الشهادة
+        try:
+            # include_qr=True إذا أردت إضافة QR code
+            buffer = CertificateService.generate_certificate(
+                queryset=qs, user=request.user, include_qr=False,type=request.GET.get("type")
+            )
+
+            # إرجاع الملف
+            filename = (
+                f'stamp_certificate_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+            )
+            return FileResponse(buffer, as_attachment=True, filename=filename)
+
+        except Exception as e:
+            # في حالة حدوث خطأ
+            return HttpResponse(
+                f'<html><body style="font-family: Arial; text-align: center; padding: 50px;">'
+                f"<h1>⚠️ خطأ</h1>"
+                f'<p style="font-size: 18px;">حدث خطأ أثناء إنشاء الشهادة</p>'
+                f'<p style="color: #dc2626;">{str(e)}</p>'
+                f'<p><a href="javascript:history.back()" style="color: #3b82f6;">← العودة</a></p>'
+                f"</body></html>",
+                status=500,
+            )
+
+    def get_filtered_stamps_queryset(self):
+        """الحصول على المطالبات المفلترة بنفس معايير صفحة القائمة"""
+        qs = StampService.get_queryset()
+
+        qs = StampService.filter(
+            qs,
+            company_id=self.request.GET.get("company"),
+            date_from=self.request.GET.get("date_from"),
+            date_to=self.request.GET.get("date_to"),
+            user=self.request.user,
+        )
+
+        qs = StampService.sort(qs, self.request.GET.get("sort"))
+
+        return qs
+    
+    def get_filtered__expected_stamps_queryset(self):
+        """الحصول على المطالبات المتوقعة المفلترة بنفس معايير صفحة القائمة"""
+        qs = ExpectedStampService.get_queryset()
+
+        qs = ExpectedStampService.filter(
+            qs,
+            sector_id=self.request.GET.get("sector"),
+            date_from=self.request.GET.get("date_from"),
+            date_to=self.request.GET.get("date_to"),
+            user=self.request.user,
+        )
+
+        qs = ExpectedStampService.sort(qs, self.request.GET.get("sort"))
+
+        return qs
+
+    def _no_data_response(self):
+        """رسالة في حالة عدم وجود بيانات"""
+        return HttpResponse(
+            '<html><body style="font-family: Arial; text-align: center; padding: 50px; direction: rtl;">'
+            '<div style="max-width: 600px; margin: 0 auto;">'
+            '<div style="font-size: 64px; margin-bottom: 20px;">📭</div>'
+            '<h1 style="color: #374151;">لا توجد بيانات</h1>'
+            '<p style="font-size: 18px; color: #6b7280; margin: 20px 0;">'
+            "لا توجد بيانات لطباعة الشهادة. يرجى التأكد من وجود سجلات دمغة مطابقة للفلاتر المحددة."
+            "</p>"
+            '<a href="javascript:history.back()" '
+            'style="display: inline-block; padding: 12px 24px; background: #3b82f6; '
+            'color: white; text-decoration: none; border-radius: 8px; margin-top: 20px;">'
+            "← العودة للقائمة"
+            "</a>"
+            "</div>"
+            "</body></html>",
+            status=400,
+        )

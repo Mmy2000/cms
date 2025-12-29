@@ -133,7 +133,7 @@ class StampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):
     success_message = "تمت إضافة حساب الدمغة بنجاح."
 
     def form_valid(self, form):
-        StampService.create_from_form(form)
+        StampService.create_from_form(form, user=self.request.user)
         return super().form_valid(form)
 
 

@@ -33,6 +33,8 @@ class ExpectedStampListView(ListView):
             self.request.GET.get("sort")
         )
 
+        print( qs)
+
         return qs
 
     def get(self, request, *args, **kwargs):
@@ -128,7 +130,7 @@ class ExpectedStampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView
     success_message = "تمت إضافة حساب الدمغة المتوقعة بنجاح."
 
     def form_valid(self, form):
-        ExpectedStampService.create_from_form(form)
+        ExpectedStampService.create_from_form(form, user=self.request.user)
         return super().form_valid(form)
 
 

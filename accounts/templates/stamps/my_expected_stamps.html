@@ -14,65 +14,32 @@
     </div>
 
     <div class="max-w-7xl mx-auto mb-8">
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     <a href="{% url 'add_expected_stamp' %}"
-                class="button_style flex justify-center items-center gap-2">
-                <span class="text-xl">➕</span>
-                <span>إضافة دمغة متوقعه</span>
-                </a>
-                <div class="flex-1 flex justify-center">
-                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg px-8 py-5 border-2 border-green-300 transform hover:scale-105 transition-transform duration-300">
-                        <div class="flex items-center justify-center gap-3 mb-3">
-                            <span class="text-4xl animate-pulse">💰</span>
-                            <h2 class="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
-                                المعاش ميتر
-                            </h2>
-                        </div>
-                        <p class="text-4xl font-extrabold text-green-900 mb-4 text-center">
-                            {{ total_pension|floatformat:2|intcomma }} <span class="text-2xl text-green-700">جنيه</span>
-                        </p>
-                        <a href="{% url 'expected_stamp_dashboard' %}" 
-                        class="group inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
-                            <span class="text-xl">📊</span>
-                            <span>عرض الرسم البياني</span>
-                            <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <a href="{% url 'grouped_expected_stamps' %}" class="group inline-flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-green-700 font-bold rounded-xl shadow-md hover:shadow-xl border-2 border-green-600 transition-all duration-300 transform hover:-translate-y-0.5">
-                    <span class="text-xl">📊</span>
-                    <span>مجموعة حسب القطاع</span>
-                </a>
+                        class="button_style flex justify-center items-center gap-2">
+                        <span class="text-xl">➕</span>
+                        <span>إضافة دمغة متوقعه</span>
+                    </a>
+                <button onclick="window.history.back()" 
+                    class="group inline-flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 hover:text-gray-900 font-bold rounded-xl shadow-lg hover:shadow-2xl border-2 border-gray-300 transition-all duration-300 transform hover:-translate-y-0.5">
+                    <span>رجوع</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 transform group-hover:translate-x-1 transition-transform">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
             </div>
-        </div>  
     </div>
      <div class="max-w-7xl mx-auto mb-6">
         <form method="GET" class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
             <div class="flex flex-wrap items-center justify-center gap-4">
-                <!-- Preserve filters -->
-                <input type="hidden" name="sector" value="{{ sector_filter }}">
-                <input type="hidden" name="date_from" value="{{ date_from }}">
-                <input type="hidden" name="date_to" value="{{ date_to }}">
-                <input type="hidden" name="sort" value="{{ request.GET.sort }}">
-                <div class="flex items-center gap-3">
-                    <label class="text-sm font-bold text-gray-700">تحميل التقرير:</label>
-                    <select class="select select-bordered select-success shadow-sm" name="download">
-                        <option value="">اختر الصيغة...</option>
-                        <option value="pdf">📄 PDF</option>
-                        <option value="excel">📊 Excel</option>
-                    </select>
-                </div>
-
-                <button name="download_btn" value="1"
-                    class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                <a href="{% url 'stamp_certificate' %}?sector={{ sector_filter }}&date_from={{ date_from }}&date_to={{ date_to }}&sort={{ request.GET.sort }}&type=sector"
+                   target="_blank"
+                   class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
                     <span class="flex items-center gap-2">
-                        <span>⬇️</span>
-                        <span>تحميل</span>
+                        <span>📄</span>
+                        <span>طباعة شهادة</span>
                     </span>
-                </button>
+                </a>
             </div>
         </form>
     </div>
@@ -129,7 +96,7 @@
                                 🔍 بحث
                             </button>
 
-                            <a href="{% url 'expected_stamp_list' %}"
+                            <a href="{% url 'my_expected_stamps' %}"
                                class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
                                 🔄 إعادة تعيين
                             </a>
