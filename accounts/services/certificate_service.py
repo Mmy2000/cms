@@ -10,6 +10,8 @@ from reportlab.lib.colors import HexColor
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode import qr
 from reportlab.graphics import renderPDF
+from reportlab.lib.utils import simpleSplit
+
 
 try:
     from arabic_reshaper import reshape
@@ -245,6 +247,10 @@ class CertificateService:
         p.setFillColor(colors["text"])
         p.setFont(font_name, sizes["body"])
 
+        right_margin = 60
+        left_margin = 60
+        max_width = width - right_margin - left_margin
+
         # بناء النص
         lines = [
             f"تشهد إدارة الموقع بأن المهندس: {data['user_name']}",
@@ -284,8 +290,15 @@ class CertificateService:
         for line in lines:
             if line:
                 text = CertificateService._arabic(line)
-                p.drawRightString(width - 60, y, text)
-            y -= 25
+
+                # تقسيم النص إذا كان طويلاً
+                wrapped_lines = simpleSplit(text, font_name, sizes["body"], max_width)
+
+                for wrapped_line in wrapped_lines:
+                    p.drawRightString(width - right_margin, y, wrapped_line)
+                    y -= 25
+            else:
+                y -= 25
 
         return y
 
@@ -297,6 +310,10 @@ class CertificateService:
 
         p.setFillColor(colors["text"])
         p.setFont(font_name, sizes["body"])
+
+        right_margin = 60
+        left_margin = 60
+        max_width = width - right_margin - left_margin
 
         # بناء النص
         lines = [
@@ -337,8 +354,15 @@ class CertificateService:
         for line in lines:
             if line:
                 text = CertificateService._arabic(line)
-                p.drawRightString(width - 60, y, text)
-            y -= 25
+                
+                # تقسيم النص إذا كان طويلاً
+                wrapped_lines = simpleSplit(text, font_name, sizes['body'], max_width)
+                
+                for wrapped_line in wrapped_lines:
+                    p.drawRightString(width - right_margin, y, wrapped_line)
+                    y -= 25
+            else:
+                y -= 25
 
         return y
 
