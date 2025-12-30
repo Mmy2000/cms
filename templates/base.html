@@ -76,27 +76,20 @@
       </a>
 
       <!-- Menu -->
-      <div class="hidden md:flex items-center gap-6 text-2xl font-medium">
+      <div class="hidden md:flex items-center gap-1">
         {% for page in pages %}
           <a href="{{ page.page_url }}" 
-            class="relative pb-1 transition text-lg group
-                    {% if request.path == page.page_url %} 
-                        text-green-600 font-semibold 
-                    {% else %} 
-                        text-gray-700 hover:text-green-600 
-                    {% endif %} 
-            ">
-
-              {{ page.page_name }}
-
-              <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-green-600 origin-left transition-transform duration-300
-                  {% if request.path == page.page_url %} 
-                      scale-x-100 
-                  {% else %} 
-                      scale-x-0 group-hover:scale-x-100 
-                  {% endif %}
-              "></span>
-
+            class="relative px-4 py-2  font-semibold rounded-lg transition-all duration-200
+                   {% if request.path == page.page_url %} 
+                       text-green-600 bg-green-50
+                   {% else %} 
+                       text-gray-700 hover:text-green-600 hover:bg-gray-50
+                   {% endif %}">
+            {{ page.page_name }}
+            
+            {% if request.path == page.page_url %}
+              <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-green-600 rounded-full"></span>
+            {% endif %}
           </a>
         {% endfor %}
       </div>
@@ -193,7 +186,8 @@
 
 
       <!-- Mobile Menu Button -->
-      <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">
+      <button id="menu-btn" class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 
+                     transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">
         <i class="fa-solid fa-bars text-2xl"></i>
       </button>
     </div>
@@ -203,19 +197,19 @@
         class="hidden md:hidden bg-white border-t border-gray-200 shadow-sm">
 
       <!-- Pages -->
-      <div class="py-3">
-        {% for page in pages %}
-          <a href="{{ page.page_url }}"
-            class="block px-6 py-3 text-base transition
-                    {% if request.path == page.page_url %}
-                        bg-green-50 text-green-700 font-semibold border-r-4 border-green-600
-                    {% else %}
-                        text-gray-700 hover:bg-gray-100
-                    {% endif %}">
-            {{ page.page_name }}
-          </a>
-        {% endfor %}
-      </div>
+      <div class="px-4 py-3 space-y-1">
+      {% for page in pages %}
+        <a href="{{ page.page_url }}"
+           class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
+                  {% if request.path == page.page_url %}
+                      bg-green-50 text-green-700 shadow-sm
+                  {% else %}
+                      text-gray-700 hover:bg-gray-50
+                  {% endif %}">
+          {{ page.page_name }}
+        </a>
+      {% endfor %}
+    </div>
 
       <!-- Divider -->
       <div class="border-t my-2 border-gray-200"></div>

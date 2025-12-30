@@ -32,9 +32,7 @@ class ExpectedStampListView(ListView):
             qs,
             self.request.GET.get("sort")
         )
-
-        print( qs)
-
+        
         return qs
 
     def get(self, request, *args, **kwargs):
