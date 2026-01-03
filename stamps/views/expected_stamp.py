@@ -32,7 +32,7 @@ class ExpectedStampListView(ListView):
             qs,
             self.request.GET.get("sort")
         )
-        
+
         return qs
 
     def get(self, request, *args, **kwargs):
@@ -67,6 +67,8 @@ class ExpectedStampListView(ListView):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        date_to = (self.request.GET.get("date_to"),)
+        last_year = ExpectedStampService.get_last_year(date_to)
         context = super().get_context_data(**kwargs)
         qs = self.object_list
         service = ExpectedStampService()
@@ -79,7 +81,7 @@ class ExpectedStampListView(ListView):
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_sectors": ExpectedStampService.total_amount(qs),
-                "total_pension": service.calculate_pension(qs),
+                "total_pension": service.calculate_pension(qs, last_year),
             }
         )
         return context

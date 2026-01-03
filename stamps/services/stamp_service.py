@@ -19,7 +19,7 @@ from reportlab.lib.units import cm
 from bidi.algorithm import get_display
 from django.conf import settings
 import io
-from datetime import date,timedelta
+from datetime import date,timedelta,datetime
 import textwrap
 from site_settings.models import SiteConfiguration
 from decimal import Decimal
@@ -56,6 +56,17 @@ class StampService:
     def get_queryset():
         """Get optimized base queryset with related data."""
         return StampCalculation.objects.select_related("company")
+
+    @staticmethod
+    def get_last_year(date_to):
+        date_str = date_to[0]
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            last_year = date_obj.year
+        except:
+            return None
+            
+        return last_year
 
     @classmethod
     def get_filtered_queryset(
@@ -126,10 +137,13 @@ class StampService:
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
     def calculate_pension(
-        self, queryset, current_year: Optional[int] = None
+        self, queryset, last_year ,current_year: Optional[int] = None
     ) -> Decimal:
-
-        year = current_year if current_year is not None else self.current_year
+        
+        if last_year:
+            year = last_year - 1
+        else:
+            year = current_year if current_year is not None else self.current_year
 
         current_total = self.total_amount(queryset)
         previous_total = self._total_for_previous_year(queryset, year)
