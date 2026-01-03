@@ -70,7 +70,7 @@ class StampListView(ListView):
 
     def get_context_data(self, **kwargs):
         date_to = (self.request.GET.get("date_to"),)
-        last_year = StampService.get_last_year(date_to)
+        year = StampService.get_last_year(date_to)
         context = super().get_context_data(**kwargs)
         qs = self.object_list
         service = StampService()
@@ -83,7 +83,7 @@ class StampListView(ListView):
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_companies": StampService.total_amount(qs),
-                "total_pension": service.calculate_pension(qs,last_year),
+                "total_pension": service.calculate_pension(qs,year),
             }
         )
         return context

@@ -131,10 +131,10 @@ class ExpectedStampService:
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
-    def calculate_pension(self, queryset,last_year ,current_year: Optional[int] = None) -> Decimal:
+    def calculate_pension(self, queryset,year ,current_year: Optional[int] = None) -> Decimal:
 
-        if last_year:
-            year = last_year - 1
+        if year:
+            year = year
         else:
             year = current_year if current_year is not None else self.current_year
 
