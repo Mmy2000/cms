@@ -499,16 +499,16 @@ class ExpectedStampService:
 
         y -= 1.2 * cm
         c.setFont("Amiri", 11)
-        c.drawAlignedString(
+        c.drawCentredString(
             FOOTER_LEFT, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
         )
 
         y -= 1.3 * cm
         c.setFont("Amiri-Bold", 11)
-        c.drawAlignedString(FOOTER_LEFT, y, ExpectedStampService.fix_arabic("أمين الصندوق"))
+        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
-        c.drawAlignedString(FOOTER_LEFT, y, ExpectedStampService.fix_arabic("د / معتز طلبة"))
+        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampService.fix_arabic("د / معتز طلبة"))
 
         c.showPage()
         c.save()
