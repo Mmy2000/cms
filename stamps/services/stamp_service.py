@@ -376,7 +376,7 @@ class StampService:
         c.drawRightString(
             RIGHT,
             y,
-            StampService.fix_arabic(f"القاهرة في : {date.today().strftime('%Y-%m-%d')}")
+            StampService.fix_arabic(f"نزول القاهرة في : {date.today().strftime('%Y-%m-%d')}")
         )
 
         y -= 1.2 * cm
@@ -503,14 +503,14 @@ class StampService:
 
         y -= 1.2 * cm
         c.setFont("Amiri", 11)
-        c.drawRightString(RIGHT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
+        c.drawCentredString(LEFT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
 
         y -= 1.3 * cm
         c.setFont("Amiri-Bold", 11)
-        c.drawRightString(RIGHT, y, StampService.fix_arabic("أمين الصندوق"))
+        c.drawCentredString(LEFT, y, StampService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
-        c.drawRightString(RIGHT, y, StampService.fix_arabic("د / معتز طلبة"))
+        c.drawCentredString(LEFT, y, StampService.fix_arabic("د / معتز طلبة"))
 
         c.showPage()
         c.save()
