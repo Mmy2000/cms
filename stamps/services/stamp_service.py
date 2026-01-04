@@ -65,7 +65,7 @@ class StampService:
             last_year = date_obj.year
         except:
             return None
-            
+
         return last_year
 
     @classmethod
@@ -139,7 +139,7 @@ class StampService:
     def calculate_pension(
         self, queryset, year ,current_year: Optional[int] = None
     ) -> Decimal:
-        
+
         if year:
             year = year 
         else:
@@ -368,15 +368,16 @@ class StampService:
         ROW_HEIGHT = 0.7 * cm
         LEFT = 2 * cm
         RIGHT = width - 2 * cm
-
-        y = height - 2 * cm
+        TOP_MARGIN = 3.5 * cm
+        FOOTER_LEFT = 5 * cm
+        y = height - TOP_MARGIN
 
         # ================= Header ================= #
         c.setFont(*HEADER_FONT)
         c.drawRightString(
             RIGHT,
             y,
-            StampService.fix_arabic(f"نزول القاهرة في : {date.today().strftime('%Y-%m-%d')}")
+            StampService.fix_arabic(f" القاهرة في : {date.today().strftime('%Y-%m-%d')}")
         )
 
         y -= 1.2 * cm
@@ -503,14 +504,14 @@ class StampService:
 
         y -= 1.2 * cm
         c.setFont("Amiri", 11)
-        c.drawCentredString(LEFT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
+        c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
 
         y -= 1.3 * cm
         c.setFont("Amiri-Bold", 11)
-        c.drawCentredString(LEFT, y, StampService.fix_arabic("أمين الصندوق"))
+        c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
-        c.drawCentredString(LEFT, y, StampService.fix_arabic("د / معتز طلبة"))
+        c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("د / معتز طلبة"))
 
         c.showPage()
         c.save()
