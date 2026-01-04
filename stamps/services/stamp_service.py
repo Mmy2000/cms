@@ -368,7 +368,7 @@ class StampService:
         ROW_HEIGHT = 0.7 * cm
         LEFT = 2 * cm
         RIGHT = width - 2 * cm
-        TOP_MARGIN = 3.5 * cm
+        TOP_MARGIN = 5 * cm
         FOOTER_LEFT = 5 * cm
         y = height - TOP_MARGIN
 

@@ -360,7 +360,7 @@ class ExpectedStampService:
         RIGHT = width - 2 * cm
         FOOTER_LEFT = 5 * cm
 
-        TOP_MARGIN = 3.5 * cm
+        TOP_MARGIN = 5 * cm
         y = height - TOP_MARGIN
 
         # ================= Header ================= #
