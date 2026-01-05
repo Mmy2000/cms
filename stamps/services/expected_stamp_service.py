@@ -131,7 +131,7 @@ class ExpectedStampService:
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
-    def calculate_pension(self, queryset,year ,current_year: Optional[int] = None) -> Decimal:
+    def calculate_pension(self, queryset,year=None ,current_year: Optional[int] = None) -> Decimal:
 
         if year:
             year = year
@@ -485,9 +485,9 @@ class ExpectedStampService:
 
         # ================= Footer ================= #
         last_points = [
-            "١- يمكنكم الطعن و التقدم بمستنداتكم خلال خمسه عشر  يوما من تاريخ الاستلام لإدارة الدمغة بالنقابة العامة للمهندسين.. مع اثبات تسليم الطعن.",
-            "٢- عدم الاعتراض أو الطعن خلال ١٥ يوم يعتبر مصادقة علي المديونية.",
-            "٣- تطبق المادة ٩٩ عند التقاعس مدة ثلاث شهور عن الدفع.",
+            "١- حق الطعن: يمكنكم الطعن والتقدم بالمستندات خلال خمسة عشر يوماً من تاريخ الاستلام إلى إدارة الدمغة بالنقابة العامة للمهندسين.",
+            "٢- المصادقة: يعتبر عدم الاعتراض أو الطعن خلال فترة الـ 15 يوماً المذكورة مصادقة رسمية على المديونية.",
+            "٣- التقاعس عن السداد: يتم تطبيق المادة رقم 99 في حالة التقاعس عن الدفع لمدة ثلاثة أشهر.",
         ]
 
         y -= 1.6 * cm
