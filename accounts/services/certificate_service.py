@@ -42,7 +42,7 @@ class CertificateService:
         "heading": 18,
         "body": 14,
         "small": 10,
-        "table": 9,
+        "table": 10,
     }
 
     @staticmethod
@@ -89,9 +89,10 @@ class CertificateService:
         # إضافة الجدول إذا كان مطلوباً
         if include_table:
             y = CertificateService._draw_stamps_table(
-                p, width, y, queryset, font_name, type
+                p, width, y, queryset, font_name, type, data
             )
 
+        # رسم التذييل على آخر صفحة فقط
         CertificateService._draw_footer(p, width, data, font_name)
 
         # إضافة QR code إذا كان مطلوباً
@@ -105,13 +106,14 @@ class CertificateService:
         return buffer
 
     @staticmethod
-    def _draw_stamps_table(p, width, y, queryset, font_name, type="company"):
-        """رسم جدول الدمغات"""
+    def _draw_stamps_table(p, width, y, queryset, font_name, type="company", data=None):
+        """رسم جدول الدمغات مع دعم التقسيم على صفحات متعددة"""
         colors_def = CertificateService.COLORS
         sizes = CertificateService.FONT_SIZES
 
         # التحقق من المساحة المتاحة
-        if y < 250:  # إذا لم يكن هناك مساحة كافية، ابدأ صفحة جديدة
+        min_space_for_table = 200
+        if y < min_space_for_table:
             p.showPage()
             CertificateService._draw_borders(p, width, A4[1])
             y = A4[1] - 80
@@ -123,9 +125,6 @@ class CertificateService:
         table_title = CertificateService._arabic("تفاصيل الدمغات المسلمة")
         p.drawCentredString(width / 2, y, table_title)
         y -= 30
-
-        # تحضير بيانات الجدول
-        table_data = []
 
         # رأس الجدول
         if type == "sector":
@@ -145,9 +144,8 @@ class CertificateService:
                 CertificateService._arabic("#"),
             ]
 
-        table_data.append(headers)
-
-        # صفوف البيانات
+        # تحضير جميع صفوف البيانات
+        all_rows = []
         for idx, stamp in enumerate(queryset.order_by("created_at"), 1):
             if type == "sector":
                 entity_name = stamp.sector.name if stamp.sector else "غير محدد"
@@ -157,7 +155,7 @@ class CertificateService:
             year = stamp.invoice_date if stamp.invoice_date else "غير محدد"
             value = f"{stamp.d1:,.0f}" if stamp.d1 else "0"
             created = (
-                stamp.created_at.strftime("%Y-%m-%d %H:%M%p")
+                stamp.created_at.strftime("%Y-%m-%d %I:%M %p")
                 if stamp.created_at
                 else ""
             )
@@ -166,71 +164,102 @@ class CertificateService:
                 CertificateService._arabic(created),
                 CertificateService._arabic(value),
                 CertificateService._arabic(str(year)),
-                CertificateService._arabic(
-                    entity_name[:30]
-                ),  # تقصير الاسم إذا كان طويلاً
+                CertificateService._arabic(entity_name[:30]),
                 CertificateService._arabic(str(idx)),
             ]
-            table_data.append(row)
+            all_rows.append(row)
 
-        # إنشاء الجدول
-        col_widths = [100, 70, 60, 160, 40]  # عرض الأعمدة
-        table = Table(table_data, colWidths=col_widths)
+        # إعدادات الجدول
+        col_widths = [100, 70, 60, 160, 40]
+        row_height = 32  # ارتفاع كل صف
+        header_height = 44  # ارتفاع رأس الجدول
+        footer_space = 150  # المساحة المحجوزة للتذييل
 
-        # تنسيق الجدول
-        table.setStyle(
-            TableStyle(
-                [
-                    # رأس الجدول
-                    ("BACKGROUND", (0, 0), (-1, 0), colors_def["primary"]),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-                    ("ALIGN", (0, 0), (-1, 0), "CENTER"),
-                    ("FONTNAME", (0, 0), (-1, 0), font_name),
-                    ("FONTSIZE", (0, 0), (-1, 0), sizes["table"]),
-                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                    ("TOPPADDING", (0, 0), (-1, 0), 12),
-                    # محتوى الجدول
-                    ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
-                    ("TEXTCOLOR", (0, 1), (-1, -1), colors_def["text"]),
-                    ("ALIGN", (0, 1), (-1, -1), "CENTER"),
-                    ("FONTNAME", (0, 1), (-1, -1), font_name),
-                    ("FONTSIZE", (0, 1), (-1, -1), sizes["table"]),
-                    ("TOPPADDING", (0, 1), (-1, -1), 8),
-                    ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
-                    # الحدود
-                    ("GRID", (0, 0), (-1, -1), 1, colors_def["border"]),
-                    ("BOX", (0, 0), (-1, -1), 2, colors_def["primary"]),
-                    # صفوف متبادلة
-                    (
-                        "ROWBACKGROUNDS",
-                        (0, 1),
-                        (-1, -1),
-                        [colors.white, colors.lightgrey],
-                    ),
-                ]
+        # حساب عدد الصفوف التي تناسب الصفحة
+        rows_per_page = int((y - footer_space - header_height) / row_height)
+
+        # تقسيم الصفوف على صفحات
+        total_rows = len(all_rows)
+        current_row = 0
+
+        while current_row < total_rows:
+            # تحديد الصفوف للصفحة الحالية
+            end_row = min(current_row + rows_per_page, total_rows)
+            page_rows = all_rows[current_row:end_row]
+
+            # إنشاء بيانات الجدول للصفحة الحالية
+            table_data = [headers] + page_rows
+            table = Table(table_data, colWidths=col_widths)
+            table.setStyle(
+                CertificateService._get_table_style(colors_def, sizes, font_name)
             )
+
+            # رسم الجدول
+            table_width, table_height = table.wrap(0, 0)
+            table_x = (width - table_width) / 2
+            table_y = y - table_height
+
+            # التأكد من أن الجدول لن يتداخل مع التذييل
+            if table_y < footer_space:
+                # إذا كان الجدول سيتداخل، قلل عدد الصفوف
+                rows_per_page = max(1, rows_per_page - 1)
+                continue
+
+            table.drawOn(p, table_x, table_y)
+
+            current_row = end_row
+
+            # إذا كان هناك المزيد من الصفوف، أنشئ صفحة جديدة
+            if current_row < total_rows:
+                p.showPage()
+                CertificateService._draw_borders(p, width, A4[1])
+                y = A4[1] - 80
+
+                # رسم عنوان الجدول للصفحة التالية
+                p.setFont(font_name, sizes["heading"])
+                p.setFillColor(colors_def["primary"])
+                continued_title = CertificateService._arabic(
+                    "تفاصيل الدمغات المسلمة (تابع)"
+                )
+                p.drawCentredString(width / 2, y, continued_title)
+                y -= 30
+
+                # إعادة حساب عدد الصفوف للصفحة الجديدة
+                rows_per_page = int((y - footer_space - header_height) / row_height)
+            else:
+                # آخر صفحة - إرجاع الموقع بعد الجدول
+                return table_y - 20
+
+        return y
+
+    @staticmethod
+    def _get_table_style(colors_def, sizes, font_name):
+        """إرجاع تنسيق الجدول"""
+        return TableStyle(
+            [
+                # رأس الجدول
+                ("BACKGROUND", (0, 0), (-1, 0), colors_def["primary"]),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+                ("FONTNAME", (0, 0), (-1, 0), font_name),
+                ("FONTSIZE", (0, 0), (-1, 0), sizes["table"]),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("TOPPADDING", (0, 0), (-1, 0), 12),
+                # محتوى الجدول
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("TEXTCOLOR", (0, 1), (-1, -1), colors_def["text"]),
+                ("ALIGN", (0, 1), (-1, -1), "CENTER"),
+                ("FONTNAME", (0, 1), (-1, -1), font_name),
+                ("FONTSIZE", (0, 1), (-1, -1), sizes["table"]),
+                ("TOPPADDING", (0, 1), (-1, -1), 8),
+                ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
+                # الحدود
+                ("GRID", (0, 0), (-1, -1), 1, colors_def["border"]),
+                ("BOX", (0, 0), (-1, -1), 2, colors_def["primary"]),
+                # صفوف متبادلة
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ]
         )
-
-        # حساب ارتفاع الجدول
-        table_width, table_height = table.wrap(0, 0)
-
-        # التحقق من المساحة المتاحة
-        if y - table_height < 120:  # إذا لم يكن هناك مساحة كافية
-            p.showPage()
-            CertificateService._draw_borders(p, width, A4[1])
-            y = A4[1] - 80
-            # إعادة رسم عنوان الجدول
-            p.setFont(font_name, sizes["heading"])
-            p.setFillColor(colors_def["primary"])
-            p.drawCentredString(width / 2, y, table_title)
-            y -= 30
-
-        # رسم الجدول
-        table_x = (width - table_width) / 2
-        table_y = y - table_height
-        table.drawOn(p, table_x, table_y)
-
-        return table_y - 20
 
     @staticmethod
     def _register_font():
@@ -410,7 +439,11 @@ class CertificateService:
             )
         elif data["companies_count"] <= 3:
             companies_text = "، ".join(data["companies"])
-            lines.append(f"قد سلم بيانات الشركات هن السنوات الموضحه في الجدول")
+            lines.append(f"قد سلم بيانات الشركات عن السنوات الموضحه في الجدول")
+        else:
+            lines.append(
+                f"قد سلم بيانات {data['companies_count']} شركة عن السنوات الموضحه في الجدول"
+            )
 
         lines.extend(
             [
@@ -466,6 +499,10 @@ class CertificateService:
         elif data["sectors_count"] <= 3:
             sectors_text = "، ".join(data["sectors"])
             lines.append(f"قد سلم بيانات القطاعات عن السنوات الموضحه في الجدول")
+        else:
+            lines.append(
+                f"قد سلم بيانات {data['sectors_count']} قطاع عن السنوات الموضحه في الجدول"
+            )
 
         lines.extend(
             [
