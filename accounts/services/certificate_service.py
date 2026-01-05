@@ -11,6 +11,8 @@ from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode import qr
 from reportlab.graphics import renderPDF
 from reportlab.lib.utils import simpleSplit
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
 
 
 try:
@@ -40,10 +42,13 @@ class CertificateService:
         "heading": 18,
         "body": 14,
         "small": 10,
+        "table": 9,
     }
 
     @staticmethod
-    def generate_certificate(queryset, user, include_qr=False,type="company"):
+    def generate_certificate(
+        queryset, user, include_qr=False, type="company", include_table=True
+    ):
         """
         توليد شهادة PDF
 
@@ -51,6 +56,8 @@ class CertificateService:
             queryset: QuerySet من StampCalculation
             user: المستخدم الحالي
             include_qr: هل يتم إضافة QR code
+            type: نوع الشهادة (company أو sector)
+            include_table: هل يتم إضافة جدول بالدمغات
 
         Returns:
             BytesIO: ملف PDF
@@ -63,7 +70,7 @@ class CertificateService:
         font_name = CertificateService._register_font()
 
         # تجهيز البيانات
-        if type=="sector":
+        if type == "sector":
             data = CertificateService._prepare_expected_stamps_data(queryset, user)
         else:
             data = CertificateService._prepare_stamps_data(queryset, user)
@@ -71,10 +78,20 @@ class CertificateService:
         # رسم الشهادة
         CertificateService._draw_borders(p, width, height)
         y = CertificateService._draw_header(p, width, height, font_name)
-        if type=="sector":
-            y = CertificateService._draw_expected_stamps_body(p, width, y, data, font_name)
+
+        if type == "sector":
+            y = CertificateService._draw_expected_stamps_body(
+                p, width, y, data, font_name
+            )
         else:
             y = CertificateService._draw_stamps_body(p, width, y, data, font_name)
+
+        # إضافة الجدول إذا كان مطلوباً
+        if include_table:
+            y = CertificateService._draw_stamps_table(
+                p, width, y, queryset, font_name, type
+            )
+
         CertificateService._draw_footer(p, width, data, font_name)
 
         # إضافة QR code إذا كان مطلوباً
@@ -86,6 +103,134 @@ class CertificateService:
         buffer.seek(0)
 
         return buffer
+
+    @staticmethod
+    def _draw_stamps_table(p, width, y, queryset, font_name, type="company"):
+        """رسم جدول الدمغات"""
+        colors_def = CertificateService.COLORS
+        sizes = CertificateService.FONT_SIZES
+
+        # التحقق من المساحة المتاحة
+        if y < 250:  # إذا لم يكن هناك مساحة كافية، ابدأ صفحة جديدة
+            p.showPage()
+            CertificateService._draw_borders(p, width, A4[1])
+            y = A4[1] - 80
+
+        # عنوان الجدول
+        y -= 30
+        p.setFont(font_name, sizes["heading"])
+        p.setFillColor(colors_def["primary"])
+        table_title = CertificateService._arabic("تفاصيل الدمغات المسلمة")
+        p.drawCentredString(width / 2, y, table_title)
+        y -= 30
+
+        # تحضير بيانات الجدول
+        table_data = []
+
+        # رأس الجدول
+        if type == "sector":
+            headers = [
+                CertificateService._arabic("تاريخ الإدخال"),
+                CertificateService._arabic("القيمة"),
+                CertificateService._arabic("السنة"),
+                CertificateService._arabic("القطاع"),
+                CertificateService._arabic("#"),
+            ]
+        else:
+            headers = [
+                CertificateService._arabic("تاريخ الإدخال"),
+                CertificateService._arabic("القيمة"),
+                CertificateService._arabic("السنة"),
+                CertificateService._arabic("الشركة"),
+                CertificateService._arabic("#"),
+            ]
+
+        table_data.append(headers)
+
+        # صفوف البيانات
+        for idx, stamp in enumerate(queryset.order_by("created_at"), 1):
+            if type == "sector":
+                entity_name = stamp.sector.name if stamp.sector else "غير محدد"
+            else:
+                entity_name = stamp.company.name if stamp.company else "غير محدد"
+
+            year = stamp.invoice_date if stamp.invoice_date else "غير محدد"
+            value = f"{stamp.d1:,.0f}" if stamp.d1 else "0"
+            created = (
+                stamp.created_at.strftime("%Y-%m-%d %H:%M%p")
+                if stamp.created_at
+                else ""
+            )
+
+            row = [
+                CertificateService._arabic(created),
+                CertificateService._arabic(value),
+                CertificateService._arabic(str(year)),
+                CertificateService._arabic(
+                    entity_name[:30]
+                ),  # تقصير الاسم إذا كان طويلاً
+                CertificateService._arabic(str(idx)),
+            ]
+            table_data.append(row)
+
+        # إنشاء الجدول
+        col_widths = [100, 70, 60, 160, 40]  # عرض الأعمدة
+        table = Table(table_data, colWidths=col_widths)
+
+        # تنسيق الجدول
+        table.setStyle(
+            TableStyle(
+                [
+                    # رأس الجدول
+                    ("BACKGROUND", (0, 0), (-1, 0), colors_def["primary"]),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), font_name),
+                    ("FONTSIZE", (0, 0), (-1, 0), sizes["table"]),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("TOPPADDING", (0, 0), (-1, 0), 12),
+                    # محتوى الجدول
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                    ("TEXTCOLOR", (0, 1), (-1, -1), colors_def["text"]),
+                    ("ALIGN", (0, 1), (-1, -1), "CENTER"),
+                    ("FONTNAME", (0, 1), (-1, -1), font_name),
+                    ("FONTSIZE", (0, 1), (-1, -1), sizes["table"]),
+                    ("TOPPADDING", (0, 1), (-1, -1), 8),
+                    ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
+                    # الحدود
+                    ("GRID", (0, 0), (-1, -1), 1, colors_def["border"]),
+                    ("BOX", (0, 0), (-1, -1), 2, colors_def["primary"]),
+                    # صفوف متبادلة
+                    (
+                        "ROWBACKGROUNDS",
+                        (0, 1),
+                        (-1, -1),
+                        [colors.white, colors.lightgrey],
+                    ),
+                ]
+            )
+        )
+
+        # حساب ارتفاع الجدول
+        table_width, table_height = table.wrap(0, 0)
+
+        # التحقق من المساحة المتاحة
+        if y - table_height < 120:  # إذا لم يكن هناك مساحة كافية
+            p.showPage()
+            CertificateService._draw_borders(p, width, A4[1])
+            y = A4[1] - 80
+            # إعادة رسم عنوان الجدول
+            p.setFont(font_name, sizes["heading"])
+            p.setFillColor(colors_def["primary"])
+            p.drawCentredString(width / 2, y, table_title)
+            y -= 30
+
+        # رسم الجدول
+        table_x = (width - table_width) / 2
+        table_y = y - table_height
+        table.drawOn(p, table_x, table_y)
+
+        return table_y - 20
 
     @staticmethod
     def _register_font():
@@ -164,7 +309,7 @@ class CertificateService:
         hasattr(user, "profile") and hasattr(user.profile, "syndicate_number")
         card_number = user.profile.syndicate_number
 
-        # الشركات
+        # القطاعات
         sectors = list(set(queryset.values_list("sector__name", flat=True)))
         sectors.sort()  # ترتيب أبجدي
 
@@ -212,7 +357,7 @@ class CertificateService:
         p.setLineWidth(1)
         p.rect(40, 40, width - 80, height - 80)
 
-        # زخرفة في الزوايا (اختياري)
+        # زخرفة في الزوايا
         p.setFillColor(colors["secondary"])
         for x, y in [(50, height - 50), (width - 50, height - 50)]:
             p.circle(x, y, 5, fill=1)
@@ -258,26 +403,20 @@ class CertificateService:
             "",
         ]
 
-        # الشركات (بدون تكرار)
+        # الشركات
         if data["companies_count"] == 1:
-            # شركة واحدة فقط
-            lines.append(f"قد سلم بيانات شركة: {data['companies'][0]}")
+            lines.append(
+                f"قد سلم بيانات الشركه {data['companies'][0]} عن السنوات الموضحه في الجدول"
+            )
         elif data["companies_count"] <= 3:
-            # 2-3 شركات
             companies_text = "، ".join(data["companies"])
-            lines.append(f"قد سلم بيانات شركات: {companies_text}")
-        else:
-            # أكثر من 3 شركات
-            companies_text = "، ".join(data["companies"][:3])
-            lines.append(f"قد سلم بيانات شركات: {companies_text}")
-            lines.append(f"وشركات أخرى (إجمالي {data['companies_count']} شركة)")
+            lines.append(f"قد سلم بيانات الشركات هن السنوات الموضحه في الجدول")
 
         lines.extend(
             [
                 "",
-                f"عن سنوات: {', '.join(map(str, data['years']))}",
                 f"بقيمة إجمالية: {data['total_value']:,.0f} جنيه مصري",
-                f"بتاريخ: {data['entry_date']} الساعة: {data['entry_time']}",
+                f"بأول تاريخ: {data['entry_date']} الساعة: {data['entry_time']}",
                 "",
                 "ويحتفظ بحقه في الحصول من النقابة عن حافز الدمغة المقرر",
                 "عند ورود المبلغ وتسليمه للنقابة.",
@@ -290,10 +429,7 @@ class CertificateService:
         for line in lines:
             if line:
                 text = CertificateService._arabic(line)
-
-                # تقسيم النص إذا كان طويلاً
                 wrapped_lines = simpleSplit(text, font_name, sizes["body"], max_width)
-
                 for wrapped_line in wrapped_lines:
                     p.drawRightString(width - right_margin, y, wrapped_line)
                     y -= 25
@@ -322,26 +458,20 @@ class CertificateService:
             "",
         ]
 
-        # الشركات (بدون تكرار)
+        # القطاعات
         if data["sectors_count"] == 1:
-            # شركة واحدة فقط
-            lines.append(f"قد سلم بيانات قطاع: {data['sectors'][0]}")
+            lines.append(
+                f"قد سلم بيانات القطاع {data['sectors'][0]} عن السنوات الموضحه في الجدول"
+            )
         elif data["sectors_count"] <= 3:
-            # 2-3 شركات
             sectors_text = "، ".join(data["sectors"])
-            lines.append(f"قد سلم بيانات قطاعات: {sectors_text}")
-        else:
-            # أكثر من 3 شركات
-            sectors_text = "، ".join(data["sectors"][:3])
-            lines.append(f"قد سلم بيانات قطاعات: {sectors_text}")
-            lines.append(f"وقطاعات أخرى (إجمالي {data['sectors_count']} قطاع)")
+            lines.append(f"قد سلم بيانات القطاعات عن السنوات الموضحه في الجدول")
 
         lines.extend(
             [
                 "",
-                f"عن سنوات: {', '.join(map(str, data['years']))}",
                 f"بقيمة إجمالية: {data['total_value']:,.0f} جنيه مصري",
-                f"بتاريخ: {data['entry_date']} الساعة: {data['entry_time']}",
+                f"بأول تاريخ: {data['entry_date']} الساعة: {data['entry_time']}",
                 "",
                 "ويحتفظ بحقه في الحصول من النقابة عن حافز الدمغة المقرر",
                 "عند ورود المبلغ وتسليمه للنقابة.",
@@ -354,10 +484,7 @@ class CertificateService:
         for line in lines:
             if line:
                 text = CertificateService._arabic(line)
-                
-                # تقسيم النص إذا كان طويلاً
-                wrapped_lines = simpleSplit(text, font_name, sizes['body'], max_width)
-                
+                wrapped_lines = simpleSplit(text, font_name, sizes["body"], max_width)
                 for wrapped_line in wrapped_lines:
                     p.drawRightString(width - right_margin, y, wrapped_line)
                     y -= 25

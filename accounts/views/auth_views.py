@@ -208,7 +208,7 @@ class GenerateStampCertificateView(LoginRequiredMixin, View):
         try:
             # include_qr=True إذا أردت إضافة QR code
             buffer = CertificateService.generate_certificate(
-                queryset=qs, user=request.user, include_qr=False,type=request.GET.get("type")
+                queryset=qs, user=request.user, include_qr=False,type=request.GET.get("type"),include_table=True
             )
 
             # إرجاع الملف
