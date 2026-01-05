@@ -329,6 +329,15 @@ class ExpectedStampService:
         pdf = buffer.getvalue()
         buffer.close()
         return pdf
+    
+    def _start_new_page(c, width, height, top_margin_cm=7):
+        TOP_MARGIN = top_margin_cm * cm
+        y = height - TOP_MARGIN
+
+        # IMPORTANT: reset font after showPage
+        c.setFont("Amiri", 11)
+
+        return y
 
     @staticmethod
     def export_to_pdf_for_spacific_sector(queryset, sector_id):
@@ -360,7 +369,7 @@ class ExpectedStampService:
         RIGHT = width - 2 * cm
         FOOTER_LEFT = 5 * cm
 
-        TOP_MARGIN = 5 * cm
+        TOP_MARGIN = 7 * cm
         y = height - TOP_MARGIN
 
         # ================= Header ================= #
@@ -470,8 +479,7 @@ class ExpectedStampService:
 
             if y < 4 * cm:
                 c.showPage()
-                c.setFont(*TABLE_ROW_FONT)
-                y = height - 2 * cm
+                y = ExpectedStampService._start_new_page(c, width, height, 7)
 
         # ================= Total ================= #
         y -= 0.5 * cm
