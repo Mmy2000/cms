@@ -512,7 +512,7 @@ class StampService:
 
         y -= 1.2 * cm
         c.setFont("Amiri", 11)
-        c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
+        c.drawRightString(RIGHT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
 
         y -= 1.3 * cm
         c.setFont("Amiri-Bold", 11)
