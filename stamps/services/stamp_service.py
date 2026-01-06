@@ -342,7 +342,7 @@ class StampService:
         c.setFont("Amiri", 11)
 
         return y
-    
+
     @staticmethod
     def export_to_pdf_for_spacific_company(queryset, company_id):
 
@@ -390,11 +390,12 @@ class StampService:
         )
 
         y -= 1.2 * cm
+        c.setFont(*TITLE_FONT)
         c.drawRightString(RIGHT, y, StampService.fix_arabic(f"السادة شركة / {company.name}"))
 
         # "تحية طيبة وبعد"
         y -= 1.5 * cm
-        c.setFont("Amiri-Bold", 13)
+        c.setFont(*TITLE_FONT)
         c.drawCentredString(width / 2, y, StampService.fix_arabic("تحية طيبة و بعد"))
 
         # Title
@@ -404,7 +405,7 @@ class StampService:
 
         # ================= Intro paragraph ================= #
         y -= 2 * cm
-        c.setFont(*PARA_FONT)
+        c.setFont(*TABLE_HEADER_FONT)
 
         paragraph_text = (
             "بمراجعة حجم اعمالكم وجد لديكم كدمغة هندسية لم تورد طبقا للقانون رقم 66 لسنة 1974 "
@@ -504,21 +505,22 @@ class StampService:
         ]
 
         y -= 1.6 * cm
-        c.setFont("Amiri", 10)
+        c.setFont(*TABLE_HEADER_FONT)
 
         for point in last_points:
             c.drawRightString(RIGHT, y, StampService.fix_arabic(point))
             y -= 0.7 * cm   # المسافة بين النقاط
 
         y -= 1.2 * cm
-        c.setFont("Amiri", 11)
+        c.setFont(*TITLE_FONT)
         c.drawRightString(RIGHT, y, StampService.fix_arabic("وتفضلوا بقبول فائق الاحترام"))
 
         y -= 1.3 * cm
-        c.setFont("Amiri-Bold", 11)
+        c.setFont(*TITLE_FONT)
         c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
+        c.setFont(*TITLE_FONT)
         c.drawCentredString(FOOTER_LEFT, y, StampService.fix_arabic("د / معتز طلبة"))
 
         c.showPage()
