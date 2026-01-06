@@ -26,6 +26,8 @@ from django.utils.dateparse import parse_date
 from django.utils import timezone
 from typing import Optional
 from django.db.models.functions import TruncYear
+from num2words import num2words
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class ExpectedStampService:
@@ -339,6 +341,32 @@ class ExpectedStampService:
 
         return y
 
+    def _number_to_arabic_text(amount) -> str:
+        """
+        Converts number to Arabic currency text (EGP).
+        Supports decimals (piasters).
+        """
+
+        amount = Decimal(str(amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+        pounds = int(amount)
+        piasters = int((amount - pounds) * 100)
+
+        parts = []
+
+        if pounds > 0:
+            pounds_text = num2words(pounds, lang="ar")
+            parts.append(f"{pounds_text} جنيه")
+
+        if piasters > 0:
+            piasters_text = num2words(piasters, lang="ar")
+            parts.append(f"{piasters_text} قرش")
+
+        if not parts:
+            return "صفر جنيه"
+
+        return f"فقط {' و '.join(parts)} لا غير"
+
     @staticmethod
     def export_to_pdf_for_spacific_sector(queryset, sector_id):
 
@@ -375,14 +403,13 @@ class ExpectedStampService:
         # ================= Header ================= #
         c.setFont(*HEADER_FONT)
         c.drawRightString(
-            RIGHT,
+            FOOTER_LEFT,
             y,
             ExpectedStampService.fix_arabic(
                 f" القاهرة في : {date.today().strftime('%Y-%m-%d')}"
             ),
         )
 
-        y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
         c.drawRightString(
             RIGHT, y, ExpectedStampService.fix_arabic(f"السادة قطاع / {company.name}")
@@ -492,6 +519,15 @@ class ExpectedStampService:
             RIGHT, y, ExpectedStampService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
         )
 
+        y -= 0.8 * cm
+        c.setFont("Amiri-Bold", 12)
+        total_in_arabic = ExpectedStampService.fix_arabic(
+            ExpectedStampService._number_to_arabic_text(total)
+        )
+        c.drawRightString(
+            RIGHT,y,total_in_arabic
+        )
+
         # ================= Footer ================= #
         last_points = [
             "١- حق الطعن: يمكنكم الطعن والتقدم بالمستندات خلال خمسة عشر يوماً من تاريخ الاستلام إلى إدارة الدمغة بالنقابة العامة للمهندسين.",
@@ -508,8 +544,8 @@ class ExpectedStampService:
 
         y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
-        c.drawRightString(
-            RIGHT, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
+        c.drawCentredString(
+            width / 2, y, ExpectedStampService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
         )
 
         y -= 1.3 * cm
