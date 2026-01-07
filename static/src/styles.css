@@ -62,3 +62,61 @@
     .animate-in {
         animation: fade-in 0.3s ease-out;
     }
+
+
+    .input-style {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+}
+
+.input-style:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    background-color: #ffffff;
+}
+
+.input-style:hover {
+    border-color: #d1d5db;
+}
+
+/* File Input Enhancement */
+input[type="file"].input-style {
+    padding: 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+input[type="file"].input-style::-webkit-file-upload-button {
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: linear-gradient(to right, #10b981, #059669);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+input[type="file"].input-style::-webkit-file-upload-button:hover {
+    background: linear-gradient(to right, #059669, #047857);
+    transform: translateY(-1px);
+}
+
+/* Group Hover Effects */
+.group:hover .input-style {
+    border-color: #d1d5db;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .input-style {
+        font-size: 16px; /* Prevents zoom on mobile */
+    }
+}
