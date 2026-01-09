@@ -164,15 +164,15 @@ class CertificateService:
                 CertificateService._arabic(created),
                 CertificateService._arabic(value),
                 CertificateService._arabic(str(year)),
-                CertificateService._arabic(entity_name[:30]),
+                CertificateService._arabic(entity_name[:40]),  # زيادة طول النص
                 CertificateService._arabic(str(idx)),
             ]
             all_rows.append(row)
 
         # إعدادات الجدول - تم تعديل عرض الأعمدة
         # الترتيب: تاريخ الإدخال، القيمة، السنة، الشركة/القطاع، #
-        col_widths = [130, 90, 80, 120, 40]  # المجموع = 460 بكسل
-        row_height = 32  # ارتفاع كل صف
+        col_widths = [115, 85, 75, 155, 35]  # المجموع = 465 بكسل
+        row_height = 35  # ارتفاع كل صف (زيادة لاستيعاب النص الطويل)
         header_height = 44  # ارتفاع رأس الجدول
         footer_space = 150  # المساحة المحجوزة للتذييل
 
@@ -252,8 +252,10 @@ class CertificateService:
                 ("ALIGN", (0, 1), (-1, -1), "CENTER"),
                 ("FONTNAME", (0, 1), (-1, -1), font_name),
                 ("FONTSIZE", (0, 1), (-1, -1), sizes["table"]),
-                ("TOPPADDING", (0, 1), (-1, -1), 8),
-                ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
+                ("TOPPADDING", (0, 1), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 1), (-1, -1), 10),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),  # محاذاة رأسية في المنتصف
+                ("WORDWRAP", (0, 0), (-1, -1), "LTR"),  # تفعيل التفاف النص
                 # الحدود
                 ("GRID", (0, 0), (-1, -1), 1, colors_def["border"]),
                 ("BOX", (0, 0), (-1, -1), 2, colors_def["primary"]),
