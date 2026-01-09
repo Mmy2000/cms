@@ -27,7 +27,8 @@ from django.utils import timezone
 from typing import Optional
 from django.db.models.functions import TruncYear
 from num2words import num2words
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP,InvalidOperation
+from typing import Optional
 
 
 class ExpectedStampService:
@@ -133,20 +134,38 @@ class ExpectedStampService:
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
-    def calculate_pension(self, queryset,year=None ,current_year: Optional[int] = None) -> Decimal:
 
-        if year:
-            year = year
-        else:
-            year = current_year if current_year is not None else self.current_year
+    def calculate_pension(
+        self,
+        queryset,
+        year: Optional[int] = None,
+        current_year: Optional[int] = None,
+    ) -> Decimal:
+        """
+        Safely calculate pension without raising runtime errors.
+        """
 
-        current_total = self.total_amount(queryset)
-        previous_total = self._total_for_previous_year(queryset, year)
+        # Resolve year safely
+        year = year or current_year or self.current_year
 
-        pension = ((current_total * self.PENSION_MULTIPLIER) + previous_total) / (
-            self.retired_engineers * self.MONTHS_PER_YEAR
-        )
-        return pension
+        # Protect against invalid retired_engineers
+        if not self.retired_engineers or self.retired_engineers <= 0:
+            return Decimal("0.00")
+
+        try:
+            current_total = self.total_amount(queryset) or Decimal("0")
+            previous_total = self._total_for_previous_year(queryset, year) or Decimal("0")
+
+            denominator = Decimal(self.retired_engineers) * Decimal(self.MONTHS_PER_YEAR)
+
+            pension = (
+                (current_total * self.PENSION_MULTIPLIER) + previous_total
+            ) / denominator
+
+            return pension
+
+        except (ZeroDivisionError, TypeError, InvalidOperation):
+            return Decimal("0.00")
 
     @staticmethod
     def total_sectors(queryset) -> int:
