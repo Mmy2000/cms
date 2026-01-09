@@ -25,10 +25,18 @@ class StampCalculation(models.Model):
         verbose_name=_("User"),
         default=1,
     )
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="stamp_calculations",verbose_name=_("Company"))
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name="stamp_calculations",
+        verbose_name=_("Company"),
+        db_index=True,
+    )
     value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=0)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
-    invoice_date = models.DateField(_("Invoice Date"),null=True, blank=True)
+    invoice_date = models.DateField(
+        _("Invoice Date"), null=True, blank=True, db_index=True
+    )
     stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
     exchange_rate = models.DecimalField(_("Exchange Rate"), max_digits=10, decimal_places=4, default=1, validators=[MinValueValidator(0.0001)],help_text="سعر الصرف لتحويل القيمة إذا كانت بالعملة الأجنبية")
 
@@ -100,10 +108,18 @@ class ExpectedStamp(models.Model):
         verbose_name=_("User"),
         default=1,
     )
-    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name="expected_stamps",verbose_name=_("Sector"))
+    sector = models.ForeignKey(
+        Sector,
+        on_delete=models.CASCADE,
+        related_name="expected_stamps",
+        verbose_name=_("Sector"),
+        db_index=True,
+    )
     value_of_work = models.DecimalField(_("Value Of Work (A)"), max_digits=19, decimal_places=0)
     invoice_copies = models.PositiveIntegerField(_("Invoice Copies (B)"))
-    invoice_date = models.DateField(_("Invoice Date"),null=True, blank=True)
+    invoice_date = models.DateField(
+        _("Invoice Date"), null=True, blank=True, db_index=True
+    )
     stamp_rate = models.DecimalField(_("Stamp rate (C)"), max_digits=6, decimal_places=4, default=0.0015)
     exchange_rate = models.DecimalField(_("Exchange Rate"), max_digits=10, decimal_places=4, default=1, validators=[MinValueValidator(0.0001)],help_text="سعر الصرف لتحويل القيمة إذا كانت بالعملة الأجنبية")
 
