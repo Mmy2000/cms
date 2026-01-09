@@ -160,11 +160,28 @@ class CertificateService:
                 else ""
             )
 
+            # استخدام Paragraph لتمكين التفاف النص التلقائي
+            from reportlab.platypus import Paragraph
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+            # إنشاء نمط للفقرة مع دعم RTL
+            style = ParagraphStyle(
+                "Arabic",
+                fontName=font_name,
+                fontSize=sizes["table"],
+                alignment=1,  # CENTER
+                textColor=colors_def["text"],
+                leading=12,  # المسافة بين الأسطر
+            )
+
+            # إنشاء Paragraph لاسم الشركة/القطاع
+            entity_paragraph = Paragraph(CertificateService._arabic(entity_name), style)
+
             row = [
                 CertificateService._arabic(created),
                 CertificateService._arabic(value),
                 CertificateService._arabic(str(year)),
-                CertificateService._arabic(entity_name[:40]),  # زيادة طول النص
+                entity_paragraph,  # استخدام Paragraph بدلاً من النص العادي
                 CertificateService._arabic(str(idx)),
             ]
             all_rows.append(row)
@@ -172,12 +189,13 @@ class CertificateService:
         # إعدادات الجدول - تم تعديل عرض الأعمدة
         # الترتيب: تاريخ الإدخال، القيمة، السنة، الشركة/القطاع، #
         col_widths = [115, 85, 75, 155, 35]  # المجموع = 465 بكسل
-        row_height = 35  # ارتفاع كل صف (زيادة لاستيعاب النص الطويل)
+        row_height = None  # السماح بارتفاع تلقائي حسب المحتوى
         header_height = 44  # ارتفاع رأس الجدول
         footer_space = 150  # المساحة المحجوزة للتذييل
+        min_row_height = 32  # الحد الأدنى لارتفاع الصف
 
-        # حساب عدد الصفوف التي تناسب الصفحة
-        rows_per_page = int((y - footer_space - header_height) / row_height)
+        # حساب عدد الصفوف التي تناسب الصفحة (تقدير تقريبي)
+        rows_per_page = int((y - footer_space - header_height) / min_row_height)
 
         # تقسيم الصفوف على صفحات
         total_rows = len(all_rows)
@@ -226,7 +244,7 @@ class CertificateService:
                 y -= 30
 
                 # إعادة حساب عدد الصفوف للصفحة الجديدة
-                rows_per_page = int((y - footer_space - header_height) / row_height)
+                rows_per_page = int((y - footer_space - header_height) / min_row_height)
             else:
                 # آخر صفحة - إرجاع الموقع بعد الجدول
                 return table_y - 20
@@ -252,10 +270,11 @@ class CertificateService:
                 ("ALIGN", (0, 1), (-1, -1), "CENTER"),
                 ("FONTNAME", (0, 1), (-1, -1), font_name),
                 ("FONTSIZE", (0, 1), (-1, -1), sizes["table"]),
-                ("TOPPADDING", (0, 1), (-1, -1), 10),
-                ("BOTTOMPADDING", (0, 1), (-1, -1), 10),
+                ("TOPPADDING", (0, 1), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 1), (-1, -1), 6),
                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),  # محاذاة رأسية في المنتصف
-                ("WORDWRAP", (0, 0), (-1, -1), "LTR"),  # تفعيل التفاف النص
+                ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 5),
                 # الحدود
                 ("GRID", (0, 0), (-1, -1), 1, colors_def["border"]),
                 ("BOX", (0, 0), (-1, -1), 2, colors_def["primary"]),
