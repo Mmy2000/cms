@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "site_settings.apps.SettingsConfig",
     "stamps.apps.StampsConfig",
     "accounts.apps.AccountsConfig",
+    "about.apps.AboutConfig",
+    "projects.apps.ProjectsConfig",
     "pwa",
     "compressor",  # new
 ]

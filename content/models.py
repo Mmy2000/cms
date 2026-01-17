@@ -19,6 +19,7 @@ class Content(models.Model):
         _("Image"), upload_to="content_images/", null=True, blank=True
     )
 
+
     created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated_at"), auto_now=True)
 

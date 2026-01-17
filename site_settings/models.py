@@ -1,7 +1,18 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+import os
 
 # Create your models here.
+
+
+def validate_svg_or_image(value):
+    ext = os.path.splitext(value.name)[1].lower()
+    allowed_extensions = [".jpg", ".jpeg", ".png", ".gif", ".svg"]
+
+    if ext not in allowed_extensions:
+        raise ValidationError("Only JPG, PNG, GIF, and SVG files are allowed.")
+
 
 class SiteConfiguration(models.Model):
     site_logo = models.ImageField(_("Site Logo"),upload_to='site_logos/', blank=True, null=True)

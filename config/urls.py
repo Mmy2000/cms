@@ -9,6 +9,8 @@ urlpatterns = [
     path("", include("content.urls")),
     path("stamps/", include("stamps.urls")),
     path("accounts/", include("accounts.urls")),
+    path("about-us/", include("about.urls")),
+    path("projects/", include("projects.urls")),
     path("", include("pwa.urls")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
