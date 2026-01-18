@@ -121,24 +121,22 @@ input[type="file"].input-style::-webkit-file-upload-button:hover {
     }
 }
 
-.ticker-wrapper {
-  display: flex;
-  width: max-content;
-  /* Remove fixed duration, will be set via JS */
-  animation: ticker-linear linear infinite;
+.ticker {
+  display: inline-flex;
+  animation: ticker-scroll 100s linear infinite;
+  will-change: transform;
 }
 
-@keyframes ticker-linear {
-  from {
-    transform: translateX(0);
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(100%);
   }
-  to {
-    transform: translateX(-50%);
+  100% {
+    transform: translateX(-100%);
   }
 }
 
-/* Pause on hover */
-.ticker-wrapper:hover {
+/* Pause animation on hover */
+.ticker:hover {
   animation-play-state: paused;
 }
-
