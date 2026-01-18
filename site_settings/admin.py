@@ -41,11 +41,11 @@ class SiteConfigurationAdmin(UnfoldModelAdmin):
 
 @admin.register(Page)
 class PageAdmin(UnfoldModelAdmin):
-    list_display = ("page_name", "page_url")
+    list_display = ("page_name", "page_url","active")
     search_fields = ("page_name", "page_url")
     ordering = ("page_name",)
     fieldsets = (
-        (None, {"fields": ("page_name", "page_url")}),
+        (None, {"fields": ("page_name", "page_url","active")}),
     )
 
 @admin.register(SEOSettings)

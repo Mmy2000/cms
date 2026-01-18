@@ -120,3 +120,22 @@ input[type="file"].input-style::-webkit-file-upload-button:hover {
         font-size: 16px; /* Prevents zoom on mobile */
     }
 }
+
+.ticker {
+  display: inline-flex;
+  animation: ticker-scroll 35s linear infinite;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Pause animation on hover */
+.ticker:hover {
+  animation-play-state: paused;
+}

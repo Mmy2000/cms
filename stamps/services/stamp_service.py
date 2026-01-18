@@ -70,6 +70,33 @@ class StampService:
 
         return last_year
 
+    @staticmethod
+    def get_this_month(queryset=None):
+        """
+        Return stamps created in the current month.
+        """
+        qs = queryset if queryset is not None else StampService.get_queryset()
+
+        now = timezone.now()
+
+        # First day of current month
+        first_day_current_month = now.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+
+        # First day of next month
+        if now.month == 12:
+            first_day_next_month = first_day_current_month.replace(
+                year=now.year + 1, month=1
+            )
+        else:
+            first_day_next_month = first_day_current_month.replace(month=now.month + 1)
+
+        return qs.filter(
+            created_at__gte=first_day_current_month,
+            created_at__lt=first_day_next_month,
+        )
+
     @classmethod
     def get_filtered_queryset(
         cls,
@@ -137,7 +164,6 @@ class StampService:
             return Decimal("0")
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
-
 
     def calculate_pension(
         self,

@@ -35,6 +35,7 @@ class SiteConfiguration(models.Model):
 class Page(models.Model):
     page_name = models.CharField(_("Page Name"),max_length=255)
     page_url = models.CharField(_("Page URL"),max_length=255, unique=True)
+    active = models.BooleanField(_("Active") , default=True)
 
     class Meta:
         verbose_name = _("Page")
