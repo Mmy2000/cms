@@ -333,70 +333,42 @@
 
       <!-- Ticker Wrapper (animated) -->
       <div class="ticker-wrapper flex items-center whitespace-nowrap">
+  <!-- ===== ORIGINAL CONTENT ===== -->
+  <div class="ticker-track flex items-center gap-12 pl-12">
+    <div class="flex items-center gap-2 text-sm font-semibold text-yellow-300">
+      <i class="fa-solid fa-coins"></i>
+      <span>المعاش المتوقع : {{ total_pension|floatformat:2 }} جنيه</span>
+      <span class="mx-6 text-white/40">|</span>
+    </div>
 
-        <!-- ===== ORIGINAL CONTENT ===== -->
-        <div class="ticker-track flex items-center gap-12">
-
-          <div class="flex items-center gap-2 text-sm font-semibold text-yellow-300">
-            <i class="fa-solid fa-coins"></i>
-            <span>
-              المعاش المتوقع :
-              {{ total_pension|floatformat:2 }} جنيه
-            </span>
-            <span class="mx-6 text-white/40">|</span>
-          </div>
-
-          {% for stamp in stamps_this_month %}
-            <div class="flex items-center gap-2 text-sm">
-              <span class="font-semibold">
-                {{ stamp.company.name }}
-              </span>
-
-              <span class="text-white/80">
-                قيمة الدمغة بالمليون :
-              </span>
-
-              <span class="font-bold">
-                {{ stamp.d1|millions }}
-              </span>
-
-              <span class="mx-6 text-white/40">|</span>
-            </div>
-          {% endfor %}
-        </div>
-
-        <!-- ===== CLONE CONTENT (for smooth loop) ===== -->
-        <div class="ticker-track flex items-center gap-12">
-
-          <div class="flex items-center gap-2 text-sm font-semibold text-yellow-300">
-            <i class="fa-solid fa-coins"></i>
-            <span>
-              المعاش المتوقع :
-              {{ total_pension|floatformat:2 }} جنيه
-            </span>
-            <span class="mx-6 text-white/40">|</span>
-          </div>
-
-          {% for stamp in stamps_this_month %}
-            <div class="flex items-center gap-2 text-sm">
-              <span class="font-semibold">
-                {{ stamp.company.name }}
-              </span>
-
-              <span class="text-white/80">
-                قيمة الدمغة بالمليون :
-              </span>
-
-              <span class="font-bold">
-                {{ stamp.d1|millions }}
-              </span>
-
-              <span class="mx-6 text-white/40">|</span>
-            </div>
-          {% endfor %}
-        </div>
-
+    {% for stamp in stamps_this_month %}
+      <div class="flex items-center gap-2 text-sm">
+        <span class="font-semibold">{{ stamp.company.name }}</span>
+        <span class="text-white/80">قيمة الدمغة بالمليون :</span>
+        <span class="font-bold">{{ stamp.d1|millions }}</span>
+        <span class="mx-6 text-white/40">|</span>
       </div>
+    {% endfor %}
+  </div>
+
+  <!-- ===== CLONE CONTENT ===== -->
+  <div class="ticker-track flex items-center gap-12 pl-12">
+    <div class="flex items-center gap-2 text-sm font-semibold text-yellow-300">
+      <i class="fa-solid fa-coins"></i>
+      <span>المعاش المتوقع : {{ total_pension|floatformat:2 }} جنيه</span>
+      <span class="mx-6 text-white/40">|</span>
+    </div>
+
+    {% for stamp in stamps_this_month %}
+      <div class="flex items-center gap-2 text-sm">
+        <span class="font-semibold">{{ stamp.company.name }}</span>
+        <span class="text-white/80">قيمة الدمغة بالمليون :</span>
+        <span class="font-bold">{{ stamp.d1|millions }}</span>
+        <span class="mx-6 text-white/40">|</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
     </div>
 
   </div>
@@ -506,19 +478,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const tickerWrapper = document.querySelector('.ticker-wrapper');
   
   if (tickerWrapper) {
-    // Get the width of one ticker-track (half of total content)
-    const tickerTrack = tickerWrapper.querySelector('.ticker-track');
-    const trackWidth = tickerTrack.offsetWidth;
-    
-    // Define your desired speed in pixels per second
-    // Adjust this value to make it faster or slower
-    const pixelsPerSecond = 70; // e.g., 100px per second
-    
-    // Calculate duration based on content width
-    const duration = trackWidth / pixelsPerSecond;
-    
-    // Apply the calculated duration
-    tickerWrapper.style.animationDuration = `${duration}s`;
+    // Wait for fonts and layout to be ready
+    setTimeout(() => {
+      // Get the width of one ticker-track (half of total content)
+      const tickerTrack = tickerWrapper.querySelector('.ticker-track');
+      const trackWidth = tickerTrack.offsetWidth;
+      
+      // Define your desired speed in pixels per second
+      // Lower value = slower speed = more time to see all content
+      const pixelsPerSecond = 50; // Adjust this value
+      
+      // Calculate duration based on content width
+      const duration = trackWidth / pixelsPerSecond;
+      
+      // Apply the calculated duration
+      tickerWrapper.style.animationDuration = `${duration}s`;
+      
+      console.log('Track width:', trackWidth, 'Duration:', duration); // Debug
+    }, 100);
   }
 });
 </script>
