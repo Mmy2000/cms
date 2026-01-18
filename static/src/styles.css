@@ -124,6 +124,8 @@ input[type="file"].input-style::-webkit-file-upload-button:hover {
 .ticker {
   display: inline-flex;
   animation: ticker-scroll 35s linear infinite;
+  animation-duration: 50s;
+  will-change: transform;
 }
 
 @keyframes ticker-scroll {
