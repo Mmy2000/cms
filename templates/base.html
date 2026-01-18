@@ -306,15 +306,10 @@
     </div>
 
   </nav>
-
-  <!-- 🧩 Main Content -->
-  <main class="max-w-7xl mx-auto mt-6 px-0 sm:px-6 py-10">
-    {% block content %}
-    {% endblock %}
-  </main>
   {% if stamps_this_month %}
 <div
-  class="hidden md:block fixed bottom-0 right-0 left-0 z-50 bg-green-600 text-white overflow-hidden shadow-xl">
+  class="hidden md:block fixed top-[80px] right-0 left-0 z-40
+         bg-green-600 text-white overflow-hidden shadow-xl">
 
   <!-- Gradient Fade -->
   <div class="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-green-600 to-transparent z-10"></div>
@@ -365,6 +360,12 @@
   </div>
 </div>
 {% endif %}
+
+  <!-- 🧩 Main Content -->
+  <main class="max-w-7xl mx-auto mt-[120px] px-0 sm:px-6 py-10">
+    {% block content %}
+    {% endblock %}
+  </main>
 
   <!-- ⚙️ Enhanced Professional Footer -->
 <footer class="bg-gray-100 text-gray-700 md:my-10 ">
