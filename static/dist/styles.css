@@ -2726,21 +2726,20 @@ input[type="file"].input-style::-webkit-file-upload-button:hover {
     font-size: 16px;
   }
 }
-.ticker {
-  display: inline-flex;
-  animation: ticker-scroll 35s linear infinite;
-  animation-duration: 50s;
-  will-change: transform;
+.ticker-wrapper {
+  display: flex;
+  width: max-content;
+  animation: ticker-linear linear infinite;
 }
-@keyframes ticker-scroll {
-  0% {
-    transform: translateX(100%);
+@keyframes ticker-linear {
+  from {
+    transform: translateX(0);
   }
-  100% {
-    transform: translateX(-100%);
+  to {
+    transform: translateX(-50%);
   }
 }
-.ticker:hover {
+.ticker-wrapper:hover {
   animation-play-state: paused;
 }
 @property --tw-translate-x {
