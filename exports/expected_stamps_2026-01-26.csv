@@ -1,0 +1,5 @@
+django_id,user,sector,value_of_work_a,invoice_copies_b,invoice_date,stamp_rate_c,exchange_rate,total_stamp_duty_d1,total_past_years,total_stamp,note,created_at
+16,mahmoud yousef,القطاع الخاص,82563214.59M,84,2026-01-12,0.0015,1.0000,10402965.04M,0,10402965.04M,test,2026-01-26 21:02:36
+17,mahmoud yousef,القطاع الخاص,8563.21M,88,2026-01-19,0.0015,1.0000,1130.34M,10402965.04M,10404095.38M,test,2026-01-26 21:04:03
+18,mahmoud yousef,القطاع الخاص,856.32M,55,2026-01-11,0.0015,1.0000,70.65M,10404095.38M,10404166.03M,test,2026-01-26 21:05:30
+19,mahmoud yousef,القطاع الخاص,85632.46M,55,2026-01-12,0.0015,1.0000,7064.68M,10404166.03M,10411230.71M,test,2026-01-26 21:07:01

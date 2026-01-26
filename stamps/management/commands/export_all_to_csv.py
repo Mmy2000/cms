@@ -11,6 +11,8 @@ from stamps.models import (
 )
 from django.utils.timezone import now
 
+from stamps.templatetags.number_filters import millions
+
 
 class Command(BaseCommand):
     help = "Export all data to multiple CSV files for ERPNext"
@@ -80,14 +82,14 @@ class Command(BaseCommand):
                         obj.id,
                         obj.user.profile.full_name(),
                         obj.company.name,
-                        obj.value_of_work,
+                        millions(obj.value_of_work),
                         obj.invoice_copies,
                         obj.invoice_date,
                         obj.stamp_rate,
                         obj.exchange_rate,
-                        obj.d1,
-                        obj.total_past_years,
-                        obj.total_stamp_for_company,
+                        millions(obj.d1),
+                        millions(obj.total_past_years),
+                        millions(obj.total_stamp_for_company),
                         obj.note,
                         obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                     ]
@@ -125,14 +127,14 @@ class Command(BaseCommand):
                         obj.id,
                         obj.user.profile.full_name(),
                         obj.sector.name,
-                        obj.value_of_work,
+                        millions(obj.value_of_work),
                         obj.invoice_copies,
                         obj.invoice_date,
                         obj.stamp_rate,
                         obj.exchange_rate,
-                        obj.d1,
-                        obj.total_past_years,
-                        obj.total_stamp_for_company,
+                        millions(obj.d1),
+                        millions(obj.total_past_years),
+                        millions(obj.total_stamp_for_company),
                         obj.note,
                         obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                     ]

@@ -1,6 +1,8 @@
 from stamps.services.erp_service import ERPNextClient
 import logging
 
+from stamps.templatetags.number_filters import millions
+
 logger = logging.getLogger(__name__)
 
 
@@ -9,14 +11,14 @@ def map_stamp_calculation(obj):
         "django_id": obj.id,
         "user": obj.user.profile.full_name() if obj.user else "Django System",
         "company": obj.company.name,
-        "value_of_work_a": float(obj.value_of_work),
+        "value_of_work_a": millions(obj.value_of_work),
         "invoice_copies_b": obj.invoice_copies,
         "invoice_date": obj.invoice_date.isoformat() if obj.invoice_date else None,
         "stamp_rate_c": float(obj.stamp_rate),
         "exchange_rate": float(obj.exchange_rate),
-        "total_stamp_duty_d1": float(obj.d1),
-        "total_past_years": float(obj.total_past_years),
-        "total_stamp": float(obj.total_stamp_for_company),
+        "total_stamp_duty_d1": millions(obj.d1),
+        "total_past_years": millions(obj.total_past_years),
+        "total_stamp": millions(obj.total_stamp_for_company),
         "note": obj.note or "",
         "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
     }
@@ -27,14 +29,14 @@ def map_expected_stamp(obj):
         "django_id": obj.id,
         "user": obj.user.profile.full_name() if obj.user else "Django System",
         "sector": obj.sector.name,
-        "value_of_work_a": float(obj.value_of_work),
+        "value_of_work_a": millions(obj.value_of_work),
         "invoice_copies_b": obj.invoice_copies,
         "invoice_date": obj.invoice_date.isoformat() if obj.invoice_date else None,
         "stamp_rate_c": float(obj.stamp_rate),
         "exchange_rate": float(obj.exchange_rate),
-        "total_stamp_duty_d1": float(obj.d1),
-        "total_past_years": float(obj.total_past_years),
-        "total_stamp": float(obj.total_stamp_for_company),
+        "total_stamp_duty_d1": millions(obj.d1),
+        "total_past_years": millions(obj.total_past_years),
+        "total_stamp": millions(obj.total_stamp_for_company),
         "note": obj.note or "",
         "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
     }
