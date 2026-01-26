@@ -1,4 +1,7 @@
 from stamps.services.erp_service import ERPNextClient
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def map_stamp_calculation(obj):
@@ -17,6 +20,7 @@ def map_stamp_calculation(obj):
         "note": obj.note or "",
         "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
     }
+
 
 def map_expected_stamp(obj):
     return {
@@ -37,15 +41,53 @@ def map_expected_stamp(obj):
 
 
 def sync_to_erpnext(doctype, instance, data):
+    """
+    Sync Django model instance to ERPNext.
+    First tries to update, if not found, creates new record.
+    """
     client = ERPNextClient()
     django_id = instance.id
 
     data = data.copy()  # prevent mutation side effects
 
-    res = client.update_by_django_id(doctype, django_id, data)
+    try:
+        # Try to update first
+        res = client.update_by_django_id(doctype, django_id, data)
 
-    # ERPNext logical error → create
-    if isinstance(res, dict) and res.get("message", {}).get("error"):
-        data["django_id"] = django_id
-        client.create(doctype, data)
-        return
+        # Check if update failed due to record not existing
+        if isinstance(res, dict):
+            message = res.get("message", {})
+
+            # Handle error in update response
+            if isinstance(message, dict) and message.get("error"):
+                error_msg = message.get("error", "")
+                if "not found" in error_msg.lower() or "no " in error_msg.lower():
+                    logger.info(
+                        f"{doctype} with django_id={django_id} not found in ERPNext, creating new record"
+                    )
+                    data["django_id"] = django_id
+                    create_res = client.create(doctype, data)
+                    logger.info(
+                        f"Created {doctype} in ERPNext: {create_res.get('data', {}).get('name')}"
+                    )
+                    return create_res
+                else:
+                    raise Exception(f"ERPNext update error: {error_msg}")
+
+            # Update was successful
+            elif isinstance(message, dict) and message.get("success"):
+                logger.info(f"Updated {doctype} in ERPNext: {message.get('name')}")
+                return res
+
+            # Handle string message (some APIs return this)
+            elif isinstance(message, str):
+                logger.info(f"ERPNext response: {message}")
+                return res
+
+        return res
+
+    except Exception as e:
+        logger.error(
+            f"Failed to sync {doctype} (django_id={django_id}) to ERPNext: {str(e)}"
+        )
+        raise

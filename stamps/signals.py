@@ -4,6 +4,7 @@ from django.db import models
 from stamps.helpers import map_expected_stamp, map_stamp_calculation, sync_to_erpnext
 from stamps.models import ExpectedStamp, StampCalculation
 from stamps.services.erp_service import ERPNextClient
+from stamps.tasks import  delete_stamp_from_erpnext_task, sync_expected_stamp_to_erpnext_task, sync_stamp_to_erpnext_task
 
 
 @receiver(post_delete, sender=StampCalculation)
@@ -60,40 +61,26 @@ def update_expected_stamps_after_delete(sender, instance, **kwargs):
         record.save(update_fields=["total_past_years", "total_stamp_for_company"])
 
 
+# Signal receivers - these run synchronously but queue background tasks
 @receiver(post_save, sender=StampCalculation)
 def sync_stamp_to_erpnext(sender, instance, **kwargs):
     data = map_stamp_calculation(instance)
-
-    try:
-        sync_to_erpnext("Stamp Calculation", instance, data)
-    except Exception as e:
-        print("ERPNext sync failed:", e)
+    # Queue the background task instead of running sync
+    sync_stamp_to_erpnext_task.enqueue(instance.id, data)
 
 
 @receiver(post_save, sender=ExpectedStamp)
 def sync_expected_stamp_to_erpnext(sender, instance, **kwargs):
     data = map_expected_stamp(instance)
-
-    try:
-        sync_to_erpnext("Expected Stamp", instance, data)
-    except Exception as e:
-        print("ERPNext sync failed:", e)
+    sync_expected_stamp_to_erpnext_task.enqueue(instance.id, data)
 
 
 @receiver(post_delete, sender=StampCalculation)
 def delete_stamp_from_erpnext(sender, instance, **kwargs):
-    client = ERPNextClient()
+    # Store the ID before deletion
+    delete_stamp_from_erpnext_task.enqueue(instance.id, "Stamp Calculation")
 
-    try:
-        client.delete_by_django_id("Stamp Calculation", instance.id)
-    except Exception as e:
-        print("ERPNext delete failed:", e)
 
 @receiver(post_delete, sender=ExpectedStamp)
 def delete_expected_stamp_from_erpnext(sender, instance, **kwargs):
-    client = ERPNextClient()
-
-    try:
-        client.delete_by_django_id("Expected Stamp", instance.id)
-    except Exception as e:
-        print("ERPNext delete failed:", e)
+    delete_stamp_from_erpnext_task.enqueue(instance.id, "Expected Stamp")
