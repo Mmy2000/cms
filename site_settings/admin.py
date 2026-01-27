@@ -7,7 +7,7 @@ from django.utils.html import format_html
 
 @admin.register(SiteConfiguration)
 class SiteConfigurationAdmin(UnfoldModelAdmin):
-    list_display = ("preview_logo","site_name")
+    list_display = ("preview_logo","site_name", "number_of_retired_engineers", "current_pension")
     search_fields = ("copyright_info", "about_site")
     ordering = ("-id",)
     fieldsets = (
@@ -20,6 +20,8 @@ class SiteConfigurationAdmin(UnfoldModelAdmin):
                     "about_site",
                     "copyright_info",
                     "number_of_retired_engineers",
+                    "current_pension",
+                    "pension_description",
                 )
             },
         ),

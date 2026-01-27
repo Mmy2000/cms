@@ -15,6 +15,34 @@
 
     <!-- Page Header -->
     <div class="max-w-7xl mx-auto mb-8">
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg border-2 border-green-300 overflow-hidden mb-6">
+            <div class="flex items-start gap-4 p-6">
+                <!-- Icon Section -->
+                <div class="flex-shrink-0">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span class="text-3xl">ℹ️</span>
+                    </div>
+                </div>
+                
+                <!-- Content Section -->
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="text-xl font-bold text-green-900">
+                            معلومات المعاش الحالي
+                        </h3>
+                        <span class="px-3 py-1 bg-green-600 text-white text-sm font-bold rounded-full shadow-sm">
+                            {{ site_configuration.current_pension|floatformat:2 }} جنيه
+                        </span>
+                    </div>
+                    
+                    {% if site_configuration.pension_description %}
+                    <p class="text-gray-700 leading-relaxed">
+                        {{ site_configuration.pension_description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 
