@@ -1,9 +1,8 @@
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.sites.shortcuts import get_current_site
-
+from stamps.tasks import send_email
 from .tokens import account_activation_token
 
 
@@ -20,8 +19,12 @@ def send_activation_email(request, user):
             "token": account_activation_token.make_token(user),
         },
     )
-    email = EmailMessage(mail_subject, message, to=[user.email])
-    email.send()
+    send_email.enqueue(
+        to_email=user.email,
+        first_name=user.first_name,
+        subject=mail_subject,
+        message=message,
+    )
 
 def send_reset_password_email(request, user, token):
     current_site = get_current_site(request)
@@ -36,5 +39,9 @@ def send_reset_password_email(request, user, token):
             "token": token,
         },
     )
-    email = EmailMessage(mail_subject, message, to=[user.email])
-    email.send()
+    send_email.enqueue(
+        to_email=user.email,
+        first_name=user.first_name,
+        subject=mail_subject,
+        message=message,
+    )

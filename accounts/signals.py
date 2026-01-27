@@ -1,5 +1,7 @@
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+
+from stamps.tasks import send_email
 from .models import Profile
 
 
@@ -12,5 +14,10 @@ def send_email_on_approval(sender, instance, **kwargs):
     if previous.status != "approved" and instance.status == "approved":
         subject = "Your account is approved!"
         message = f"Hi {instance.user.first_name},\n\nYour account has been approved. You can now log in."
-        instance.user.email_user(subject, message)
+        send_email.enqueue(
+            to_email=instance.user.email,
+            first_name=instance.user.first_name,
+            subject=subject,
+            message=message,
+        )
         
