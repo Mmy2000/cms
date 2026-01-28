@@ -82,6 +82,7 @@ class ExpectedStampListView(ListView):
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_sectors": ExpectedStampService.total_amount(qs),
                 "total_pension": service.calculate_pension(qs, year),
+                "30_previous_year": service.get_30_from_previous_year(qs),
             }
         )
         return context
@@ -162,7 +163,6 @@ def expexted_stamp_dashboard(request):
         "excepted_stamp_data": chart["yearly"],
         "total_past_excepted_stamps_data": chart["cumulative"],
         "total_pension": service.calculate_pension(excepted_stamps),
-        "get_30_from_previous_year": service.get_30_from_previous_year(excepted_stamps),
         "current_filter": time_filter,
     }
     return render(request, "expected_stamps/expected_stamp_dashboard.html", context)
