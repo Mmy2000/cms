@@ -14,52 +14,46 @@
     </div>
 
     <div class="max-w-7xl mx-auto mb-8">
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg border-2 border-green-300 overflow-hidden mb-6">
-            <div class="flex items-start gap-4 p-6">
-                <!-- Icon Section -->
-                <div class="flex-shrink-0">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                        <span class="text-3xl">ℹ️</span>
-                    </div>
-                </div>
-                
-                <!-- Content Section -->
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-xl font-bold text-green-900">
-                            معلومات المعاش الحالي
-                        </h3>
-                        <span class="px-3 py-1 bg-green-600 text-white text-sm font-bold rounded-full shadow-sm">
-                            {{ site_configuration.current_pension|floatformat:2 }} جنيه
-                        </span>
-                    </div>
-                    
-                    {% if site_configuration.pension_description %}
-                    <p class="text-gray-700 leading-relaxed">
-                        {{ site_configuration.pension_description }}
-                    </p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="flex flex-col sm:items-center gap-4 lg:gap-6">
                     <a href="{% url 'add_expected_stamp' %}"
-                class="button_style flex justify-center items-center gap-2">
-                <span class="text-xl">➕</span>
-                <span>إضافة دمغة متوقعه</span>
-                </a>
+                        class="button_style flex justify-center items-center gap-2">
+                        <span class="text-xl">➕</span>
+                        <span>إضافة دمغة متوقعه</span>
+                    </a>
+                    <a href="{% url 'grouped_expected_stamps' %}" class="group inline-flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-green-700 font-bold rounded-xl shadow-md hover:shadow-xl border-2 border-green-600 transition-all duration-300 transform hover:-translate-y-0.5">
+                        <span class="text-xl">📊</span>
+                        <span>مجموعة حسب القطاع</span>
+                    </a>
+                </div>
                 <div class="flex-1 flex justify-center">
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg px-8 py-5 border-2 border-green-300 transform hover:scale-105 transition-transform duration-300">
-                        <div class="flex items-center justify-center gap-3 mb-3">
+                        <div class="flex items-center justify-center gap-3 mb-1">
                             <span class="text-4xl animate-pulse">💰</span>
                             <h2 class="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
                                 المعاش ميتر
                             </h2>
+                            <p class="text-4xl font-extrabold text-green-900 text-center">
+                                {{ total_pension|floatformat:2|intcomma }} <span class="text-2xl text-green-700">جنيه</span>
+                            </p>
+                            
                         </div>
-                        <p class="text-4xl font-extrabold text-green-900 mb-4 text-center">
-                            {{ total_pension|floatformat:2|intcomma }} <span class="text-2xl text-green-700">جنيه</span>
-                        </p>
+                        {% if site_configuration.pension_description %}
+                            <p class="text-gray-700 leading-relaxed py-2">
+                                {{ site_configuration.pension_description }}
+                            </p>
+                        {% endif %}
+
+                        <div class="flex items-center justify-center gap-3 mb-3">
+                            <h3 class="text-xl font-bold text-green-900">
+                             المعاش الحالي:
+                            </h3>
+                            <p class="text-xl font-extrabold text-green-900 text-center">
+                                {{ site_configuration.current_pension|floatformat:2 }} <span class="text-xl text-green-700">جنيه</span>
+                            </p>
+                        </div>
+                        
                         <a href="{% url 'expected_stamp_dashboard' %}" 
                         class="group inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
                             <span class="text-xl">📊</span>
@@ -70,10 +64,7 @@
                         </a>
                     </div>
                 </div>
-                <a href="{% url 'grouped_expected_stamps' %}" class="group inline-flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 text-green-700 font-bold rounded-xl shadow-md hover:shadow-xl border-2 border-green-600 transition-all duration-300 transform hover:-translate-y-0.5">
-                    <span class="text-xl">📊</span>
-                    <span>مجموعة حسب القطاع</span>
-                </a>
+                
             </div>
         </div>  
     </div>
