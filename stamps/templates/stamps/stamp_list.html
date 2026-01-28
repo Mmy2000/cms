@@ -6,7 +6,7 @@
 {% block title %} قائمة حسابات الدمغة {% endblock %}
 
 {% block content %}
-<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen py-8 px-4 sm:px-0">
     
     <!-- Alerts -->
     <div class="max-w-7xl mx-auto mb-6">
@@ -72,53 +72,50 @@
         </div>
     </div>
 
-    <!-- Download Section -->
-    <div class="max-w-7xl mx-auto mb-6">
-        <form method="GET" class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
-            <div class="flex flex-wrap items-center justify-center gap-4">
-                <!-- Preserve filters -->
-                <input type="hidden" name="company" value="{{ company_filter }}">
-                <input type="hidden" name="date_from" value="{{ date_from }}">
-                <input type="hidden" name="date_to" value="{{ date_to }}">
-                <input type="hidden" name="sort" value="{{ request.GET.sort }}">
-
-                <div class="flex items-center gap-3">
-                    <label class="text-sm font-bold text-gray-700">تحميل التقرير:</label>
-                    <select class="select select-bordered select-success shadow-sm" name="download">
-                        <option value="">اختر الصيغة...</option>
-                        <option value="pdf">📄 PDF</option>
-                        <option value="excel">📊 Excel</option>
-                    </select>
-                </div>
-
-                <button name="download_btn" value="1"
-                    class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
-                    <span class="flex items-center gap-2">
-                        <span>⬇️</span>
-                        <span>تحميل</span>
-                    </span>
-                </button>
-            </div>
-        </form>
-    </div>
-
     <!-- Main Content Card -->
     <div class="max-w-7xl mx-auto">
         <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
             
             <!-- Header with Filters -->
             <div class="bg-gradient-to-l from-green-100 via-green-50 to-emerald-50 border-b-2 border-green-300 px-6 py-6">
-                
-                <!-- Total Display -->
-                <div class="mb-6 text-center">
-                    <div class="inline-block bg-white rounded-xl shadow-lg px-8 py-4 border-2 border-green-300">
-                        <h2 class="text-lg font-bold text-green-700 mb-2">
-                            💰 إجمالي الدمغة بالمليون
-                        </h2>
-                        <div class="text-4xl font-extrabold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
-                            {{ total_all_companies|millions }}
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                    <!-- Total Display -->
+                    <div class="text-center">
+                        <div class="inline-block bg-white rounded-xl shadow-lg px-8 py-4 border-2 border-green-300">
+                            <h2 class="text-lg font-bold text-green-700 mb-2">
+                                💰 إجمالي الدمغة بالمليون
+                            </h2>
+                            <div class="text-4xl font-extrabold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
+                                {{ total_all_companies|millions }}
+                            </div>
                         </div>
                     </div>
+                    <form method="GET" >
+                        <div class="flex flex-wrap items-center justify-center gap-4">
+                            <!-- Preserve filters -->
+                            <input type="hidden" name="company" value="{{ company_filter }}">
+                            <input type="hidden" name="date_from" value="{{ date_from }}">
+                            <input type="hidden" name="date_to" value="{{ date_to }}">
+                            <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+
+                            <div class="flex items-center gap-3">
+                                <label class="text-sm font-bold text-gray-700">تحميل التقرير:</label>
+                                <select class="select select-bordered select-success shadow-sm" name="download">
+                                    <option value="">اختر الصيغة...</option>
+                                    <option value="pdf">📄 PDF</option>
+                                    <option value="excel">📊 Excel</option>
+                                </select>
+                            </div>
+
+                            <button name="download_btn" value="1"
+                                class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                                <span class="flex items-center gap-2">
+                                    <span>⬇️</span>
+                                    <span>تحميل</span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Filters Form -->
