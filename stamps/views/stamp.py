@@ -84,6 +84,7 @@ class StampListView(ListView):
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_companies": StampService.total_amount(qs),
                 "total_pension": service.calculate_pension(qs,year),
+                "30_previous_year": service.get_30_from_previous_year(qs),
             }
         )
         return context

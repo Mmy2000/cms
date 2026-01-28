@@ -33,7 +33,7 @@
                 <!-- Center: Pension Meter -->
                 <div class="flex-1 flex justify-center">
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg px-8 py-5 border-2 border-green-300 transform hover:scale-105 transition-transform duration-300">
-                        <div class="flex items-center justify-center gap-3 mb-1">
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-1">
                             <span class="text-4xl animate-pulse">💰</span>
                             <h2 class="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
                                 المعاش ميتر
@@ -48,14 +48,23 @@
                                 {{ site_configuration.pension_description }}
                             </p>
                         {% endif %}
-
-                        <div class="flex items-center justify-center gap-3 mb-3">
-                            <h3 class="text-xl font-bold text-green-900">
-                             المعاش الحالي:
-                            </h3>
-                            <p class="text-xl font-extrabold text-green-900 text-center">
-                                {{ site_configuration.current_pension|floatformat:2 }} <span class="text-xl text-green-700">جنيه</span>
-                            </p>
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6 my-4">
+                            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-3">
+                                <h3 class="text-2xl  font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
+                                المعاش الحالي:
+                                </h3>
+                                <p class="text-2xl  font-extrabold text-green-900 text-center">
+                                    {{ site_configuration.current_pension|floatformat:2 }} <span class="text-xl text-green-700">جنيه</span>
+                                </p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-3">
+                                <h3 class="text-2xl  font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
+                                دعم الانشطه:
+                                </h3>
+                                <p class="text-2xl  font-extrabold text-green-900 text-center">
+                                    {{ 30_previous_year|floatformat:2 }} <span class="text-xl text-green-700">جنيه</span>
+                                </p>
+                            </div>
                         </div>
                         
                         <a href="{% url 'expected_stamp_dashboard' %}" 

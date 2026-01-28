@@ -134,6 +134,18 @@ class ExpectedStampService:
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
+    def get_30_from_previous_year(self, queryset) -> Decimal:
+
+        year = self.current_year
+        previous_year = year - 1
+
+        stamps = queryset.filter(invoice_date__year=previous_year)
+        total = stamps.aggregate(total=Sum("d1"))["total"]
+
+        if not total:
+            return Decimal("0")
+
+        return Decimal(str(total)) * Decimal("0.3")
 
     def calculate_pension(
         self,
