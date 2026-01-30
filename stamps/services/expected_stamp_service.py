@@ -55,6 +55,14 @@ class ExpectedStampService:
     @staticmethod
     def get_queryset():
         return ExpectedStamp.objects.select_related("sector")
+    
+    @staticmethod
+    def get_expected_stamp_by_id(stamp_id: int) -> Optional[ExpectedStamp]:
+        """Retrieve an ExpectedStamp by its ID."""
+        try:
+            return ExpectedStamp.objects.select_related("sector").get(id=stamp_id)
+        except ExpectedStamp.DoesNotExist:
+            return None
 
     @staticmethod
     def get_last_year(date_to):
@@ -198,6 +206,12 @@ class ExpectedStampService:
             .order_by("-total")
         )
 
+    @staticmethod
+    def get_number_of_invoice_copies(queryset, sector_id: int) -> int:
+        result = queryset.filter(sector_id=sector_id).aggregate(
+            total_copies=Sum("invoice_copies")
+        )["total_copies"]
+        return result if result else 0
     @staticmethod
     def yearly_chart(queryset):
         expected_stamps = (

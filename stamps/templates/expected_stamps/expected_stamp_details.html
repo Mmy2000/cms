@@ -33,8 +33,6 @@
     <div dir="rtl" class="max-w-5xl mx-auto">
         <div class="bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-200">
 
-            {% for stamp in expected_stamps %}
-
             <!-- Hero Header -->
             <div class="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white px-8 py-8 overflow-hidden">
                 <!-- Decorative Pattern -->
@@ -91,9 +89,9 @@
                         <div class="bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-shadow duration-300">
                             <div class="flex items-center gap-2 mb-2">
                                 <span class="text-xl">📋</span>
-                                <span class="text-sm text-gray-500 font-medium">عدد النسخ</span>
+                                <span class="text-sm text-gray-500 font-medium">اجمالي عدد النسخ</span>
                             </div>
-                            <p class="font-bold text-xl text-gray-900">{{ stamp.invoice_copies }}</p>
+                            <p class="font-bold text-xl text-gray-900">{{ total_invoice_copies_for_sector }}</p>
                         </div>
                     </div>
                 </div>
@@ -210,8 +208,6 @@
                 {% endif %}
 
             </div>
-
-            {% endfor %}
 
             <!-- Footer Total -->
             <div class="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white p-8 overflow-hidden">

@@ -58,6 +58,15 @@ class StampService:
     def get_queryset():
         """Get optimized base queryset with related data."""
         return StampCalculation.objects.select_related("company")
+    
+    @staticmethod
+    def get_stamp_by_id(stamp_id: int) -> Optional[StampCalculation]:
+        """Retrieve a StampCalculation by its ID."""
+        try:
+            return StampCalculation.objects.select_related("company").get(id=stamp_id)
+        except StampCalculation.DoesNotExist:
+            return None
+    
 
     @staticmethod
     def get_last_year(date_to):
@@ -164,7 +173,7 @@ class StampService:
             return Decimal("0")
 
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
-    
+
     def get_30_from_previous_year(
        self, queryset
     ) -> Decimal:
@@ -226,10 +235,19 @@ class StampService:
     @staticmethod
     def grouped_by_company(queryset):
         return (
-            queryset.values("company__name", "company_id", "stamp_rate")
+            queryset.values(
+                "company__name", "company_id", "stamp_rate", "invoice_copies"
+            )
             .annotate(total=Sum("d1"))
             .order_by("-total")
         )
+    
+    @staticmethod
+    def get_number_of_invoice_copies(queryset, company_id: int) -> int:
+        result = queryset.filter(company_id=company_id).aggregate(
+            total_copies=Sum("invoice_copies")
+        )["total_copies"]
+        return result if result else 0
 
     @staticmethod
     def yearly_chart(queryset):

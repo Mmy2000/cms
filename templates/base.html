@@ -212,14 +212,14 @@
                   {% if request.path == page.page_url %}
                       bg-green-50 text-green-700 shadow-sm
                   {% else %}
-                      text-gray-700 hover:bg-gray-50
+                      text-gray-700 hover:text-green-600 hover:bg-gray-50
                   {% endif %}">
           {{ page.page_name }}
         </a>
       {% endfor %}
       <a href="https://hitrips.net/"
       target="_blank"
-           class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 shadow-sm text-gray-700 hover:bg-gray-50">
+           class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-gray-700 hover:text-green-600 hover:bg-gray-50">
           الرحلات
         </a>
     </div>
@@ -270,12 +270,12 @@
         <div id="mobile-user-menu" class="hidden mt-3 space-y-1">
 
           <a href="{% url 'profile' %}"
-            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:bg-gray-100">
+            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:text-green-600 hover:bg-gray-100">
             الملف الشخصي
           </a>
 
           <a href="{% url 'change_password' %}"
-            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:bg-gray-100">
+            class="block px-4 py-2 text-sm rounded-lg text-gray-700 hover:text-green-600 hover:bg-gray-100">
             تغيير كلمة المرور
           </a>
 

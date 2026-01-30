@@ -113,19 +113,20 @@ class GroupedStampListView(ListView):
 
 class StampDetailView( ListView):
     template_name = "stamps/stamp_detail.html"
-    context_object_name = "stamps"
-    paginate_by = 10
+    context_object_name = "stamp"
 
     def get_queryset(self):
         stamp_id = self.kwargs.get("stamp_id")
-        qs = StampService.get_queryset().filter(id=stamp_id)
-        return qs
+        stamp = StampService.get_stamp_by_id(stamp_id)
+        return stamp
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = self.get_queryset()
-        company_id = qs.first().company.id if qs.exists() else None
+        company_id = self.get_queryset().company_id
         context["total_amount_for_company"] = StampService.total_amount_for_company(
+            StampService.get_queryset(), company_id
+        )
+        context["total_invoice_copies_for_company"] = StampService.get_number_of_invoice_copies(
             StampService.get_queryset(), company_id
         )
         return context
