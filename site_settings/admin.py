@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteConfiguration, Page, SEOSettings
+from .models import SiteConfiguration, Page, SEOSettings,AdminAllowedIP
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from django.utils.html import format_html
 
@@ -57,4 +57,13 @@ class SEOSettingsAdmin(UnfoldModelAdmin):
     ordering = ("-id",)
     fieldsets = (
         (None, {"fields": ("page", "meta_title", "meta_keywords", "meta_description")}),
+    )
+
+@admin.register(AdminAllowedIP)
+class AdminAllowedIPAdmin(UnfoldModelAdmin):
+    list_display = ("ip_address", "description", "active", "created_at")
+    search_fields = ("ip_address", "description")
+    ordering = ("-created_at",)
+    fieldsets = (
+        (None, {"fields": ("ip_address", "description", "active")}),
     )
