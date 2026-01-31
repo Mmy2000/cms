@@ -131,7 +131,7 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = "login"  # your login view name
 LOGIN_REDIRECT_URL = "stamp_list"
 LOGOUT_REDIRECT_URL = "login"
-
+ADMIN_URL = "secure-dashboard-a7b3c9d2"
 
 # settings.py
 MIDDLEWARE += ["axes.middleware.AxesMiddleware"]

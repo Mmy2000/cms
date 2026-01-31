@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("admin/admin/cms", admin.site.urls),
+    path(f"{settings.ADMIN_URL}/", admin.site.urls),
     path("", include("content.urls")),
     path("stamps/", include("stamps.urls")),
     path("accounts/", include("accounts.urls")),

@@ -6,6 +6,7 @@ from site_settings.models import AdminAllowedIP
 from django.core.cache import cache
 import logging
 import ipaddress
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -96,12 +97,14 @@ class AdminIPRestrictionMiddleware:
         """Parse ip-api.com response"""
         if data.get("status") == "success":
             return {
-                "country": data.get("country"),
-                "city": data.get("city"),
-                "region": data.get("regionName"),
-                "isp": data.get("isp"),
-                "org": data.get("org"),
-                "timezone": data.get("timezone"),
+                "country": data.get("country") or "Unknown",
+                "city": data.get("city") or "Unknown",
+                "region": data.get("regionName") or "Unknown",
+                "isp": data.get("isp") or "Unknown",
+                "org": data.get("org")
+                or data.get("as")
+                or "Unknown",  # Fallback to AS if org is empty
+                "timezone": data.get("timezone") or "Unknown",
                 "lat": data.get("lat"),
                 "lon": data.get("lon"),
             }
@@ -115,11 +118,12 @@ class AdminIPRestrictionMiddleware:
         # ipinfo.io returns 'bogon' for private IPs or 'error' field for errors
         if "error" not in data and not data.get("bogon"):
             return {
-                "country": data.get("country"),
-                "city": data.get("city"),
-                "region": data.get("region"),
-                "isp": data.get("org"),
-                "timezone": data.get("timezone"),
+                "country": data.get("country") or "Unknown",
+                "city": data.get("city") or "Unknown",
+                "region": data.get("region") or "Unknown",
+                "isp": data.get("org") or "Unknown",
+                "org": data.get("org") or "Unknown",
+                "timezone": data.get("timezone") or "Unknown",
             }
         elif data.get("bogon"):
             logger.info(f"IP {data.get('ip')} is a bogon (private/reserved)")
@@ -135,7 +139,7 @@ class AdminIPRestrictionMiddleware:
         return ip
 
     def __call__(self, request):
-        if request.path.startswith("/admin/admin/cms"):
+        if request.path.startswith(f"/{settings.ADMIN_URL}/"):
             ip = self.get_client_ip(request)
             ALLOWED_ADMIN_IPS = self._get_allowed_ips()
 
@@ -145,9 +149,17 @@ class AdminIPRestrictionMiddleware:
 
                 # Get additional request information
                 user_agent = request.META.get("HTTP_USER_AGENT", "Unknown")
-                referer = request.META.get("HTTP_REFERER", "None")
+                referer = request.META.get("HTTP_REFERER", "Direct Access")
                 request_method = request.method
                 request_path = request.get_full_path()
+
+                # Get current timestamp
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                # Get username if it's a POST request
+                username = "Not attempted (viewing login page)"
+                if request_method == "POST":
+                    username = request.POST.get("username", "Not provided")
 
                 # Format email message
                 message = f"""
@@ -163,14 +175,14 @@ Request Details:
 - Path: {request_path}
 - User Agent: {user_agent}
 - Referer: {referer}
-- Timestamp: {request.META.get('HTTP_DATE', 'Not available')}
+- Timestamp: {timestamp}
 
 Proxy/Forwarding Headers:
-- X-Forwarded-For: {request.META.get('HTTP_X_FORWARDED_FOR', 'None')}
-- X-Real-IP: {request.META.get('HTTP_X_REAL_IP', 'None')}
+- X-Forwarded-For: {request.META.get('HTTP_X_FORWARDED_FOR', 'Not proxied')}
+- X-Real-IP: {request.META.get('HTTP_X_REAL_IP', 'Not available')}
 
-Additional Information:
-- Username Attempted: {request.POST.get('username', 'N/A')}
+Login Information:
+- Username: {username}
 
 This is an automated security alert.
                 """
@@ -178,7 +190,7 @@ This is an automated security alert.
                 send_email.enqueue(
                     to_email=settings.DEFAULT_FROM_EMAIL,
                     first_name="Admin",
-                    subject=f"⚠️ Unauthorized Admin Access Attempt from {ip}",
+                    subject=f"⚠️ Unauthorized Admin Access from {ip} ({ip_info.get('geolocation', {}).get('country', 'Unknown') if isinstance(ip_info.get('geolocation'), dict) else 'Unknown'})",
                     message=message.strip(),
                 )
 
@@ -204,9 +216,14 @@ This is an automated security alert.
             geo_info = f"""- Country: {geo.get('country', 'Unknown')}
 - City: {geo.get('city', 'Unknown')}
 - Region: {geo.get('region', 'Unknown')}
-- ISP: {geo.get('isp', 'Unknown')}
-- Organization: {geo.get('org', 'Unknown')}
-- Timezone: {geo.get('timezone', 'Unknown')}"""
+- ISP: {geo.get('isp', 'Unknown')}"""
+
+            # Only add organization if it's different from ISP and not "Unknown"
+            org = geo.get("org", "Unknown")
+            if org != "Unknown" and org != geo.get("isp"):
+                geo_info += f"\n- Organization: {org}"
+
+            geo_info += f"\n- Timezone: {geo.get('timezone', 'Unknown')}"
 
             # Add coordinates if available
             if geo.get("lat") and geo.get("lon"):
