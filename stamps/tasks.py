@@ -153,7 +153,6 @@ def recalculate_stamp_calculations_task(company_id):
         logger.info(
             f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}"
         )
-        print(f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}")
         return {"company_id": company_id, "updated_records": len(records_to_update)}
 
     except Exception as e:

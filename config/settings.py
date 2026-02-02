@@ -131,7 +131,8 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = "login"  # your login view name
 LOGIN_REDIRECT_URL = "stamp_list"
 LOGOUT_REDIRECT_URL = "login"
-ADMIN_URL = "secure-dashboard-a7b3c9d2"
+# ADMIN_URL = "secure-dashboard-a7b3c9d2"
+ADMIN_URL = env("ADMIN_URL")
 
 # settings.py
 MIDDLEWARE += ["axes.middleware.AxesMiddleware"]
@@ -182,6 +183,62 @@ DATABASES = {
     }
 }
 
+
+import os
+import sys
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {asctime} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": sys.stdout,  # Explicitly set stream
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "debug.log"),
+            "formatter": "verbose",
+            "encoding": "utf-8",  # Add UTF-8 encoding for file handler
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "error.log"),
+            "formatter": "verbose",
+            "encoding": "utf-8",  # Add UTF-8 encoding for file handler
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "error_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "stamps": {
+            "handlers": ["console", "file", "error_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "": {
+            "handlers": ["console", "file", "error_file"],
+            "level": "INFO",
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

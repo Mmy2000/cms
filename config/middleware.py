@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 CACHE_KEY = "admin_allowed_ips"
 CACHE_TIMEOUT = 60 * 5  # 5 minutes
+DEFAULT_IPS_ADDRESS = ["156.197.242.246", "127.0.0.1"]
 
 
 class AdminIPRestrictionMiddleware:
@@ -163,28 +164,28 @@ class AdminIPRestrictionMiddleware:
 
                 # Format email message
                 message = f"""
-⚠️ UNAUTHORIZED ADMIN ACCESS ATTEMPT DETECTED
+                    ⚠️ UNAUTHORIZED ADMIN ACCESS ATTEMPT DETECTED
 
-IP Address: {ip}
+                    IP Address: {ip}
 
-Geolocation Information:
-{self._format_geolocation(ip_info['geolocation'])}
+                    Geolocation Information:
+                    {self._format_geolocation(ip_info['geolocation'])}
 
-Request Details:
-- Method: {request_method}
-- Path: {request_path}
-- User Agent: {user_agent}
-- Referer: {referer}
-- Timestamp: {timestamp}
+                    Request Details:
+                    - Method: {request_method}
+                    - Path: {request_path}
+                    - User Agent: {user_agent}
+                    - Referer: {referer}
+                    - Timestamp: {timestamp}
 
-Proxy/Forwarding Headers:
-- X-Forwarded-For: {request.META.get('HTTP_X_FORWARDED_FOR', 'Not proxied')}
-- X-Real-IP: {request.META.get('HTTP_X_REAL_IP', 'Not available')}
+                    Proxy/Forwarding Headers:
+                    - X-Forwarded-For: {request.META.get('HTTP_X_FORWARDED_FOR', 'Not proxied')}
+                    - X-Real-IP: {request.META.get('HTTP_X_REAL_IP', 'Not available')}
 
-Login Information:
-- Username: {username}
+                    Login Information:
+                    - Username: {username}
 
-This is an automated security alert.
+                    This is an automated security alert.
                 """
 
                 send_email.enqueue(
@@ -194,7 +195,7 @@ This is an automated security alert.
                     message=message.strip(),
                 )
 
-                return HttpResponseForbidden("Access denied")
+                return HttpResponseForbidden("Access denied 😁")
 
         return self.get_response(request)
 
@@ -208,15 +209,18 @@ This is an automated security alert.
                 )
             )
             cache.set(CACHE_KEY, allowed_ips, CACHE_TIMEOUT)
-        return allowed_ips
+            return allowed_ips
+        else:
+            allowed_ips = DEFAULT_IPS_ADDRESS
+            return allowed_ips
 
     def _format_geolocation(self, geo):
         """Format geolocation data for email"""
         if isinstance(geo, dict):
             geo_info = f"""- Country: {geo.get('country', 'Unknown')}
-- City: {geo.get('city', 'Unknown')}
-- Region: {geo.get('region', 'Unknown')}
-- ISP: {geo.get('isp', 'Unknown')}"""
+            - City: {geo.get('city', 'Unknown')}
+            - Region: {geo.get('region', 'Unknown')}
+            - ISP: {geo.get('isp', 'Unknown')}"""
 
             # Only add organization if it's different from ISP and not "Unknown"
             org = geo.get("org", "Unknown")

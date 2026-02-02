@@ -46,12 +46,36 @@ def handle_expected_stamp_delete(sender, instance, **kwargs):
 
 # Signal receivers - these run synchronously but queue background tasks
 @receiver(post_save, sender=StampCalculation)
-def sync_stamp_to_erpnext(sender, instance, **kwargs):
+def sync_stamp_to_erpnext(sender, instance, created, **kwargs):
+    """
+    After saving a StampCalculation:
+    1. Sync to ERPNext
+    2. If updated (not created), recalculate all records for the same company
+    """
     data = map_stamp_calculation(instance)
     sync_stamp_to_erpnext_task.enqueue(instance.id, data)
 
+    # Recalculate all records if this was an update (not a new creation)
+    if not created:
+        logger.info(
+            f"StampCalculation {instance.id} was updated - queuing recalculation for company {instance.company.id}"
+        )
+        recalculate_stamp_calculations_task.enqueue(instance.company.id)
+
 
 @receiver(post_save, sender=ExpectedStamp)
-def sync_expected_stamp_to_erpnext(sender, instance, **kwargs):
+def sync_expected_stamp_to_erpnext(sender, instance, created, **kwargs):
+    """
+    After saving an ExpectedStamp:
+    1. Sync to ERPNext
+    2. If updated (not created), recalculate all records for the same sector
+    """
     data = map_expected_stamp(instance)
     sync_expected_stamp_to_erpnext_task.enqueue(instance.id, data)
+
+    # Recalculate all records if this was an update (not a new creation)
+    if not created:
+        logger.info(
+            f"ExpectedStamp {instance.id} was updated - queuing recalculation for sector {instance.sector.id}"
+        )
+        recalculate_expected_stamps_task.enqueue(instance.sector.id)
