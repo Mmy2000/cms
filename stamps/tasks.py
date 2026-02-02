@@ -1,5 +1,5 @@
 from django.tasks import task
-from stamps.helpers import sync_to_erpnext
+from stamps.helpers import map_expected_stamp, map_stamp_calculation, sync_to_erpnext
 from stamps.services.erp_service import ERPNextClient
 from .models import Company, Sector, StampCalculation, ExpectedStamp
 import logging
@@ -140,6 +140,9 @@ def recalculate_stamp_calculations_task(company_id):
                 record.total_past_years = past_total
                 record.total_stamp_for_company = record.d1 + past_total
                 records_to_update.append(record)
+            
+            data = map_stamp_calculation(record)
+            sync_stamp_to_erpnext_task.enqueue(record.id, data)
 
         # Bulk update all records at once
         if records_to_update:
@@ -150,6 +153,7 @@ def recalculate_stamp_calculations_task(company_id):
         logger.info(
             f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}"
         )
+        print(f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}")
         return {"company_id": company_id, "updated_records": len(records_to_update)}
 
     except Exception as e:
@@ -193,6 +197,9 @@ def recalculate_expected_stamps_task(sector_id):
                 record.total_past_years = past_total
                 record.total_stamp_for_company = record.d1 + past_total
                 records_to_update.append(record)
+            
+            data = map_expected_stamp(record)
+            sync_expected_stamp_to_erpnext_task.enqueue(record.id, data)
 
         # Bulk update all records at once
         if records_to_update:
