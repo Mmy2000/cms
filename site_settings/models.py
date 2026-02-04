@@ -58,3 +58,17 @@ class SEOSettings(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class AdminAllowedIP(models.Model):
+    ip_address = models.GenericIPAddressField(_("IP Address"),unique=True)
+    description = models.CharField(_("IP Address Description"),max_length=255, blank=True)
+    active = models.BooleanField(_("Active"),default=True)
+    created_at = models.DateTimeField(_("created_at"),auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Allowed Admin IP")
+        verbose_name_plural = _("Allowed Admin IPs")
+
+    def __str__(self):
+        return f"{self.ip_address}"

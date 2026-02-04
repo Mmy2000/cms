@@ -4,5 +4,6 @@
 .env
 *.pyc
 error.log
+debug.log
 __pycache__/
 /node_modules

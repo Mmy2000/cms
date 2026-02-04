@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-27 20:53+0200\n"
+"POT-Creation-Date: 2026-01-31 10:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr "الصورة"
 
 #: .\about\models.py:12 .\about\models.py:28 .\accounts\models.py:20
 #: .\content\models.py:23 .\projects\models.py:8 .\projects\models.py:40
-#: .\stamps\models.py:53 .\stamps\models.py:136
+#: .\site_settings\models.py:67 .\stamps\models.py:53 .\stamps\models.py:136
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
@@ -297,9 +297,9 @@ msgstr "اسم الصفحه"
 msgid "Page URL"
 msgstr "لينك الصفحه"
 
-#: .\site_settings\models.py:40
+#: .\site_settings\models.py:40 .\site_settings\models.py:66
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #: .\site_settings\models.py:43 .\site_settings\models.py:50
 msgid "Page"
@@ -328,6 +328,22 @@ msgstr "إعدادات تحسين محركات البحث"
 #: .\site_settings\models.py:57
 msgid "SEO Settings"
 msgstr "إعدادات تحسين محركات البحث"
+
+#: .\site_settings\models.py:64
+msgid "IP Address"
+msgstr "عنوان IP"
+
+#: .\site_settings\models.py:65
+msgid "IP Address Description"
+msgstr "وصف عنوان IP"
+
+#: .\site_settings\models.py:70
+msgid "Allowed Admin IP"
+msgstr "عنوان IP المسموح به للمسؤول"
+
+#: .\site_settings\models.py:71
+msgid "Allowed Admin IPs"
+msgstr "عناوين IP المسموح بها للمسؤول"
 
 #: .\stamps\apps.py:8
 msgid "Calculating stamps"
@@ -1992,6 +2008,10 @@ msgstr ""
 
 #: .\venv\Lib\site-packages\django_summernote\views.py:160
 msgid "Failed to save attachment"
+msgstr ""
+
+#: .\venv\Lib\site-packages\ipware\apps.py:10
+msgid "ipware app"
 msgstr ""
 
 #: .\venv\Lib\site-packages\kombu\transport\qpid.py:1311

@@ -28,6 +28,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
 INSTALLED_APPS = [
     "unfold",
+    "axes",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -113,6 +114,7 @@ PWA_APP_LANG = "ar"
 
 
 MIDDLEWARE = [
+    "config.middleware.AdminIPRestrictionMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -125,11 +127,20 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = [
     "accounts.backends.EmailAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
+    "axes.backends.AxesBackend",
 ]
 
 LOGIN_URL = "login"  # your login view name
 LOGIN_REDIRECT_URL = "stamp_list"
 LOGOUT_REDIRECT_URL = "login"
+# ADMIN_URL = "secure-dashboard-a7b3c9d2"
+ADMIN_URL = env("ADMIN_URL")
+
+# settings.py
+MIDDLEWARE += ["axes.middleware.AxesMiddleware"]
+
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # hours
 
 
 ROOT_URLCONF = 'config.urls'
