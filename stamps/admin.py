@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import *
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
+from django_summernote.admin import SummernoteModelAdmin
 
 
 def format_millions(value):
@@ -37,7 +38,7 @@ class SectorAdmin(UnfoldModelAdmin):
     ordering = ["name"]
 
 @admin.register(StampCalculation)
-class StampCalculationAdmin(UnfoldModelAdmin):
+class StampCalculationAdmin(UnfoldModelAdmin,SummernoteModelAdmin):
     list_display = [
         "company",
         "invoice_date",
@@ -78,7 +79,7 @@ class StampCalculationAdmin(UnfoldModelAdmin):
 
 
 @admin.register(ExpectedStamp)
-class ExpectedStampAdmin(UnfoldModelAdmin):
+class ExpectedStampAdmin(UnfoldModelAdmin,SummernoteModelAdmin):
     list_display = [
         "sector",
         "invoice_date",

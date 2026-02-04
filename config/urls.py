@@ -12,6 +12,7 @@ urlpatterns = [
     path("about-us/", include("about.urls")),
     path("projects/", include("projects.urls")),
     path("", include("pwa.urls")),
+    path("summernote/", include("django_summernote.urls")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
