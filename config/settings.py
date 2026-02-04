@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "pwa",
     "compressor",
     "django_summernote",
+    "django_tasks.backends.database",
 ]
 
 UNFOLD = {
@@ -185,59 +186,60 @@ DATABASES = {
     }
 }
 
+TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "formatters": {
-#         "verbose": {
-#             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-#             "style": "{",
-#         },
-#         "simple": {
-#             "format": "{levelname} {asctime} {message}",
-#             "style": "{",
-#         },
-#     },
-#     "handlers": {
-#         "console": {
-#             "level": "DEBUG",
-#             "class": "logging.StreamHandler",
-#             "formatter": "simple",
-#             "stream": sys.stdout,  # Explicitly set stream
-#         },
-#         "file": {
-#             "level": "INFO",
-#             "class": "logging.FileHandler",
-#             "filename": os.path.join(BASE_DIR, "debug.log"),
-#             "formatter": "verbose",
-#             "encoding": "utf-8",  # Add UTF-8 encoding for file handler
-#         },
-#         "error_file": {
-#             "level": "ERROR",
-#             "class": "logging.FileHandler",
-#             "filename": os.path.join(BASE_DIR, "error.log"),
-#             "formatter": "verbose",
-#             "encoding": "utf-8",  # Add UTF-8 encoding for file handler
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["console", "error_file"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "stamps": {
-#             "handlers": ["console", "file", "error_file"],
-#             "level": "DEBUG",
-#             "propagate": False,
-#         },
-#         "": {
-#             "handlers": ["console", "file", "error_file"],
-#             "level": "INFO",
-#         },
-#     },
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {asctime} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": sys.stdout,  # Explicitly set stream
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "debug.log"),
+            "formatter": "verbose",
+            "encoding": "utf-8",  # Add UTF-8 encoding for file handler
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "error.log"),
+            "formatter": "verbose",
+            "encoding": "utf-8",  # Add UTF-8 encoding for file handler
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "error_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "stamps": {
+            "handlers": ["console", "file", "error_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "": {
+            "handlers": ["console", "file", "error_file"],
+            "level": "INFO",
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
