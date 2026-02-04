@@ -116,7 +116,7 @@
 
         <!-- Description with Better Readability -->
         <div class="prose prose-lg max-w-none">
-          <p class="text-gray-700 leading-loose text-lg whitespace-pre-line">{{ content.description|linebreaks }}</p>
+          <p class="text-gray-700 leading-loose text-lg whitespace-pre-line">{{ content.description|safe|linebreaks }}</p>
         </div>
 
       <!-- Multiple Files Section -->
@@ -211,11 +211,11 @@
                   {{ sub.title }}
                 </h3>
                 
-                {% if sub.description %}
+                {% comment %} {% if sub.description %}
                   <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-3">
                     {{ sub.description|truncatewords:20 }}
                   </p>
-                {% endif %}
+                {% endif %} {% endcomment %}
 
                 <!-- Read More Link -->
                 <div class="flex items-center text-green-600 text-sm font-medium group-hover:gap-2 transition-all">

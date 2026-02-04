@@ -74,12 +74,12 @@
               <h2 class="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-green-600 transition-colors duration-300">
                 {{ topic.title }}
               </h2>
-              
+{% comment %}               
               {% if topic.description %}
                 <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
-                  {{ topic.description|truncatewords:30 }}
+                  {{ topic.description|safe|truncatewords:30 }}
                 </p>
-              {% endif %}
+              {% endif %} {% endcomment %}
 
               <!-- Read More Link -->
               <div class="flex items-center text-green-600 text-sm font-medium group-hover:gap-2 transition-all">

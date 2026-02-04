@@ -4,7 +4,7 @@ from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import Content, ContentImage, ContentFile
 from unfold.admin import StackedInline, TabularInline
-
+from django_summernote.admin import SummernoteModelAdmin
 
 # ------------------------------
 # Inline image uploader with preview
@@ -39,7 +39,7 @@ class ContentFileInline( TabularInline):
 # Main Content Admin
 # ------------------------------
 @admin.register(Content)
-class ContentAdmin(UnfoldModelAdmin):
+class ContentAdmin(UnfoldModelAdmin,SummernoteModelAdmin):
     list_display = ("title", "parent", "created_at", "updated_at")
     search_fields = ("title", "description")
     list_filter = ("created_at", "updated_at", "parent")
