@@ -17,6 +17,7 @@ class Profile(models.Model):
     },)
     syndicate_card = models.ImageField(upload_to="syndicate_cards/", verbose_name=_("Syndicate Card"))
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending", verbose_name=_("Status"))
+    judicial_seizure = models.BooleanField(_("Judicial seizure"),blank=True,null=True)
     created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated_at"), auto_now=True)
 

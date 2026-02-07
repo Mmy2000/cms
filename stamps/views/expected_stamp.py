@@ -2,14 +2,10 @@ from django.http import HttpResponse
 from django.views.generic import ListView, CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from stamps.services.expected_stamp.expected_stamp_service import ExpectedStampService
 from ..models import  Sector
 from ..forms import ExpectedStampForm
-from ..services.expected_stamp_service import ExpectedStampService
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum
-from django.db.models.functions import TruncYear
-from datetime import  timedelta
-from django.utils import timezone
 from django.shortcuts import render
 
 
@@ -54,7 +50,7 @@ class ExpectedStampListView(ListView):
                 return response
 
             elif file_type == "excel":
-                excel = ExpectedStampService.export_excel(queryset)
+                excel = ExpectedStampService.export_excel_formatted(queryset)
                 response = HttpResponse(
                     excel,
                     content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
