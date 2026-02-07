@@ -186,7 +186,7 @@ DATABASES = {
     }
 }
 
-TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
+# TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
 
 LOGGING = {
     "version": 1,

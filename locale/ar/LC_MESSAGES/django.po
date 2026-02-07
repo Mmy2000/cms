@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-31 10:37+0200\n"
+"POT-Creation-Date: 2026-02-07 11:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,13 +37,13 @@ msgstr "الوصف"
 msgid "Image"
 msgstr "الصورة"
 
-#: .\about\models.py:12 .\about\models.py:28 .\accounts\models.py:20
+#: .\about\models.py:12 .\about\models.py:28 .\accounts\models.py:21
 #: .\content\models.py:23 .\projects\models.py:8 .\projects\models.py:40
 #: .\site_settings\models.py:67 .\stamps\models.py:53 .\stamps\models.py:136
 msgid "created_at"
 msgstr "تاريخ الإنشاء"
 
-#: .\about\models.py:13 .\about\models.py:29 .\accounts\models.py:21
+#: .\about\models.py:13 .\about\models.py:29 .\accounts\models.py:22
 #: .\content\models.py:24 .\projects\models.py:9 .\projects\models.py:41
 msgid "updated_at"
 msgstr "تاريخ التحديث"
@@ -136,11 +136,15 @@ msgstr "بطاقة النقابة"
 msgid "Status"
 msgstr "الحاله"
 
-#: .\accounts\models.py:24
+#: .\accounts\models.py:20
+msgid "Judicial seizure"
+msgstr "ضبطية قضائية"
+
+#: .\accounts\models.py:25
 msgid "Profile"
 msgstr "حساب تعريفي"
 
-#: .\accounts\models.py:25
+#: .\accounts\models.py:26
 msgid "Profiles"
 msgstr "حسابات تعريفيه"
 
@@ -1402,16 +1406,19 @@ msgid "No"
 msgstr ""
 
 #: .\venv\Lib\site-packages\django\tasks\base.py:34
+#: .\venv\Lib\site-packages\django_tasks\base.py:52
 msgctxt "Task"
 msgid "Ready"
 msgstr ""
 
 #: .\venv\Lib\site-packages\django\tasks\base.py:36
+#: .\venv\Lib\site-packages\django_tasks\base.py:55
 msgctxt "Task"
 msgid "Running"
 msgstr ""
 
 #: .\venv\Lib\site-packages\django\tasks\base.py:38
+#: .\venv\Lib\site-packages\django_tasks\base.py:58
 msgctxt "Task"
 msgid "Failed"
 msgstr ""
@@ -2008,6 +2015,81 @@ msgstr ""
 
 #: .\venv\Lib\site-packages\django_summernote\views.py:160
 msgid "Failed to save attachment"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:99
+#, fuzzy
+#| msgid "Status"
+msgid "status"
+msgstr "الحاله"
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:105
+msgid "enqueued at"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:106
+msgid "started at"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:107
+msgid "finished at"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:109
+msgid "args kwargs"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:111
+msgid "priority"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:113
+msgid "task path"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:114
+msgid "worker id"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:117
+msgid "queue name"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:119
+msgid "backend name"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:121
+msgid "run after"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:123
+msgid "return value"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:125
+msgid "exception class path"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:126
+msgid "traceback"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:128
+msgid "metadata"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:134
+msgid "Task Result"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\backends\database\models.py:135
+msgid "Task Results"
+msgstr ""
+
+#: .\venv\Lib\site-packages\django_tasks\base.py:61
+msgctxt "Task"
+msgid "Succeeded"
 msgstr ""
 
 #: .\venv\Lib\site-packages\ipware\apps.py:10

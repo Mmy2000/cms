@@ -19,11 +19,12 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from stamps.models import Company, ExpectedStamp, Sector, StampCalculation
-from stamps.services.expected_stamp_service import ExpectedStampService
-from stamps.services.stamp_service import StampService
+from stamps.services.expected_stamp.expected_stamp_service import ExpectedStampService
 from django.http import FileResponse, HttpResponse
 from django.views import View
 from datetime import datetime
+
+from stamps.services.stamp.stamp_service import StampService
 
 
 @anonymous_required(path_url="main_topics")

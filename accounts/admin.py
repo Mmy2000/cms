@@ -11,18 +11,36 @@ from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationFo
 
 @admin.register(Profile)
 class ProfileAdmin(UnfoldModelAdmin):
-    list_display = ("user", "syndicate_number", "status", "created_at")
-    list_filter = ("status", "created_at")
+    list_display = (
+        "user",
+        "syndicate_number",
+        "judicial_seizure",
+        "status",
+        "created_at",
+    )
+    list_filter = ("status", "judicial_seizure", "created_at")
     search_fields = ("user__first_name", "user__last_name", "syndicate_number")
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
-        (None, {
-            'fields': ('user', 'syndicate_number', 'syndicate_card', 'status')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',),
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "user",
+                    "syndicate_number",
+                    "syndicate_card",
+                    "judicial_seizure",
+                    "status",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": ("created_at", "updated_at"),
+                "classes": ("collapse",),
+            },
+        ),
     )
 
 

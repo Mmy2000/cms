@@ -1,4 +1,4 @@
-from stamps.services.stamp_service import StampService
+from stamps.services.stamp.stamp_service import StampService
 from .models import SiteConfiguration, Page, SEOSettings
 
 def site_config_context(request):

@@ -2,16 +2,12 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
+
+from stamps.services.stamp.stamp_service import StampService
 from ..forms import StampCalculationForm
 from ..models import Company
-from ..services.stamp_service import StampService
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum
-from django.db.models.functions import TruncYear
-from datetime import timedelta
-from django.utils import timezone
 from django.shortcuts import render
-from datetime import datetime
 
 
 class StampListView(ListView):
@@ -21,19 +17,13 @@ class StampListView(ListView):
 
     def get_queryset(self):
         qs = StampService.get_queryset()
-
         qs = StampService.filter(
             qs,
             company_id=self.request.GET.get("company"),
             date_from=self.request.GET.get("date_from"),
             date_to=self.request.GET.get("date_to"),
         )
-
-        qs = StampService.sort(
-            qs,
-            self.request.GET.get("sort")
-        )
-
+        qs = StampService.sort(qs, self.request.GET.get("sort"))
         return qs
 
     def get(self, request, *args, **kwargs):
@@ -45,10 +35,14 @@ class StampListView(ListView):
             company_id = request.GET.get("company")
 
             if file_type == "pdf":
+                # Option 1: Use StampService (recommended for consistency)
                 if company_id not in ["", "None", None]:
-                    pdf = StampService.export_to_pdf_for_spacific_company(queryset, company_id)
+                    pdf = StampService.export_to_pdf_for_spacific_company(
+                        queryset, company_id
+                    )
                 else:
                     pdf = StampService.export_pdf(queryset)
+
                 response = HttpResponse(pdf, content_type="application/pdf")
                 response["Content-Disposition"] = (
                     "attachment; filename=stamp_report.pdf"
@@ -56,7 +50,9 @@ class StampListView(ListView):
                 return response
 
             elif file_type == "excel":
-                excel = StampService.export_excel(queryset)
+                # Option 1: Use StampService (basic export)
+                excel = StampService.export_excel_formatted(queryset)
+
                 response = HttpResponse(
                     excel,
                     content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -83,7 +79,7 @@ class StampListView(ListView):
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
                 "total_all_companies": StampService.total_amount(qs),
-                "total_pension": service.calculate_pension(qs,year),
+                "total_pension": service.calculate_pension(qs, year),
                 "30_previous_year": service.get_30_from_previous_year(qs),
             }
         )
