@@ -254,9 +254,9 @@ class ExpectedStampService:
         return ExpectedStampPDFService.export_general_report(queryset)
 
     @staticmethod
-    def export_to_pdf_for_spacific_sector(queryset, sector_id):
+    def export_to_pdf_for_spacific_sector(queryset, sector_id, user=None):
         return ExpectedStampPDFService.export_sector_detailed_report(
-            queryset, sector_id
+            queryset, sector_id,user
         )
 
     @staticmethod

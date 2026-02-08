@@ -40,7 +40,9 @@ class ExpectedStampListView(ListView):
             sector_id = self.request.GET.get("sector")
             if file_type == "pdf":
                 if sector_id not in ["", "None", None]:
-                    pdf = ExpectedStampService.export_to_pdf_for_spacific_sector(queryset, sector_id)
+                    pdf = ExpectedStampService.export_to_pdf_for_spacific_sector(
+                        queryset, sector_id, user=request.user
+                    )
                 else:
                     pdf = ExpectedStampService.export_pdf(queryset)
                 response = HttpResponse(pdf, content_type="application/pdf")

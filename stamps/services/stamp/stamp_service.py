@@ -286,8 +286,10 @@ class StampService:
         return StampPDFService.export_general_report(queryset)
 
     @staticmethod
-    def export_to_pdf_for_spacific_company(queryset, company_id):
-        return StampPDFService.export_company_detailed_report(queryset, company_id)
+    def export_to_pdf_for_spacific_company(queryset, company_id, user=None):
+        return StampPDFService.export_company_detailed_report(
+            queryset, company_id, user
+        )
 
     @staticmethod
     def export_pdf_to_judicial_seizure(queryset):

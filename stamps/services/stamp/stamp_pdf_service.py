@@ -107,6 +107,186 @@ class StampPDFService:
         return Decimal(str(result)) if result else Decimal("0")
 
     @staticmethod
+    def _draw_judicial_seizure_page(c, width, height, user_profile):
+        """
+        Draw the judicial seizure notice page.
+        This is shown when user has judicial_seizure=True.
+        """
+        LEFT = 2 * cm
+        RIGHT = width - 2 * cm
+        CENTER = width / 2
+        TOP_MARGIN = 3 * cm
+        BOTTOM_MARGIN = 2.5 * cm  # Add bottom margin to prevent cutoff
+        y = height - TOP_MARGIN
+        FOOTER_LEFT = 5 * cm
+
+        # Title at top - BOLD
+        c.setFont("Amiri-Bold", 16)
+        title = "بمحضر ضبط قضائي لمخالفة مواد (.....................)"
+        c.drawCentredString(CENTER, y, StampPDFService.fix_arabic(title))
+
+        y -= 2 * cm
+
+        # Form fields with dotted lines - BOLD
+        c.setFont("Amiri-Bold", 12)
+
+        # رقم المسلسل
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("رقم المسلسل :"))
+        c.drawString(LEFT, y, "." * 100)
+
+        y -= 1 * cm
+
+        # رقم القيد بالسجل
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("رقم القيد بالسجل :"))
+        c.drawString(LEFT, y, "." * 100)
+
+        y -= 1 * cm
+
+        # اسم المخالف
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("اسم المخالف :"))
+        c.drawString(LEFT, y, "." * 100)
+
+        y -= 1 * cm
+
+        # عنوان المخالف
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("عنوان المخالف :"))
+        c.drawString(LEFT, y, "." * 100)
+
+        y -= 1.2 * cm
+
+        # انه في يوم ... الموافق
+        line1_right = (
+            "انه في يوم .............................. الموافق    /    /٢٠٢٥ الساعة :"
+        )
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line1_right))
+        c.drawString(LEFT, y, "." * 20)
+
+        y -= 1.2 * cm
+
+        # بمعرفتي انا المحامي
+        line2 = "بمعرفتي انا المحامي / ..................................... بصفتي / ......................................."
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line2))
+
+        y -= 1 * cm
+
+        # محامي بإدارة الدمغة الهندسية
+        line3 = "محامي بإدارة الدمغة الهندسية بنقابة المهندسين المصرية ، مأمور الضبط القضائي."
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line3))
+
+        y -= 1.2 * cm
+
+        # بناء علي قرار السيد وزير العدل - BOLD
+        c.setFont("Amiri-Bold", 11)
+        para1 = "بناء علي قرار السيد وزير العدل رقم (٤٨٠٥) لسنة ٢٠٢٥ المنشور بالجريدة الرسمية"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(para1))
+
+        y -= 0.7 * cm
+
+        para2 = "بتاريخ ٢٠٢٥/٣/٢٥ العدد (١٨٨) ، فقد تحقق لنا أن السيد – السادة /"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(para2))
+
+        y -= 1 * cm
+
+        c.drawString(LEFT, y, "." * 120)
+
+        y -= 0.7 * cm
+
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("قد قام – قاموا"))
+        c.drawString(LEFT, y, "." * 120)
+
+        y -= 1 * cm
+
+        # وبعد التحقيق والتحري - BOLD
+        c.setFont("Amiri-Bold", 12)
+        investigation = "وبعد التحقيق والتحري عن الأمر بموجب الإجراءات الآتية :"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(investigation))
+
+        y -= 0.8 * cm
+
+        c.setFont("Amiri-Bold", 11)
+        c.drawString(LEFT, y, "." * 120)
+        y -= 0.7 * cm
+        c.drawString(LEFT, y, "." * 120)
+        y -= 0.7 * cm
+        c.drawString(LEFT, y, "." * 120)
+
+        y -= 1.2 * cm
+
+        # Main paragraph - BOLD
+        c.setFont("Amiri-Bold", 11)
+        main_text1 = "وحيث أن هذا العمل مخالف للمواد ( ٢٣ ) من قانون الإجراءات الجنائية ومخالفة المواد"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text1))
+
+        y -= 0.7 * cm
+
+        main_text2 = "( ٤٦ - ٤٧ - ١٣١ ) من قانون ٦٦ لسنة ١٩٧٤ ولائحته التنفيذية الصادر بشأن نقابة"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text2))
+
+        y -= 0.7 * cm
+
+        main_text3 = "المهندسين ، نحرر هذا المحضر من أصل وصورتين."
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text3))
+
+        y -= 1.2 * cm
+
+        # Closing - BOLD
+        c.setFont("Amiri-Bold", 11)
+        closing = "يرسل الأصل إلى النيابة العامة لإتخاذ ما يلزم وطلب الحكم بالعقوبات المقررة قانوناً ، ونسلم صورة"
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(closing))
+
+        y -= 0.7 * cm
+
+        closing2 = "للمخالف وترسل صورة إلى النقابة العامة."
+        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(closing2))
+
+        # Check if we have enough space for signature section (need ~4cm from bottom)
+        if y - 4 * cm < BOTTOM_MARGIN:
+            c.showPage()
+            y = height - TOP_MARGIN
+            c.setFont("Amiri-Bold", 12)
+        else:
+            y -= 1.5 * cm
+
+        # Signature section - BOLD
+        c.setFont("Amiri-Bold", 12)
+        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.fix_arabic("محرر المحضر"))
+
+        y -= 0.8 * cm
+
+        c.drawCentredString(
+            FOOTER_LEFT,
+            y,
+            StampPDFService.fix_arabic(
+                "الاسم : ........................................"
+            ),
+        )
+
+        y -= 0.8 * cm
+
+        c.drawCentredString(
+            FOOTER_LEFT,
+            y,
+            StampPDFService.fix_arabic(
+                "التوقيع : ........................................"
+            ),
+        )
+
+        y -= 0.8 * cm
+
+        # Ensure we don't go below bottom margin
+        if y > BOTTOM_MARGIN:
+            c.drawCentredString(
+                FOOTER_LEFT,
+                y,
+                StampPDFService.fix_arabic(
+                    "التاريخ : ........................................"
+                ),
+            )
+
+        # Finish this page
+        c.showPage()
+
+    @staticmethod
     def export_general_report(queryset):
         """
         Export general PDF report with summary table of all stamps.
@@ -213,7 +393,7 @@ class StampPDFService:
         return pdf
 
     @staticmethod
-    def export_company_detailed_report(queryset, company_id):
+    def export_company_detailed_report(queryset, company_id,user=None):
         """
         Export detailed PDF report for a specific company.
         Includes legal references, detailed table, and formal footer.
@@ -231,6 +411,10 @@ class StampPDFService:
         pdfmetrics.registerFont(
             TTFont("Amiri-Bold", settings.BASE_DIR / "static/fonts/Amiri-Bold.ttf")
         )
+
+        show_judicial_seizure = False
+        if user and hasattr(user, "profile"):
+            show_judicial_seizure = user.profile.judicial_seizure == True
 
         # ================= Layout constants ================= #
         HEADER_FONT = ("Amiri", 12)
@@ -421,6 +605,10 @@ class StampPDFService:
         y -= 0.9 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(FOOTER_LEFT, y, StampPDFService.fix_arabic("د / معتز طلبة"))
+
+        if show_judicial_seizure:
+            c.showPage()  # Start new page for judicial seizure
+            StampPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
 
         c.showPage()
         c.save()
