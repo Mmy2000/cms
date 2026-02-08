@@ -19,6 +19,7 @@ from django.conf import settings
 from num2words import num2words
 
 from stamps.models import Sector
+from stamps.services.stamp.stamp_pdf_service import StampPDFService
 
 
 class ExpectedStampPDFService:
@@ -213,7 +214,7 @@ class ExpectedStampPDFService:
         return pdf
 
     @staticmethod
-    def export_sector_detailed_report(queryset, sector_id):
+    def export_sector_detailed_report(queryset, sector_id, user=None):
         """
         Export detailed PDF report for a specific sector.
         Includes legal references, detailed table, and formal footer.
@@ -231,6 +232,10 @@ class ExpectedStampPDFService:
         pdfmetrics.registerFont(
             TTFont("Amiri-Bold", settings.BASE_DIR / "static/fonts/Amiri-Bold.ttf")
         )
+
+        show_judicial_seizure = False
+        if user and hasattr(user, "profile"):
+            show_judicial_seizure = user.profile.judicial_seizure == True
 
         # ================= Layout constants ================= #
         HEADER_FONT = ("Amiri", 12)
@@ -421,6 +426,10 @@ class ExpectedStampPDFService:
         y -= 0.9 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(FOOTER_LEFT, y, ExpectedStampPDFService.fix_arabic("د / معتز طلبة"))
+
+        if show_judicial_seizure:
+            c.showPage()  # Start new page for judicial seizure
+            StampPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
 
         c.showPage()
         c.save()

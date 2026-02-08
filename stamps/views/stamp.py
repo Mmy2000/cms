@@ -38,7 +38,7 @@ class StampListView(ListView):
                 # Option 1: Use StampService (recommended for consistency)
                 if company_id not in ["", "None", None]:
                     pdf = StampService.export_to_pdf_for_spacific_company(
-                        queryset, company_id
+                        queryset, company_id, user=request.user
                     )
                 else:
                     pdf = StampService.export_pdf(queryset)
