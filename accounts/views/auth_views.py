@@ -119,15 +119,18 @@ def edit_profile(request):
 
 
 class MyStampListView(LoginRequiredMixin, ListView):
-    model = StampCalculation
     template_name = "stamps/my_stamps.html"
     context_object_name = "stamps"
     paginate_by = 10
 
-    def get_queryset(self):
-        qs = StampService.get_queryset()
+    def dispatch(self, request, *args, **kwargs):
+        self.service = StampService()
+        return super().dispatch(request, *args, **kwargs)
 
-        qs = StampService.filter(
+    def get_queryset(self):
+        qs = self.service.get_queryset()
+
+        qs = self.service.filter(
             qs,
             company_id=self.request.GET.get("company"),
             date_from=self.request.GET.get("date_from"),
@@ -135,7 +138,7 @@ class MyStampListView(LoginRequiredMixin, ListView):
             user=self.request.user,
         )
 
-        qs = StampService.sort(qs, self.request.GET.get("sort"))
+        qs = self.service.sort(qs, self.request.GET.get("sort"))
 
         return qs
 
@@ -151,21 +154,24 @@ class MyStampListView(LoginRequiredMixin, ListView):
                 "date_from": self.request.GET.get("date_from", ""),
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
-                "total_all_companies": StampService.total_amount(qs),
+                "total_all_companies": self.service.total_amount(qs),
             }
         )
         return context
 
 class MyExpectedStampListView(LoginRequiredMixin, ListView):
-    model = ExpectedStamp
     template_name = "stamps/my_expected_stamps.html"
     context_object_name = "expected_stamps"
     paginate_by = 10
 
-    def get_queryset(self):
-        qs = ExpectedStampService.get_queryset()
+    def dispatch(self, request, *args, **kwargs):
+        self.service = ExpectedStampService()
+        return super().dispatch(request, *args, **kwargs)
 
-        qs = ExpectedStampService.filter(
+    def get_queryset(self):
+        qs = self.service.get_queryset()
+
+        qs = self.service.filter(
             qs,
             sector_id=self.request.GET.get("sector"),
             date_from=self.request.GET.get("date_from"),
@@ -173,7 +179,7 @@ class MyExpectedStampListView(LoginRequiredMixin, ListView):
             user=self.request.user,
         )
 
-        qs = ExpectedStampService.sort(qs, self.request.GET.get("sort"))
+        qs = self.service.sort(qs, self.request.GET.get("sort"))
 
         return qs
 
@@ -187,7 +193,7 @@ class MyExpectedStampListView(LoginRequiredMixin, ListView):
                 "date_from": self.request.GET.get("date_from", ""),
                 "date_to": self.request.GET.get("date_to", ""),
                 "sort_by": self.request.GET.get("sort", "-created_at"),
-                "total_all_sectors": ExpectedStampService.total_amount(qs),
+                "total_all_sectors": self.service.total_amount(qs),
             }
         )
         return context

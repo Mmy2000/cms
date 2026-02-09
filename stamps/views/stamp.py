@@ -41,14 +41,20 @@ class StampListView(ListView):
         file_type = request.GET.get("download")
         company_id = request.GET.get("company")
 
+        try:
+            company_id = int(company_id)
+        except (TypeError, ValueError):
+            company_id = None
+
         if file_type == "pdf":
-            pdf = (
-                self.service.export_to_pdf_for_spacific_company(
-                    queryset, company_id, user=request.user
+            if company_id:
+                pdf = self.service.export_to_pdf_for_spacific_company(
+                    queryset,
+                    company_id,
+                    user=request.user,
                 )
-                if company_id
-                else self.service.export_pdf(queryset)
-            )
+            else:
+                pdf = self.service.export_pdf(queryset)
 
             response = HttpResponse(pdf, content_type="application/pdf")
             response["Content-Disposition"] = "attachment; filename=stamp_report.pdf"
