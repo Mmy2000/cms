@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView,DetailView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
@@ -15,72 +15,70 @@ class StampListView(ListView):
     context_object_name = "stamps"
     paginate_by = 10
 
+    def dispatch(self, request, *args, **kwargs):
+        self.service = StampService()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
-        qs = StampService.get_queryset()
-        qs = StampService.filter(
+        qs = self.service.get_queryset()
+        qs = self.service.filter(
             qs,
             company_id=self.request.GET.get("company"),
             date_from=self.request.GET.get("date_from"),
             date_to=self.request.GET.get("date_to"),
         )
-        qs = StampService.sort(qs, self.request.GET.get("sort"))
+        qs = self.service.sort(qs, self.request.GET.get("sort"))
         return qs
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        # Handle export
+        self.object_list = self.get_queryset()
         if request.GET.get("download_btn"):
-            file_type = request.GET.get("download")
-            company_id = request.GET.get("company")
+            return self.handle_export(request, self.object_list)
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
-            if file_type == "pdf":
-                # Option 1: Use StampService (recommended for consistency)
-                if company_id not in ["", "None", None]:
-                    pdf = StampService.export_to_pdf_for_spacific_company(
-                        queryset, company_id, user=request.user
-                    )
-                else:
-                    pdf = StampService.export_pdf(queryset)
+    def handle_export(self, request, queryset):
+        file_type = request.GET.get("download")
+        company_id = request.GET.get("company")
 
-                response = HttpResponse(pdf, content_type="application/pdf")
-                response["Content-Disposition"] = (
-                    "attachment; filename=stamp_report.pdf"
+        if file_type == "pdf":
+            pdf = (
+                self.service.export_to_pdf_for_spacific_company(
+                    queryset, company_id, user=request.user
                 )
-                return response
+                if company_id
+                else self.service.export_pdf(queryset)
+            )
 
-            elif file_type == "excel":
-                # Option 1: Use StampService (basic export)
-                excel = StampService.export_excel_formatted(queryset)
+            response = HttpResponse(pdf, content_type="application/pdf")
+            response["Content-Disposition"] = "attachment; filename=stamp_report.pdf"
+            return response
 
-                response = HttpResponse(
-                    excel,
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
-                response["Content-Disposition"] = (
-                    "attachment; filename=stamp_report.xlsx"
-                )
-                return response
-
-        return super().get(request, *args, **kwargs)
+        if file_type == "excel":
+            excel = self.service.export_excel_formatted(queryset)
+            response = HttpResponse(
+                excel,
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            response["Content-Disposition"] = "attachment; filename=stamp_report.xlsx"
+            return response
 
     def get_context_data(self, **kwargs):
         date_to = (self.request.GET.get("date_to"),)
-        year = StampService.get_last_year(date_to)
+        year = self.service.get_last_year(date_to)
         context = super().get_context_data(**kwargs)
         qs = self.object_list
-        service = StampService()
 
         context.update(
             {
                 "companies": Company.objects.all(),
                 "company_filter": self.request.GET.get("company"),
                 "date_from": self.request.GET.get("date_from", ""),
-                "date_to": self.request.GET.get("date_to", ""),
+                "date_to": date_to or "",
                 "sort_by": self.request.GET.get("sort", "-created_at"),
-                "total_all_companies": StampService.total_amount(qs),
-                "total_pension": service.calculate_pension(qs, year),
-                "30_previous_year": service.get_30_from_previous_year(qs),
+                "total_all_companies": self.service.total_amount(qs),
+                "total_pension": self.service.calculate_pension(qs, year),
+                "30_previous_year": self.service.get_30_from_previous_year(qs),
             }
         )
         return context
@@ -92,39 +90,52 @@ class GroupedStampListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        qs = StampService.get_queryset()
-        return StampService.grouped_by_company(qs)
+        qs = self.service.get_queryset()
+        return self.service.grouped_by_company(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["total_all_companies"] = StampService.total_amount(
-            self.get_queryset()  # full queryset, not paginated
-        )
-        context["total_companies"] = StampService.total_companies(
-            self.get_queryset()  # full queryset, not paginated
-        )
+        qs = self.object_list  # already evaluated queryset
+
+        context["total_all_companies"] = self.service.total_amount(qs)
+        context["total_companies"] = self.service.total_companies(qs)
 
         return context
 
-class StampDetailView( ListView):
+    @property
+    def service(self):
+        return StampService()
+
+
+class StampDetailView(DetailView):
     template_name = "stamps/stamp_detail.html"
     context_object_name = "stamp"
 
-    def get_queryset(self):
+    @property
+    def service(self):
+        return StampService()
+
+    def get_object(self):
         stamp_id = self.kwargs.get("stamp_id")
-        stamp = StampService.get_stamp_by_id(stamp_id)
-        return stamp
+        return self.service.get_stamp_by_id(stamp_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        company_id = self.get_queryset().company_id
-        context["total_amount_for_company"] = StampService.total_amount_for_company(
-            StampService.get_queryset(), company_id
+
+        stamp = self.object  # already fetched once
+        company_id = stamp.company_id
+
+        qs = self.service.get_queryset()
+
+        context["total_amount_for_company"] = (
+            self.service.total_amount_for_company(qs, company_id)
         )
-        context["total_invoice_copies_for_company"] = StampService.get_number_of_invoice_copies(
-            StampService.get_queryset(), company_id
+
+        context["total_invoice_copies_for_company"] = (
+            self.service.get_number_of_invoice_copies(qs, company_id)
         )
+
         return context
 
 class StampCreateView(LoginRequiredMixin,SuccessMessageMixin, CreateView):

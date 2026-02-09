@@ -14,73 +14,75 @@ class ExpectedStampListView(ListView):
     context_object_name = "expected_stamps"
     paginate_by = 10
 
-    def get_queryset(self):
-        qs = ExpectedStampService.get_queryset()
+    def dispatch(self, request, *args, **kwargs):
+        self.service = ExpectedStampService()
+        return super().dispatch(request, *args, **kwargs)
 
-        qs = ExpectedStampService.filter(
+    def get_queryset(self):
+        qs = self.service.get_queryset()
+        qs = self.service.filter(
             qs,
             sector_id=self.request.GET.get("sector"),
             date_from=self.request.GET.get("date_from"),
             date_to=self.request.GET.get("date_to"),
         )
-
-        qs = ExpectedStampService.sort(
+        qs = self.service.sort(
             qs,
             self.request.GET.get("sort")
         )
-
         return qs
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        # Handle export
+        self.object_list = self.get_queryset()
         if request.GET.get("download_btn"):
-            file_type = request.GET.get("download")
-            sector_id = self.request.GET.get("sector")
-            if file_type == "pdf":
-                if sector_id not in ["", "None", None]:
-                    pdf = ExpectedStampService.export_to_pdf_for_spacific_sector(
-                        queryset, sector_id, user=request.user
-                    )
-                else:
-                    pdf = ExpectedStampService.export_pdf(queryset)
-                response = HttpResponse(pdf, content_type="application/pdf")
-                response["Content-Disposition"] = (
-                    "attachment; filename=expected_stamp_report.pdf"
-                )
-                return response
+            return self.handle_export(request, self.object_list)
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
-            elif file_type == "excel":
-                excel = ExpectedStampService.export_excel_formatted(queryset)
-                response = HttpResponse(
-                    excel,
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    def handle_export(self, request, queryset):
+        file_type = request.GET.get("download")
+        sector_id = self.request.GET.get("sector")
+        if file_type == "pdf":
+            pdf = (
+                self.service.export_to_pdf_for_spacific_sector(
+                    queryset, sector_id, user=request.user
                 )
-                response["Content-Disposition"] = (
-                    "attachment; filename=expected_stamp_report.xlsx"
-                )
-                return response
+                if sector_id
+                else self.service.export_pdf(queryset)
+            )
+            response = HttpResponse(pdf, content_type="application/pdf")
+            response["Content-Disposition"] = (
+                "attachment; filename=expected_stamp_report.pdf"
+            )
+            return response
 
-        return super().get(request, *args, **kwargs)
+        elif file_type == "excel":
+            excel = self.service.export_excel_formatted(queryset)
+            response = HttpResponse(
+                excel,
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            response["Content-Disposition"] = (
+                "attachment; filename=expected_stamp_report.xlsx"
+            )
+            return response
 
     def get_context_data(self, **kwargs):
         date_to = (self.request.GET.get("date_to"),)
-        year = ExpectedStampService.get_last_year(date_to)
+        year = self.service.get_last_year(date_to)
         context = super().get_context_data(**kwargs)
         qs = self.object_list
-        service = ExpectedStampService()
 
         context.update(
             {
                 "sectors": Sector.objects.all(),
                 "sector_filter": self.request.GET.get("sector"),
                 "date_from": self.request.GET.get("date_from", ""),
-                "date_to": self.request.GET.get("date_to", ""),
+                "date_to": date_to or "",
                 "sort_by": self.request.GET.get("sort", "-created_at"),
-                "total_all_sectors": ExpectedStampService.total_amount(qs),
-                "total_pension": service.calculate_pension(qs, year),
-                "30_previous_year": service.get_30_from_previous_year(qs),
+                "total_all_sectors": self.service.total_amount(qs),
+                "total_pension": self.service.calculate_pension(qs, year),
+                "30_previous_year": self.service.get_30_from_previous_year(qs),
             }
         )
         return context
@@ -91,18 +93,23 @@ class GroupedExpectedStampListView(ListView):
     context_object_name = "grouped_qs"
     paginate_by = 10
 
+    @property
+    def service(self):
+        return ExpectedStampService()
+
     def get_queryset(self):
-        qs = ExpectedStampService.get_queryset()
-        return ExpectedStampService.grouped_by_sector(qs)
+        qs = self.service.get_queryset()
+        return self.service.grouped_by_sector(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        qs = self.object_list
 
-        context["total_all_sectors"] = ExpectedStampService.total_amount(
-            self.get_queryset()  # full queryset, not paginated
+        context["total_all_sectors"] = self.service.total_amount(
+            qs  # full queryset, not paginated
         )
-        context["total_sectors"] = ExpectedStampService.total_sectors(
-            self.get_queryset()  # full queryset, not paginated
+        context["total_sectors"] = self.service.total_sectors(
+            qs  # full queryset, not paginated
         )
         return context
 
@@ -110,17 +117,22 @@ class ExpectedStampDetailView(ListView):
     template_name = "expected_stamps/expected_stamp_details.html"
     context_object_name = "stamp"
 
-    def get_queryset(self):
+    @property
+    def service(self):
+        return ExpectedStampService()
+
+    def get_object(self):
         stamp_id = self.kwargs.get("stamp_id")
-        expected_stamp = ExpectedStampService.get_expected_stamp_by_id(stamp_id)
-        return expected_stamp
+        return self.service.get_expected_stamp_by_id(stamp_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sector_id = self.get_queryset().sector_id
-        context["total_amount_for_sector"] = ExpectedStampService.total_amount_for_sector(ExpectedStampService.get_queryset(),sector_id)
-        context["total_invoice_copies_for_sector"] = ExpectedStampService.get_number_of_invoice_copies(
-            ExpectedStampService.get_queryset(), sector_id
+        stamp = self.object
+        sector_id = stamp.sector_id
+        qs = self.service.get_queryset()
+        context["total_amount_for_sector"] = self.service.total_amount_for_sector(qs,sector_id)
+        context["total_invoice_copies_for_sector"] = self.service.get_number_of_invoice_copies(
+            qs, sector_id
         )
         return context
 
