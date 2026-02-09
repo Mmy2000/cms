@@ -10,10 +10,6 @@ from stamps.admin import format_millions
 
 
 class BaseStampService:
-    """
-    Base service class containing common functionality for stamp-related services.
-    Implements DRY principle by extracting shared logic from StampService and ExpectedStampService.
-    """
 
     PREVIOUS_YEAR_MULTIPLIER = Decimal("0.7")
     PENSION_MULTIPLIER = Decimal("0.2")
@@ -33,7 +29,6 @@ class BaseStampService:
 
     @staticmethod
     def get_last_year(date_to):
-        """Extract year from date string."""
         from datetime import datetime
 
         date_str = date_to[0]
@@ -45,7 +40,6 @@ class BaseStampService:
 
     @staticmethod
     def get_this_month(queryset):
-        """Filter queryset to current month only."""
         now = timezone.now()
 
         # First day of current month
@@ -68,7 +62,6 @@ class BaseStampService:
 
     @staticmethod
     def filter_by_date_range(queryset, date_from=None, date_to=None):
-        """Filter queryset by date range."""
         filters = Q()
 
         if date_from:
@@ -85,7 +78,6 @@ class BaseStampService:
 
     @staticmethod
     def filter_by_years(queryset, years: int | None):
-        """Filter queryset to show only records from last N years."""
         if not years:
             return queryset
 
@@ -94,27 +86,23 @@ class BaseStampService:
 
     @staticmethod
     def filter_by_user(queryset, user=None):
-        """Filter queryset by user."""
         if user:
             return queryset.filter(user=user)
         return queryset
 
     @staticmethod
     def sort(queryset, sort: str = "-created_at"):
-        """Sort queryset with allowed sort fields."""
         allowed_sorts = ["invoice_date", "-invoice_date", "created_at", "-created_at"]
         return queryset.order_by(sort if sort in allowed_sorts else "-created_at")
 
     @staticmethod
     def total_amount(queryset) -> Decimal:
-        """Calculate total amount (d1 field) from queryset."""
         result = queryset.aggregate(total=Sum("d1"))["total"]
         return Decimal(str(result)) if result else Decimal("0")
 
     def _total_for_previous_year(
         self, queryset, current_year: Optional[int] = None
     ) -> Decimal:
-        """Calculate total for previous year multiplied by PREVIOUS_YEAR_MULTIPLIER."""
         year = current_year if current_year is not None else self.current_year
         previous_year = year - 1
 
@@ -127,7 +115,6 @@ class BaseStampService:
         return Decimal(str(total)) * self.PREVIOUS_YEAR_MULTIPLIER
 
     def get_30_from_previous_year(self, queryset) -> Decimal:
-        """Calculate 30% of previous year's total."""
         year = self.current_year
         previous_year = year - 1
 
@@ -145,14 +132,9 @@ class BaseStampService:
         year: Optional[int] = None,
         current_year: Optional[int] = None,
     ) -> Decimal:
-        """
-        Calculate pension based on current and previous year totals.
-        Safely handles edge cases without raising runtime errors.
-        """
-        # Resolve year safely
+        
         year = year or current_year or self.current_year
 
-        # Validate retired engineers
         if not self.retired_engineers or self.retired_engineers <= 0:
             return Decimal("0.00")
 
@@ -179,14 +161,6 @@ class BaseStampService:
     def get_number_of_invoice_copies(
         queryset, entity_id: int, entity_field: str
     ) -> int:
-        """
-        Get total number of invoice copies for a specific entity.
-
-        Args:
-            queryset: The queryset to filter
-            entity_id: ID of the entity (company_id or sector_id)
-            entity_field: Name of the field to filter by ('company_id' or 'sector_id')
-        """
         filter_kwargs = {entity_field: entity_id}
         result = queryset.filter(**filter_kwargs).aggregate(
             total_copies=Sum("invoice_copies")
@@ -195,9 +169,6 @@ class BaseStampService:
 
     @staticmethod
     def yearly_chart(queryset):
-        """
-        Generate yearly chart data with categories, yearly totals, and cumulative totals.
-        """
         stamps = (
             queryset.filter(invoice_date__isnull=False)
             .annotate(year=TruncYear("invoice_date"))
@@ -233,25 +204,10 @@ class BaseStampService:
 
     @staticmethod
     def total_amount_for_entity(queryset, entity_id: int, entity_field: str) -> Decimal:
-        """
-        Calculate total amount for a specific entity.
-
-        Args:
-            queryset: The queryset to filter
-            entity_id: ID of the entity (company_id or sector_id)
-            entity_field: Name of the field to filter by ('company_id' or 'sector_id')
-        """
         filter_kwargs = {entity_field: entity_id}
         result = queryset.filter(**filter_kwargs).aggregate(total=Sum("d1"))["total"]
         return Decimal(str(result)) if result else Decimal("0")
 
     @staticmethod
     def total_entities(queryset, entity_field: str) -> int:
-        """
-        Count distinct entities in queryset.
-
-        Args:
-            queryset: The queryset to count from
-            entity_field: Name of the field to count distinct values ('company_id' or 'sector_id')
-        """
         return queryset.values(entity_field).distinct().count()

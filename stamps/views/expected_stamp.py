@@ -34,7 +34,7 @@ class ExpectedStampListView(ListView):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        if request.GET.get("download_btn"):
+        if request.GET.get("download_btn") and request.GET.get("download"):
             return self.handle_export(request, self.object_list)
         context = self.get_context_data()
         return self.render_to_response(context)

@@ -17,13 +17,11 @@ from stamps.models import Sector
 from stamps.services.main_pdf_service import MainPDFService
 
 
-class ExpectedStampPDFService:
+class ExpectedStampPDFService(MainPDFService):
     """
     Service for generating PDF exports of stamp calculations.
     Handles both general reports and sector-specific detailed reports.
     """
-
-    mainPDFService = MainPDFService()
 
     @staticmethod
     def export_general_report(queryset):
@@ -67,10 +65,10 @@ class ExpectedStampPDFService:
         )
 
         # Calculate total
-        total_amount = ExpectedStampPDFService.mainPDFService._calculate_total_amount(queryset)
+        total_amount = ExpectedStampPDFService._calculate_total_amount(queryset)
 
         total_paragraph = Paragraph(
-            ExpectedStampPDFService.mainPDFService.fix_arabic(
+            ExpectedStampPDFService.fix_arabic(
                 f"إجمالي الدمغة لكل القطاعات بالمليون: {total_amount:,} جنيه مصري"
             ),
             arabic_style,
@@ -78,12 +76,12 @@ class ExpectedStampPDFService:
 
         # RTL: REVERSED column order
         headers = [
-            ExpectedStampPDFService.mainPDFService.fix_arabic("إجمالي الدمغة"),
-            ExpectedStampPDFService.mainPDFService.fix_arabic("النسبة"),
-            ExpectedStampPDFService.mainPDFService.fix_arabic("عدد النسخ"),
-            ExpectedStampPDFService.mainPDFService.fix_arabic("قيمة الأعمال"),
-            ExpectedStampPDFService.mainPDFService.fix_arabic("تاريخ المطالبه"),
-            ExpectedStampPDFService.mainPDFService.fix_arabic("القطاع"),
+            ExpectedStampPDFService.fix_arabic("إجمالي الدمغة"),
+            ExpectedStampPDFService.fix_arabic("النسبة"),
+            ExpectedStampPDFService.fix_arabic("عدد النسخ"),
+            ExpectedStampPDFService.fix_arabic("قيمة الأعمال"),
+            ExpectedStampPDFService.fix_arabic("تاريخ المطالبه"),
+            ExpectedStampPDFService.fix_arabic("القطاع"),
         ]
 
         table_data = [[Paragraph(h, arabic_style) for h in headers]]
@@ -98,7 +96,7 @@ class ExpectedStampPDFService:
                     s.invoice_date.strftime("%Y-%m-%d") if s.invoice_date else "—",
                     number_style,
                 ),
-                Paragraph(ExpectedStampPDFService.mainPDFService.fix_arabic(s.sector.name), arabic_style),
+                Paragraph(ExpectedStampPDFService.fix_arabic(s.sector.name), arabic_style),
             ]
 
             table_data.append(row)
@@ -175,26 +173,26 @@ class ExpectedStampPDFService:
         c.drawRightString(
             FOOTER_LEFT,
             y,
-            ExpectedStampPDFService.mainPDFService.fix_arabic(
+            ExpectedStampPDFService.fix_arabic(
                 f" القاهرة في : {date.today().strftime('%Y-%m-%d')}"
             ),
         )
 
         c.setFont(*TITLE_FONT)
         c.drawRightString(
-            RIGHT, y, ExpectedStampPDFService.mainPDFService.fix_arabic(f"السادة قطاع / {sector.name}")
+            RIGHT, y, ExpectedStampPDFService.fix_arabic(f"السادة قطاع / {sector.name}")
         )
 
         # "تحية طيبة وبعد"
         y -= 1.5 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(width / 2, y, ExpectedStampPDFService.mainPDFService.fix_arabic("تحية طيبة و بعد"))
+        c.drawCentredString(width / 2, y, ExpectedStampPDFService.fix_arabic("تحية طيبة و بعد"))
 
         # Title
         y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(
-            width / 2, y, ExpectedStampPDFService.mainPDFService.fix_arabic("مطالبة نموذج رقم ( 1 )")
+            width / 2, y, ExpectedStampPDFService.fix_arabic("مطالبة نموذج رقم ( 1 )")
         )
 
         # ================= Intro paragraph ================= #
@@ -213,7 +211,7 @@ class ExpectedStampPDFService:
         wrapped_lines = textwrap.wrap(paragraph_text, width=85)
 
         for line in wrapped_lines:
-            c.drawRightString(RIGHT, y, ExpectedStampPDFService.mainPDFService.fix_arabic(line))
+            c.drawRightString(RIGHT, y, ExpectedStampPDFService.fix_arabic(line))
             y -= 0.7 * cm
 
         # ================= Table ================= #
@@ -241,7 +239,7 @@ class ExpectedStampPDFService:
         c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
 
         for header, w in zip(headers, col_widths):
-            c.drawRightString(x, y, ExpectedStampPDFService.mainPDFService.fix_arabic(header))
+            c.drawRightString(x, y, ExpectedStampPDFService.fix_arabic(header))
             x -= w
 
         c.line(LEFT, y - 0.3 * cm, RIGHT, y - 0.3 * cm)
@@ -266,7 +264,7 @@ class ExpectedStampPDFService:
             total += obj.d1
 
             for value, w in zip(row, col_widths):
-                c.drawRightString(x, y, ExpectedStampPDFService.mainPDFService.fix_arabic(str(value)))
+                c.drawRightString(x, y, ExpectedStampPDFService.fix_arabic(str(value)))
                 x -= w
 
             c.setStrokeColorRGB(0.85, 0.85, 0.85)
@@ -278,7 +276,7 @@ class ExpectedStampPDFService:
             # Check if we need a new page
             if y < 4 * cm:
                 c.showPage()
-                y = ExpectedStampPDFService.mainPDFService._start_new_page(
+                y = ExpectedStampPDFService._start_new_page(
                     c,
                     width,
                     height,
@@ -293,7 +291,7 @@ class ExpectedStampPDFService:
         # Check if we have enough space for total section (need ~3cm)
         if y < 5 * cm:
             c.showPage()
-            y = ExpectedStampPDFService.mainPDFService._start_new_page(c, width, height, 7)
+            y = ExpectedStampPDFService._start_new_page(c, width, height, 7)
             c.setFont("Amiri-Bold", 12)
 
         y -= 0.5 * cm
@@ -302,11 +300,11 @@ class ExpectedStampPDFService:
         c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
 
         c.drawRightString(
-            RIGHT, y, ExpectedStampPDFService.mainPDFService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
+            RIGHT, y, ExpectedStampPDFService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
         )
 
-        total_in_arabic = ExpectedStampPDFService.mainPDFService.fix_arabic(
-            ExpectedStampPDFService.mainPDFService._number_to_arabic_text(total)
+        total_in_arabic = ExpectedStampPDFService.fix_arabic(
+            ExpectedStampPDFService._number_to_arabic_text(total)
         )
         y -= 0.8 * cm
         c.setFont("Amiri-Bold", 12)
@@ -322,32 +320,32 @@ class ExpectedStampPDFService:
         # Check if we have enough space for footer (need ~8cm for all footer content)
         if y < 10 * cm:
             c.showPage()
-            y = ExpectedStampPDFService.mainPDFService._start_new_page(c, width, height, 7)
+            y = ExpectedStampPDFService._start_new_page(c, width, height, 7)
 
         y -= 1.6 * cm
         c.setFont(*TABLE_HEADER_FONT)
 
         for point in last_points:
-            c.drawRightString(RIGHT, y, ExpectedStampPDFService.mainPDFService.fix_arabic(point))
+            c.drawRightString(RIGHT, y, ExpectedStampPDFService.fix_arabic(point))
             y -= 0.7 * cm
 
         y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(
-            width / 2, y, ExpectedStampPDFService.mainPDFService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
+            width / 2, y, ExpectedStampPDFService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
         )
 
         y -= 1.3 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampPDFService.mainPDFService.fix_arabic("أمين الصندوق"))
+        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampPDFService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampPDFService.mainPDFService.fix_arabic("د / معتز طلبة"))
+        c.drawCentredString(FOOTER_LEFT, y, ExpectedStampPDFService.fix_arabic("د / معتز طلبة"))
 
         if show_judicial_seizure:
             c.showPage()  # Start new page for judicial seizure
-            ExpectedStampPDFService.mainPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
+            ExpectedStampPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
 
         c.showPage()
         c.save()
