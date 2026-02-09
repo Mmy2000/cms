@@ -42,14 +42,20 @@ class ExpectedStampListView(ListView):
     def handle_export(self, request, queryset):
         file_type = request.GET.get("download")
         sector_id = self.request.GET.get("sector")
+
+        try:
+            sector_id = int(sector_id)
+        except (TypeError, ValueError):
+            sector_id = None
         if file_type == "pdf":
-            pdf = (
-                self.service.export_to_pdf_for_spacific_sector(
-                    queryset, sector_id, user=request.user
+            if sector_id:
+                pdf = self.service.export_to_pdf_for_spacific_sector(
+                    queryset,
+                    sector_id,
+                    user=request.user,
                 )
-                if sector_id
-                else self.service.export_pdf(queryset)
-            )
+            else:
+                pdf = self.service.export_pdf(queryset)
             response = HttpResponse(pdf, content_type="application/pdf")
             response["Content-Disposition"] = (
                 "attachment; filename=expected_stamp_report.pdf"

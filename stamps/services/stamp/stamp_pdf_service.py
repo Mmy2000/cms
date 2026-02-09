@@ -1,4 +1,3 @@
-from decimal import Decimal, ROUND_HALF_UP
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -13,12 +12,9 @@ from datetime import date
 import textwrap
 import os
 import io
-from arabic_reshaper import reshape
-from bidi.algorithm import get_display
 from django.conf import settings
-from num2words import num2words
-
 from stamps.models import Company
+from stamps.services.main_pdf_service import MainPDFService
 
 
 class StampPDFService:
@@ -26,266 +22,8 @@ class StampPDFService:
     Service for generating PDF exports of stamp calculations.
     Handles both general reports and company-specific detailed reports.
     """
-
-    @staticmethod
-    def fix_arabic(text):
-        """Convert Arabic text to proper RTL display format."""
-        if text is None:
-            return ""
-        return get_display(reshape(str(text)))
-
-    @staticmethod
-    def _number_to_arabic_text(amount) -> str:
-        """
-        Converts number to Arabic currency text (EGP).
-        Supports decimals (piasters).
-        """
-        amount = Decimal(str(amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-        pounds = int(amount)
-        piasters = int((amount - pounds) * 100)
-
-        parts = []
-
-        if pounds > 0:
-            pounds_text = num2words(pounds, lang="ar")
-            parts.append(f"{pounds_text} جنيه")
-
-        if piasters > 0:
-            piasters_text = num2words(piasters, lang="ar")
-            parts.append(f"{piasters_text} قرش")
-
-        if not parts:
-            return "صفر جنيه"
-
-        return f"فقط {' و '.join(parts)} لا غير"
-
-    @staticmethod
-    def _start_new_page(
-        c,
-        width,
-        height,
-        top_margin_cm=7,
-        draw_table_header=False,
-        headers=None,
-        col_widths=None,
-    ):
-        """Start a new PDF page and reset formatting."""
-        TOP_MARGIN = top_margin_cm * cm
-        y = height - TOP_MARGIN
-
-        # IMPORTANT: reset font after showPage
-        c.setFont("Amiri", 11)
-
-        # Optionally redraw table headers on new page
-        if draw_table_header and headers and col_widths:
-            LEFT = 2 * cm
-            RIGHT = width - 2 * cm
-
-            c.setFont("Amiri-Bold", 11)
-            x = RIGHT
-
-            c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
-
-            for header, w in zip(headers, col_widths):
-                c.drawRightString(x, y, StampPDFService.fix_arabic(header))
-                x -= w
-
-            c.line(LEFT, y - 0.3 * cm, RIGHT, y - 0.3 * cm)
-
-            y -= 0.8 * cm
-            c.setFont("Amiri", 11)
-
-        return y
-
-    @staticmethod
-    def _calculate_total_amount(queryset) -> Decimal:
-        """Calculate total d1 amount from queryset."""
-        from django.db.models import Sum
-
-        result = queryset.aggregate(total=Sum("d1"))["total"]
-        return Decimal(str(result)) if result else Decimal("0")
-
-    @staticmethod
-    def _draw_judicial_seizure_page(c, width, height, user_profile):
-        """
-        Draw the judicial seizure notice page.
-        This is shown when user has judicial_seizure=True.
-        """
-        LEFT = 2 * cm
-        RIGHT = width - 2 * cm
-        CENTER = width / 2
-        TOP_MARGIN = 3 * cm
-        BOTTOM_MARGIN = 2.5 * cm  # Add bottom margin to prevent cutoff
-        y = height - TOP_MARGIN
-        FOOTER_LEFT = 5 * cm
-
-        # Title at top - BOLD
-        c.setFont("Amiri-Bold", 16)
-        title = "بمحضر ضبط قضائي لمخالفة مواد (.....................)"
-        c.drawCentredString(CENTER, y, StampPDFService.fix_arabic(title))
-
-        y -= 2 * cm
-
-        # Form fields with dotted lines - BOLD
-        c.setFont("Amiri-Bold", 12)
-
-        # رقم المسلسل
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("رقم المسلسل :"))
-        c.drawString(LEFT, y, "." * 100)
-
-        y -= 1 * cm
-
-        # رقم القيد بالسجل
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("رقم القيد بالسجل :"))
-        c.drawString(LEFT, y, "." * 100)
-
-        y -= 1 * cm
-
-        # اسم المخالف
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("اسم المخالف :"))
-        c.drawString(LEFT, y, "." * 100)
-
-        y -= 1 * cm
-
-        # عنوان المخالف
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("عنوان المخالف :"))
-        c.drawString(LEFT, y, "." * 100)
-
-        y -= 1.2 * cm
-
-        # انه في يوم ... الموافق
-        line1_right = (
-            "انه في يوم .............................. الموافق    /    /٢٠٢٥ الساعة :"
-        )
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line1_right))
-        c.drawString(LEFT, y, "." * 20)
-
-        y -= 1.2 * cm
-
-        # بمعرفتي انا المحامي
-        line2 = "بمعرفتي انا المحامي / ..................................... بصفتي / ......................................."
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line2))
-
-        y -= 1 * cm
-
-        # محامي بإدارة الدمغة الهندسية
-        line3 = "محامي بإدارة الدمغة الهندسية بنقابة المهندسين المصرية ، مأمور الضبط القضائي."
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line3))
-
-        y -= 1.2 * cm
-
-        # بناء علي قرار السيد وزير العدل - BOLD
-        c.setFont("Amiri-Bold", 11)
-        para1 = "بناء علي قرار السيد وزير العدل رقم (٤٨٠٥) لسنة ٢٠٢٥ المنشور بالجريدة الرسمية"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(para1))
-
-        y -= 0.7 * cm
-
-        para2 = "بتاريخ ٢٠٢٥/٣/٢٥ العدد (١٨٨) ، فقد تحقق لنا أن السيد – السادة /"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(para2))
-
-        y -= 1 * cm
-
-        c.drawString(LEFT, y, "." * 120)
-
-        y -= 0.7 * cm
-
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic("قد قام – قاموا"))
-        c.drawString(LEFT, y, "." * 120)
-
-        y -= 1 * cm
-
-        # وبعد التحقيق والتحري - BOLD
-        c.setFont("Amiri-Bold", 12)
-        investigation = "وبعد التحقيق والتحري عن الأمر بموجب الإجراءات الآتية :"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(investigation))
-
-        y -= 0.8 * cm
-
-        c.setFont("Amiri-Bold", 11)
-        c.drawString(LEFT, y, "." * 120)
-        y -= 0.7 * cm
-        c.drawString(LEFT, y, "." * 120)
-        y -= 0.7 * cm
-        c.drawString(LEFT, y, "." * 120)
-
-        y -= 1.2 * cm
-
-        # Main paragraph - BOLD
-        c.setFont("Amiri-Bold", 11)
-        main_text1 = "وحيث أن هذا العمل مخالف للمواد ( ٢٣ ) من قانون الإجراءات الجنائية ومخالفة المواد"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text1))
-
-        y -= 0.7 * cm
-
-        main_text2 = "( ٤٦ - ٤٧ - ١٣١ ) من قانون ٦٦ لسنة ١٩٧٤ ولائحته التنفيذية الصادر بشأن نقابة"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text2))
-
-        y -= 0.7 * cm
-
-        main_text3 = "المهندسين ، نحرر هذا المحضر من أصل وصورتين."
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(main_text3))
-
-        y -= 1.2 * cm
-
-        # Closing - BOLD
-        c.setFont("Amiri-Bold", 11)
-        closing = "يرسل الأصل إلى النيابة العامة لإتخاذ ما يلزم وطلب الحكم بالعقوبات المقررة قانوناً ، ونسلم صورة"
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(closing))
-
-        y -= 0.7 * cm
-
-        closing2 = "للمخالف وترسل صورة إلى النقابة العامة."
-        c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(closing2))
-
-        # Check if we have enough space for signature section (need ~4cm from bottom)
-        if y - 4 * cm < BOTTOM_MARGIN:
-            c.showPage()
-            y = height - TOP_MARGIN
-            c.setFont("Amiri-Bold", 12)
-        else:
-            y -= 1.5 * cm
-
-        # Signature section - BOLD
-        c.setFont("Amiri-Bold", 12)
-        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.fix_arabic("محرر المحضر"))
-
-        y -= 0.8 * cm
-
-        c.drawCentredString(
-            FOOTER_LEFT,
-            y,
-            StampPDFService.fix_arabic(
-                "الاسم : ........................................"
-            ),
-        )
-
-        y -= 0.8 * cm
-
-        c.drawCentredString(
-            FOOTER_LEFT,
-            y,
-            StampPDFService.fix_arabic(
-                "التوقيع : ........................................"
-            ),
-        )
-
-        y -= 0.8 * cm
-
-        # Ensure we don't go below bottom margin
-        if y > BOTTOM_MARGIN:
-            c.drawCentredString(
-                FOOTER_LEFT,
-                y,
-                StampPDFService.fix_arabic(
-                    "التاريخ : ........................................"
-                ),
-            )
-
-        # Finish this page
-        c.showPage()
-
+    mainPDFService = MainPDFService()
+    
     @staticmethod
     def export_general_report(queryset):
         """
@@ -328,10 +66,10 @@ class StampPDFService:
         )
 
         # Calculate total
-        total_amount = StampPDFService._calculate_total_amount(queryset)
+        total_amount = StampPDFService.mainPDFService._calculate_total_amount(queryset)
 
         total_paragraph = Paragraph(
-            StampPDFService.fix_arabic(
+            StampPDFService.mainPDFService.fix_arabic(
                 f"إجمالي الدمغة لكل الشركات بالمليون: {total_amount:,} جنيه مصري"
             ),
             arabic_style,
@@ -339,12 +77,12 @@ class StampPDFService:
 
         # RTL: REVERSED column order
         headers = [
-            StampPDFService.fix_arabic("إجمالي الدمغة"),
-            StampPDFService.fix_arabic("النسبة"),
-            StampPDFService.fix_arabic("عدد النسخ"),
-            StampPDFService.fix_arabic("قيمة الأعمال"),
-            StampPDFService.fix_arabic("تاريخ المطالبه"),
-            StampPDFService.fix_arabic("الشركة"),
+            StampPDFService.mainPDFService.fix_arabic("إجمالي الدمغة"),
+            StampPDFService.mainPDFService.fix_arabic("النسبة"),
+            StampPDFService.mainPDFService.fix_arabic("عدد النسخ"),
+            StampPDFService.mainPDFService.fix_arabic("قيمة الأعمال"),
+            StampPDFService.mainPDFService.fix_arabic("تاريخ المطالبه"),
+            StampPDFService.mainPDFService.fix_arabic("الشركة"),
         ]
 
         table_data = [[Paragraph(h, arabic_style) for h in headers]]
@@ -359,7 +97,7 @@ class StampPDFService:
                     s.invoice_date.strftime("%Y-%m-%d") if s.invoice_date else "—",
                     number_style,
                 ),
-                Paragraph(StampPDFService.fix_arabic(s.company.name), arabic_style),
+                Paragraph(StampPDFService.mainPDFService.fix_arabic(s.company.name), arabic_style),
             ]
 
             table_data.append(row)
@@ -436,26 +174,26 @@ class StampPDFService:
         c.drawRightString(
             FOOTER_LEFT,
             y,
-            StampPDFService.fix_arabic(
+            StampPDFService.mainPDFService.fix_arabic(
                 f" القاهرة في : {date.today().strftime('%Y-%m-%d')}"
             ),
         )
 
         c.setFont(*TITLE_FONT)
         c.drawRightString(
-            RIGHT, y, StampPDFService.fix_arabic(f"السادة شركة / {company.name}")
+            RIGHT, y, StampPDFService.mainPDFService.fix_arabic(f"السادة شركة / {company.name}")
         )
 
         # "تحية طيبة وبعد"
         y -= 1.5 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(width / 2, y, StampPDFService.fix_arabic("تحية طيبة و بعد"))
+        c.drawCentredString(width / 2, y, StampPDFService.mainPDFService.fix_arabic("تحية طيبة و بعد"))
 
         # Title
         y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(
-            width / 2, y, StampPDFService.fix_arabic("مطالبة نموذج رقم ( 1 )")
+            width / 2, y, StampPDFService.mainPDFService.fix_arabic("مطالبة نموذج رقم ( 1 )")
         )
 
         # ================= Intro paragraph ================= #
@@ -474,7 +212,7 @@ class StampPDFService:
         wrapped_lines = textwrap.wrap(paragraph_text, width=85)
 
         for line in wrapped_lines:
-            c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(line))
+            c.drawRightString(RIGHT, y, StampPDFService.mainPDFService.fix_arabic(line))
             y -= 0.7 * cm
 
         # ================= Table ================= #
@@ -502,7 +240,7 @@ class StampPDFService:
         c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
 
         for header, w in zip(headers, col_widths):
-            c.drawRightString(x, y, StampPDFService.fix_arabic(header))
+            c.drawRightString(x, y, StampPDFService.mainPDFService.fix_arabic(header))
             x -= w
 
         c.line(LEFT, y - 0.3 * cm, RIGHT, y - 0.3 * cm)
@@ -527,7 +265,7 @@ class StampPDFService:
             total += obj.d1
 
             for value, w in zip(row, col_widths):
-                c.drawRightString(x, y, StampPDFService.fix_arabic(str(value)))
+                c.drawRightString(x, y, StampPDFService.mainPDFService.fix_arabic(str(value)))
                 x -= w
 
             c.setStrokeColorRGB(0.85, 0.85, 0.85)
@@ -539,7 +277,7 @@ class StampPDFService:
             # Check if we need a new page
             if y < 4 * cm:
                 c.showPage()
-                y = StampPDFService._start_new_page(
+                y = StampPDFService.mainPDFService._start_new_page(
                     c,
                     width,
                     height,
@@ -554,7 +292,7 @@ class StampPDFService:
         # Check if we have enough space for total section (need ~3cm)
         if y < 5 * cm:
             c.showPage()
-            y = StampPDFService._start_new_page(c, width, height, 7)
+            y = StampPDFService.mainPDFService._start_new_page(c, width, height, 7)
             c.setFont("Amiri-Bold", 12)
 
         y -= 0.5 * cm
@@ -563,11 +301,11 @@ class StampPDFService:
         c.line(LEFT, y + 0.4 * cm, RIGHT, y + 0.4 * cm)
 
         c.drawRightString(
-            RIGHT, y, StampPDFService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
+            RIGHT, y, StampPDFService.mainPDFService.fix_arabic(f"الإجمالي : {total:,} جنيه مصري")
         )
 
-        total_in_arabic = StampPDFService.fix_arabic(
-            StampPDFService._number_to_arabic_text(total)
+        total_in_arabic = StampPDFService.mainPDFService.fix_arabic(
+            StampPDFService.mainPDFService._number_to_arabic_text(total)
         )
         y -= 0.8 * cm
         c.setFont("Amiri-Bold", 12)
@@ -583,32 +321,32 @@ class StampPDFService:
         # Check if we have enough space for footer (need ~8cm for all footer content)
         if y < 10 * cm:
             c.showPage()
-            y = StampPDFService._start_new_page(c, width, height, 7)
+            y = StampPDFService.mainPDFService._start_new_page(c, width, height, 7)
 
         y -= 1.6 * cm
         c.setFont(*TABLE_HEADER_FONT)
 
         for point in last_points:
-            c.drawRightString(RIGHT, y, StampPDFService.fix_arabic(point))
+            c.drawRightString(RIGHT, y, StampPDFService.mainPDFService.fix_arabic(point))
             y -= 0.7 * cm
 
         y -= 1.2 * cm
         c.setFont(*TITLE_FONT)
         c.drawCentredString(
-            width / 2, y, StampPDFService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
+            width / 2, y, StampPDFService.mainPDFService.fix_arabic("وتفضلوا بقبول فائق الاحترام")
         )
 
         y -= 1.3 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.fix_arabic("أمين الصندوق"))
+        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.mainPDFService.fix_arabic("أمين الصندوق"))
 
         y -= 0.9 * cm
         c.setFont(*TITLE_FONT)
-        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.fix_arabic("د / معتز طلبة"))
+        c.drawCentredString(FOOTER_LEFT, y, StampPDFService.mainPDFService.fix_arabic("د / معتز طلبة"))
 
         if show_judicial_seizure:
             c.showPage()  # Start new page for judicial seizure
-            StampPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
+            StampPDFService.mainPDFService._draw_judicial_seizure_page(c, width, height, user.profile)
 
         c.showPage()
         c.save()
