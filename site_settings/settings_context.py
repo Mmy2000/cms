@@ -21,7 +21,9 @@ def seo_context(request):
     if page:
         seo = SEOSettings.objects.filter(page=page).first()
 
-    stamps_this_month = StampService.get_this_month()
+    
+    qs = StampService.get_queryset()
+    stamps_this_month = StampService.get_this_month(qs)
     total_pension= service.calculate_pension(service.get_queryset())
 
     return {
