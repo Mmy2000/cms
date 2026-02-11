@@ -3,8 +3,8 @@ from django.core.exceptions import ValidationError
 
 class AuthService:
     @staticmethod
-    def authenticate_user(email: str, password: str):
-        user = authenticate(username=email, password=password)
+    def authenticate_user(request,email: str, password: str):
+        user = authenticate(request=request,username=email, password=password)
         if not user:
             raise ValidationError("البريد الإلكتروني أو كلمة المرور غير صحيحة")
 
@@ -12,4 +12,3 @@ class AuthService:
             raise ValidationError("حسابك قيد المراجعة ولم يتم تفعيله بعد.")
 
         return user
-

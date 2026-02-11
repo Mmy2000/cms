@@ -67,6 +67,7 @@ def login_view(request):
     if form.is_valid():
         try:
             user = AuthService.authenticate_user(
+                request,
                 form.cleaned_data["email"],
                 form.cleaned_data["password"],
             )
