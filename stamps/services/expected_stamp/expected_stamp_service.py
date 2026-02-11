@@ -20,18 +20,6 @@ class ExpectedStampService(BaseStampService):
         except ExpectedStamp.DoesNotExist:
             return None
 
-    @classmethod
-    def get_filtered_queryset(
-        cls,
-        sector_id: Optional[int] = None,
-        date_from: Optional[str] = None,
-        date_to: Optional[str] = None,
-        sort: str = "-created_at",
-    ):
-        queryset = cls.get_queryset()
-        queryset = cls.filter(queryset, sector_id, date_from, date_to)
-        return cls.sort(queryset, sort)
-
     @staticmethod
     def filter(queryset, sector_id=None, date_from=None, date_to=None, user=None):
         filters = Q()
