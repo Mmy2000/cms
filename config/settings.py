@@ -47,7 +47,22 @@ INSTALLED_APPS = [
     "compressor",
     "django_summernote",
     "django_tasks.backends.database",
+    "rest_framework",
+    "django_filters",
 ]
+
+REST_FRAMEWORK = {
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     "rest_framework.authentication.SessionAuthentication",
+    #     # Add TokenAuthentication or JWTAuthentication if needed:
+    #     # "rest_framework.authentication.TokenAuthentication",
+    # ],
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
+    "DEFAULT_PAGINATION_CLASS": "stamps.api.pagination.StandardResultsPagination",
+    "PAGE_SIZE": 10,
+}
 
 UNFOLD = {
     "SITE_TITLE": "My Admin",

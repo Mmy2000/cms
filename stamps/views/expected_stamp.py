@@ -6,7 +6,6 @@ from stamps.services.expected_stamp.expected_stamp_service import ExpectedStampS
 from ..models import  Sector
 from ..forms import ExpectedStampForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 
 
 class ExpectedStampListView(ListView):
