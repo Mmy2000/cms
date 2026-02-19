@@ -22,6 +22,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = True if str(env("DEBUG")).upper() == "TRUE" else False
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
+CORS_ALLOW_ALL_ORIGINS = (
+    True if str(env("ALLOW_ALL_ORIGINS")).upper() == "TRUE" else False
+)
 
 
 # Application definition
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
     "django_tasks.backends.database",
     "rest_framework",
     "django_filters",
+    "corsheaders",
 ]
 
 REST_FRAMEWORK = {
@@ -133,6 +137,7 @@ MIDDLEWARE = [
     # "config.middleware.AdminIPRestrictionMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -160,6 +165,7 @@ AXES_COOLOFF_TIME = 1  # hours
 
 
 ROOT_URLCONF = 'config.urls'
+SITE_ID = 1
 
 TEMPLATES = [
     {
