@@ -20,7 +20,7 @@ class ERPNextClient:
             response = requests.post(url, json=data, headers=self.headers, timeout=10)
             response.raise_for_status()
             result = response.json()
-            logger.debug(f"ERPNext create response: {result}")
+            # logger.debug(f"ERPNext create response: {result}")
             return result
         except requests.exceptions.RequestException as e:
             logger.error(f"ERPNext create request failed: {str(e)}")
@@ -40,7 +40,7 @@ class ERPNextClient:
             )
             response.raise_for_status()
             result = response.json()
-            logger.debug(f"ERPNext update response: {result}")
+            # logger.debug(f"ERPNext update response: {result}")
             return result
         except requests.exceptions.RequestException as e:
             logger.error(f"ERPNext update request failed: {str(e)}")
@@ -59,7 +59,7 @@ class ERPNextClient:
             )
             response.raise_for_status()
             result = response.json()
-            logger.debug(f"ERPNext delete response: {result}")
+            # logger.debug(f"ERPNext delete response: {result}")
             return result
         except requests.exceptions.RequestException as e:
             logger.error(f"ERPNext delete request failed: {str(e)}")
