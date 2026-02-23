@@ -17,12 +17,12 @@ def handle_stamp_calculation_delete(sender, instance, **kwargs):
     """
     company_id = instance.company.id
 
-    logger.info(f"Deleting StampCalculation {instance.id} - queuing ERPNext deletion")
+    # logger.info(f"Deleting StampCalculation {instance.id} - queuing ERPNext deletion")
     delete_stamp_from_erpnext_task.enqueue(instance.id, "Stamp Calculation")
 
-    logger.info(
-        f"Queuing recalculation for company {company_id} after StampCalculation {instance.id} deletion"
-    )
+    # logger.info(
+    #     f"Queuing recalculation for company {company_id} after StampCalculation {instance.id} deletion"
+    # )
     recalculate_stamp_calculations_task.enqueue(company_id)
 
 
@@ -35,12 +35,12 @@ def handle_expected_stamp_delete(sender, instance, **kwargs):
     """
     sector_id = instance.sector.id
 
-    logger.info(f"Deleting ExpectedStamp {instance.id} - queuing ERPNext deletion")
+    # logger.info(f"Deleting ExpectedStamp {instance.id} - queuing ERPNext deletion")
     delete_stamp_from_erpnext_task.enqueue(instance.id, "Expected Stamp")
 
-    logger.info(
-        f"Queuing recalculation for sector {sector_id} after ExpectedStamp {instance.id} deletion"
-    )
+    # logger.info(
+    #     f"Queuing recalculation for sector {sector_id} after ExpectedStamp {instance.id} deletion"
+    # )
     recalculate_expected_stamps_task.enqueue(sector_id)
 
 
@@ -57,9 +57,9 @@ def sync_stamp_to_erpnext(sender, instance, created, **kwargs):
 
     # Recalculate all records if this was an update (not a new creation)
     if not created:
-        logger.info(
-            f"StampCalculation {instance.id} was updated - queuing recalculation for company {instance.company.id}"
-        )
+        # logger.info(
+        #     f"StampCalculation {instance.id} was updated - queuing recalculation for company {instance.company.id}"
+        # )
         recalculate_stamp_calculations_task.enqueue(instance.company.id)
 
 
@@ -75,7 +75,7 @@ def sync_expected_stamp_to_erpnext(sender, instance, created, **kwargs):
 
     # Recalculate all records if this was an update (not a new creation)
     if not created:
-        logger.info(
-            f"ExpectedStamp {instance.id} was updated - queuing recalculation for sector {instance.sector.id}"
-        )
+        # logger.info(
+        #     f"ExpectedStamp {instance.id} was updated - queuing recalculation for sector {instance.sector.id}"
+        # )
         recalculate_expected_stamps_task.enqueue(instance.sector.id)

@@ -21,16 +21,16 @@ def sync_stamp_to_erpnext_task(instance_id, data):
     try:
         instance = StampCalculation.objects.get(id=instance_id)
         result = sync_to_erpnext("Stamp Calculation", instance, data)
-        logger.info(f"Successfully synced StampCalculation {instance_id} to ERPNext")
+        # logger.info(f"Successfully synced StampCalculation {instance_id} to ERPNext")
         return result
     except StampCalculation.DoesNotExist:
-        logger.warning(f"StampCalculation {instance_id} no longer exists")
+        # logger.warning(f"StampCalculation {instance_id} no longer exists")
         return None
     except Exception as e:
-        logger.error(
-            f"ERPNext sync failed for StampCalculation {instance_id}: {str(e)}",
-            exc_info=True,
-        )
+        # logger.error(
+        #     f"ERPNext sync failed for StampCalculation {instance_id}: {str(e)}",
+        #     exc_info=True,
+        # )
         send_email.enqueue(
             to_email=settings.DEFAULT_FROM_EMAIL,
             first_name="Admin",
@@ -46,16 +46,16 @@ def sync_expected_stamp_to_erpnext_task(instance_id, data):
     try:
         instance = ExpectedStamp.objects.get(id=instance_id)
         result = sync_to_erpnext("Expected Stamp", instance, data)
-        logger.info(f"Successfully synced ExpectedStamp {instance_id} to ERPNext")
+        # logger.info(f"Successfully synced ExpectedStamp {instance_id} to ERPNext")
         return result
     except ExpectedStamp.DoesNotExist:
-        logger.warning(f"ExpectedStamp {instance_id} no longer exists")
+        # logger.warning(f"ExpectedStamp {instance_id} no longer exists")
         return None
     except Exception as e:
-        logger.error(
-            f"ERPNext sync failed for ExpectedStamp {instance_id}: {str(e)}",
-            exc_info=True,
-        )
+        # logger.error(
+        #     f"ERPNext sync failed for ExpectedStamp {instance_id}: {str(e)}",
+        #     exc_info=True,
+        # )
         send_email.enqueue(
             to_email=settings.DEFAULT_FROM_EMAIL,
             first_name="Admin",
@@ -75,12 +75,12 @@ def delete_stamp_from_erpnext_task(django_id, doctype):
     client = ERPNextClient()
     try:
         result = client.delete_by_django_id(doctype, django_id)
-        logger.info(f"Successfully deleted {doctype} {django_id} from ERPNext")
+        # logger.info(f"Successfully deleted {doctype} {django_id} from ERPNext")
         return result
     except Exception as e:
-        logger.error(
-            f"ERPNext delete failed for {doctype} {django_id}: {str(e)}", exc_info=True
-        )
+        # logger.error(
+        #     f"ERPNext delete failed for {doctype} {django_id}: {str(e)}", exc_info=True
+        # )
         send_email.enqueue(
             to_email=settings.DEFAULT_FROM_EMAIL,
             first_name="Admin",
@@ -114,7 +114,7 @@ def recalculate_stamp_calculations_task(company_id):
     lock_key = f"recalc_stamp_company_{company_id}"
 
     if not cache.add(lock_key, "locked", timeout=300):
-        logger.info(f"Skipping duplicate recalculation for company {company_id}")
+        # logger.info(f"Skipping duplicate recalculation for company {company_id}")
         return None
 
     try:
@@ -150,15 +150,15 @@ def recalculate_stamp_calculations_task(company_id):
                 records_to_update, ["total_past_years", "total_stamp_for_company"]
             )
 
-        logger.info(
-            f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}"
-        )
+        # logger.info(
+        #     f"Bulk updated {len(records_to_update)} StampCalculation records for company {company.name}"
+        # )
         return {"company_id": company_id, "updated_records": len(records_to_update)}
 
     except Exception as e:
-        logger.error(
-            f"Recalculation failed for company {company_id}: {str(e)}", exc_info=True
-        )
+        # logger.error(
+        #     f"Recalculation failed for company {company_id}: {str(e)}", exc_info=True
+        # )
         raise
     finally:
         cache.delete(lock_key)
@@ -170,7 +170,7 @@ def recalculate_expected_stamps_task(sector_id):
     lock_key = f"recalc_expected_sector_{sector_id}"
 
     if not cache.add(lock_key, "locked", timeout=300):
-        logger.info(f"Skipping duplicate recalculation for sector {sector_id}")
+        # logger.info(f"Skipping duplicate recalculation for sector {sector_id}")
         return None
 
     try:
@@ -206,18 +206,18 @@ def recalculate_expected_stamps_task(sector_id):
                 records_to_update, ["total_past_years", "total_stamp_for_company"]
             )
 
-        logger.info(
-            f"Bulk updated {len(records_to_update)} ExpectedStamp records for sector {sector.name}"
-        )
+        # logger.info(
+        #     f"Bulk updated {len(records_to_update)} ExpectedStamp records for sector {sector.name}"
+        # )
         return {"sector_id": sector_id, "updated_records": len(records_to_update)}
 
     except Sector.DoesNotExist:
-        logger.warning(f"Sector {sector_id} no longer exists")
+        # logger.warning(f"Sector {sector_id} no longer exists")
         return None
     except Exception as e:
-        logger.error(
-            f"Recalculation failed for sector {sector_id}: {str(e)}", exc_info=True
-        )
+        # logger.error(
+        #     f"Recalculation failed for sector {sector_id}: {str(e)}", exc_info=True
+        # )
         raise
     finally:
         cache.delete(lock_key)
